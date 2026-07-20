@@ -34,4 +34,4 @@ Appearance records include both MLB's official `gamesStarted` designation and th
 - A schedule that loses a previously completed game is rejected as an unsafe regression.
 - Structural errors such as missing teams, missing official starters, duplicate appearance order, or unclassified appearances prevent the snapshot from being written.
 
-The GitHub workflow added in the next implementation phase will commit only a validated snapshot. GitHub Pages will separately receive an ephemeral build artifact.
+The manual `Refresh dashboard data` workflow commits only a validated snapshot to the orphan `dashboard-data` branch. GitHub Pages will separately receive an ephemeral build artifact in a later implementation phase.
