@@ -96,6 +96,8 @@ class RefreshManager:
                         self.state["api_calls"] = client.api_calls
 
                     failures = await fetch_game_batch(client, pending, save)
+                    for failed_game, error in failures:
+                        await asyncio.to_thread(database.record_game_failure, failed_game, error)
                     self.state.update(
                         phase="classifying roles",
                         api_calls=client.api_calls,
@@ -110,18 +112,34 @@ class RefreshManager:
                     await asyncio.to_thread(database.save_classifications, classifications)
 
                     finished_at = datetime.now(timezone.utc).isoformat()
+                    coverage = await asyncio.to_thread(
+                        database.refresh_coverage,
+                        request.season,
+                        [game["game_pk"] for game in games],
+                    )
+                    if failures and len(failures) == len(pending) and pending:
+                        refresh_result = "failed"
+                    elif failures:
+                        refresh_result = "partial"
+                    else:
+                        refresh_result = "complete"
                     metadata = {
                         "last_refresh_at": finished_at,
                         "last_refresh_season": request.season,
+                        "last_refresh_result": refresh_result,
                         "last_api_calls": client.api_calls,
                         "last_games_fetched": len(pending) - len(failures),
                         "last_games_failed": len(failures),
                         "completed_games": len(games),
+                        "last_games_scheduled": coverage["scheduled"],
+                        "last_games_current": coverage["current"],
+                        "last_games_stale": coverage["stale"],
+                        "last_games_missing": coverage["missing"],
                     }
                     await asyncio.to_thread(database.set_metadata, metadata)
                     self.state.update(
                         running=False,
-                        phase="complete",
+                        phase=refresh_result,
                         api_calls=client.api_calls,
                         finished_at=finished_at,
                     )
@@ -169,6 +187,15 @@ async def audit(
 ) -> dict[str, Any]:
     rows = await asyncio.to_thread(database.audit, season, limit)
     return {"season": season, "appearances": rows}
+
+
+@app.get("/api/failures")
+async def failures(
+    season: int = Query(default_factory=lambda: date.today().year, ge=2000, le=2100),
+    limit: int = Query(200, ge=1, le=1000),
+) -> dict[str, Any]:
+    rows = await asyncio.to_thread(database.fetch_failures, season, limit)
+    return {"season": season, "failures": rows}
 
 
 @app.get("/{full_path:path}")
