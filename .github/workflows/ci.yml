@@ -73,3 +73,37 @@ jobs:
 
       - name: Build production frontend
         run: npm run build
+
+  static-site:
+    name: Static site checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: observable
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: observable/package-lock.json
+
+      - name: Install static-site dependencies
+        run: npm ci
+
+      - name: Type-check static-site components
+        run: npm run typecheck
+
+      - name: Run static-site tests
+        run: npm test
+
+      - name: Build static site from fixture
+        run: npm run build
