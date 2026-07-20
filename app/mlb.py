@@ -52,6 +52,10 @@ class MLBClient:
     def __init__(self, concurrency: int | None = None, rate_per_sec: float | None = None):
         concurrency = concurrency if concurrency is not None else DEFAULT_CONCURRENCY
         rate_per_sec = rate_per_sec if rate_per_sec is not None else DEFAULT_RATE_LIMIT
+        if concurrency < 1:
+            raise ValueError("MLB_CONCURRENCY must be at least 1")
+        if rate_per_sec < 0:
+            raise ValueError("MLB_RATE_LIMIT must be zero or greater")
         self.api_calls = 0
         self._semaphore = asyncio.Semaphore(concurrency)
         self._limiter = RateLimiter(rate_per_sec)
@@ -73,7 +77,13 @@ class MLBClient:
             for attempt in range(MAX_ATTEMPTS):
                 await self._limiter.acquire()
                 self.api_calls += 1
-                response = await self._client.get(path, params=params)
+                try:
+                    response = await self._client.get(path, params=params)
+                except httpx.TransportError:
+                    if attempt == MAX_ATTEMPTS - 1:
+                        raise
+                    await asyncio.sleep(self._retry_delay(None, attempt))
+                    continue
                 if response.status_code == 429 or response.status_code >= 500:
                     if attempt == MAX_ATTEMPTS - 1:
                         response.raise_for_status()
@@ -84,7 +94,7 @@ class MLBClient:
         raise RuntimeError("MLB request exhausted retries")
 
     @staticmethod
-    def _retry_delay(response: httpx.Response, attempt: int) -> float:
+    def _retry_delay(response: httpx.Response | None, attempt: int) -> float:
         """Exponential backoff with jitter, honoring Retry-After when present.
 
         Jitter breaks the lock-step retry storm that a fixed delay produces when
@@ -93,7 +103,7 @@ class MLBClient:
         form is ignored in favor of the computed backoff.
         """
         base = BACKOFF_BASE * (2**attempt)
-        retry_after = response.headers.get("Retry-After")
+        retry_after = response.headers.get("Retry-After") if response is not None else None
         if retry_after:
             try:
                 base = max(base, float(retry_after))

@@ -31,7 +31,7 @@ uvicorn app.main:app --reload          # terminal 1 (API on :8000)
 cd frontend && npm run dev             # terminal 2 (UI on :5173)
 ```
 
-Open the Vite URL (default <http://127.0.0.1:5173>) during development. `npm run typecheck` runs the TypeScript compiler without emitting. The Docker image builds the frontend automatically (multi-stage), so no manual build step is needed for containerized runs.
+Open the Vite URL (default <http://127.0.0.1:5173>) during development. `npm run typecheck` runs the TypeScript compiler without emitting, and `npm test` runs the frontend test suite. The Docker image builds the frontend automatically (multi-stage), so no manual build step is needed for containerized runs.
 
 The status line reports the exact API-call count for each refresh.
 
@@ -39,7 +39,9 @@ The status line reports the exact API-call count for each refresh.
 
 Outbound requests to the MLB API are both concurrency-capped and rate-limited. The concurrency cap bounds how many boxscore requests are in flight; the rate limit paces how fast new requests may start, so a small pool cannot burst hundreds of requests per second when responses come back quickly. Throttled (`429`) and server (`5xx`) responses are retried with jittered exponential backoff, honoring a numeric `Retry-After` header when the server sends one.
 
-A single game whose request exhausts its retries no longer aborts the whole refresh: it is skipped, the remaining games are stored and classified, and the count of skipped games is shown in the status line. Run the refresh again to backfill the skipped games (they are simply treated as not-yet-stored).
+A single game whose request exhausts its retries no longer aborts the whole refresh. The remaining games are stored and classified, while the failed game is marked retryable. Last-known-good data is retained as stale; a game with no cached copy is reported as missing. Either way, the next incremental refresh attempts it again.
+
+Refreshes finish as `complete`, `partial`, or `failed`. The status line reports scheduled, current, stale, and missing coverage so a partial refresh cannot silently look complete. Failure details are available from `/api/failures`.
 
 Tune the load with environment variables:
 
@@ -82,6 +84,7 @@ The key is `gamePk:playerId`. Valid roles are `SP` and `RP`. Overrides are appli
 - `GET /api/status` — progress, API calls, and last-refresh metadata
 - `GET /api/teams` — all 30 team aggregates
 - `GET /api/audit` — reclassified and review-flagged appearances
+- `GET /api/failures` — retryable game failures and stale-cache state
 - `GET /health` — basic health check
 
 Example refresh body:
@@ -105,4 +108,3 @@ Run one application worker so the in-process refresh lock and progress state rem
 ## Data and usage note
 
 This is an unofficial personal project. MLB endpoints and response shapes can change without notice. Use a reasonable refresh cadence and review MLB's applicable terms before publishing or commercializing a deployment.
-

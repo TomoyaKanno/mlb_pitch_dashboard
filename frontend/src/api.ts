@@ -27,9 +27,14 @@ export interface Status {
   error: string | null;
   last_refresh_at?: string;
   last_refresh_season?: number;
+  last_refresh_result?: "complete" | "partial" | "failed";
   last_api_calls?: number;
   last_games_fetched?: number;
   last_games_failed?: number;
+  last_games_scheduled?: number;
+  last_games_current?: number;
+  last_games_stale?: number;
+  last_games_missing?: number;
   completed_games?: number;
 }
 

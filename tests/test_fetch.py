@@ -1,7 +1,10 @@
 import asyncio
 import time
 
-from app.mlb import RateLimiter, fetch_game_batch
+import httpx
+
+import app.mlb as mlb_module
+from app.mlb import MLBClient, RateLimiter, fetch_game_batch
 
 
 class StubClient:
@@ -66,3 +69,38 @@ def test_rate_limiter_disabled_is_noop():
         return time.monotonic() - start
 
     assert asyncio.run(run()) < 0.05
+
+
+def test_client_retries_transport_errors(monkeypatch):
+    monkeypatch.setattr(mlb_module, "BACKOFF_BASE", 0)
+    attempts = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal attempts
+        attempts += 1
+        if attempts < 3:
+            raise httpx.ConnectError("temporary disconnect", request=request)
+        return httpx.Response(200, json={"ok": True})
+
+    async def run():
+        client = MLBClient(concurrency=1, rate_per_sec=0)
+        await client._client.aclose()
+        client._client = httpx.AsyncClient(
+            base_url=mlb_module.BASE_URL,
+            transport=httpx.MockTransport(handler),
+        )
+        async with client:
+            return await client.get_json("/test")
+
+    assert asyncio.run(run()) == {"ok": True}
+    assert attempts == 3
+
+
+def test_client_rejects_invalid_pacing_configuration():
+    for kwargs in ({"concurrency": 0}, {"rate_per_sec": -1}):
+        try:
+            MLBClient(**kwargs)
+        except ValueError:
+            pass
+        else:  # pragma: no cover - defensive assertion branch
+            raise AssertionError(f"Expected invalid configuration to fail: {kwargs}")

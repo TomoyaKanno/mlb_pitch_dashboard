@@ -15,9 +15,9 @@ export default function Dashboard() {
   const [order, setOrder] = useState<Order>("high");
   const [perGame, setPerGame] = useState(false);
 
-  const { status, teams, error, startRefresh } = useDashboard(season);
+  const { status, teams, error, requestingRefresh, startRefresh } = useDashboard(season);
   const league = useMemo(() => leagueTotals(teams), [teams]);
-  const refreshing = Boolean(status?.running);
+  const refreshing = requestingRefresh || Boolean(status?.running);
 
   return (
     <main className="shell">

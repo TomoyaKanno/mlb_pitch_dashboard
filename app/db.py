@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -57,17 +58,64 @@ class Database:
                     key TEXT PRIMARY KEY,
                     value TEXT NOT NULL
                 );
+
+                CREATE TABLE IF NOT EXISTS game_fetch_state (
+                    game_pk INTEGER PRIMARY KEY,
+                    season INTEGER NOT NULL,
+                    game_date TEXT NOT NULL,
+                    fetch_status TEXT NOT NULL CHECK(fetch_status IN ('success', 'failed')),
+                    last_attempt_at TEXT NOT NULL,
+                    last_success_at TEXT,
+                    last_error TEXT,
+                    attempt_count INTEGER NOT NULL DEFAULT 1
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_game_fetch_state_season_status
+                    ON game_fetch_state(season, fetch_status);
                 """
             )
 
     def existing_game_pks(self, season: int) -> set[int]:
+        """Return cached games that are eligible to be treated as current.
+
+        Legacy rows without a fetch-state record are considered successful.
+        Once a later fetch fails, the failure record makes that game retryable
+        even though its last-known-good appearances remain available.
+        """
+        with self.connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT g.game_pk
+                FROM games g
+                LEFT JOIN game_fetch_state f USING(game_pk)
+                WHERE g.season = ?
+                  AND COALESCE(f.fetch_status, 'success') = 'success'
+                """,
+                (season,),
+            ).fetchall()
+        return {int(row["game_pk"]) for row in rows}
+
+    def cached_game_pks(self, season: int) -> set[int]:
         with self.connect() as connection:
             rows = connection.execute(
                 "SELECT game_pk FROM games WHERE season = ?", (season,)
             ).fetchall()
         return {int(row["game_pk"]) for row in rows}
 
+    def failed_game_pks(self, season: int) -> set[int]:
+        with self.connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT game_pk
+                FROM game_fetch_state
+                WHERE season = ? AND fetch_status = 'failed'
+                """,
+                (season,),
+            ).fetchall()
+        return {int(row["game_pk"]) for row in rows}
+
     def upsert_game(self, game: dict[str, Any], appearances: list[dict[str, Any]]) -> None:
+        attempted_at = datetime.now(timezone.utc).isoformat()
         with self.connect() as connection:
             connection.execute(
                 """
@@ -102,6 +150,89 @@ class Database:
                     for item in appearances
                 ],
             )
+            connection.execute(
+                """
+                INSERT INTO game_fetch_state(
+                    game_pk, season, game_date, fetch_status,
+                    last_attempt_at, last_success_at, last_error, attempt_count
+                ) VALUES (?, ?, ?, 'success', ?, ?, NULL, 1)
+                ON CONFLICT(game_pk) DO UPDATE SET
+                    season = excluded.season,
+                    game_date = excluded.game_date,
+                    fetch_status = 'success',
+                    last_attempt_at = excluded.last_attempt_at,
+                    last_success_at = excluded.last_success_at,
+                    last_error = NULL,
+                    attempt_count = game_fetch_state.attempt_count + 1
+                """,
+                (
+                    game["game_pk"],
+                    game["season"],
+                    game["game_date"],
+                    attempted_at,
+                    attempted_at,
+                ),
+            )
+
+    def record_game_failure(self, game: dict[str, Any], error: str) -> None:
+        """Mark a game retryable without deleting its last-known-good data."""
+        attempted_at = datetime.now(timezone.utc).isoformat()
+        with self.connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO game_fetch_state(
+                    game_pk, season, game_date, fetch_status,
+                    last_attempt_at, last_success_at, last_error, attempt_count
+                ) VALUES (?, ?, ?, 'failed', ?, NULL, ?, 1)
+                ON CONFLICT(game_pk) DO UPDATE SET
+                    season = excluded.season,
+                    game_date = excluded.game_date,
+                    fetch_status = 'failed',
+                    last_attempt_at = excluded.last_attempt_at,
+                    last_error = excluded.last_error,
+                    attempt_count = game_fetch_state.attempt_count + 1
+                """,
+                (
+                    game["game_pk"],
+                    game["season"],
+                    game["game_date"],
+                    attempted_at,
+                    error,
+                ),
+            )
+
+    def refresh_coverage(self, season: int, scheduled_game_pks: Iterable[int]) -> dict[str, int]:
+        """Summarize current, stale, and missing games for one schedule snapshot."""
+        scheduled = {int(game_pk) for game_pk in scheduled_game_pks}
+        cached = self.cached_game_pks(season) & scheduled
+        current = self.existing_game_pks(season) & scheduled
+        failed = self.failed_game_pks(season) & scheduled
+        stale = cached & failed
+        missing = scheduled - current - stale
+        return {
+            "scheduled": len(scheduled),
+            "current": len(current),
+            "stale": len(stale),
+            "missing": len(missing),
+        }
+
+    def fetch_failures(self, season: int, limit: int = 200) -> list[dict[str, Any]]:
+        with self.connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT game_pk, season, game_date, last_attempt_at,
+                       last_success_at, last_error, attempt_count,
+                       CASE WHEN EXISTS(
+                           SELECT 1 FROM games g WHERE g.game_pk = game_fetch_state.game_pk
+                       ) THEN 1 ELSE 0 END AS has_cached_data
+                FROM game_fetch_state
+                WHERE season = ? AND fetch_status = 'failed'
+                ORDER BY game_date DESC, game_pk DESC
+                LIMIT ?
+                """,
+                (season, limit),
+            ).fetchall()
+        return [dict(row) for row in rows]
 
     def all_appearances(self, season: int) -> list[Appearance]:
         with self.connect() as connection:
@@ -213,4 +344,3 @@ class Database:
         with self.connect() as connection:
             rows = connection.execute("SELECT key, value FROM metadata").fetchall()
         return {row["key"]: json.loads(row["value"]) for row in rows}
-
