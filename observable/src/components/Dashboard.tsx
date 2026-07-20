@@ -1,4 +1,4 @@
-import {useMemo, useState} from "react";
+import {useMemo, useState} from "npm:react";
 import {
   context, formatMetric, label, leagueTotals, metric, rawMetric,
   type Basis, type LeagueTotals, type Order, type Team, type View,
