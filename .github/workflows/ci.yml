@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   backend:
-    name: Backend tests
+    name: Pipeline tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -37,42 +37,8 @@ jobs:
       - name: Install Python dependencies
         run: python -m pip install -r requirements-dev.txt
 
-      - name: Run backend tests
+      - name: Run pipeline tests
         run: python -m pytest -q
-
-  frontend:
-    name: Frontend checks
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    defaults:
-      run:
-        working-directory: frontend
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install frontend dependencies
-        run: npm ci
-
-      - name: Type-check frontend
-        run: npm run typecheck
-
-      - name: Run frontend tests
-        run: npm test
-
-      - name: Build production frontend
-        run: npm run build
 
   static-site:
     name: Static site checks
@@ -107,3 +73,4 @@ jobs:
 
       - name: Build static site from fixture
         run: npm run build
+

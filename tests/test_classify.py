@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from app.classify import Appearance, classify_appearances
+from pipeline.classify import Appearance, classify_appearances
 
 
 BASE = date(2026, 6, 1)
@@ -65,4 +65,5 @@ def test_manual_override_wins():
     row = appearance(40, 0, 50, 14, False)
     result = classify_appearances([row], {"40:50": {"role": "SP", "note": "spot starter"}})
     assert role(result, row) == "SP"
+
 

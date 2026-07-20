@@ -27,6 +27,11 @@ export interface LeagueTotals {
   review_count: number;
 }
 
+export interface RankedTeam {
+  team: Team;
+  rank: number;
+}
+
 const integer = new Intl.NumberFormat("en-US");
 const decimal = new Intl.NumberFormat("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1});
 const LEAGUE_KEYS = [
@@ -48,6 +53,29 @@ export function rawMetric(team: Team, view: View, basis: Basis): number {
 export function metric(team: Team, view: View, basis: Basis, perGame: boolean): number {
   const value = rawMetric(team, view, basis);
   return perGame && view !== "share" ? value / team.games : value;
+}
+
+export function rankTeams(
+  teams: Team[],
+  view: View,
+  basis: Basis,
+  order: Order,
+  perGame: boolean,
+): RankedTeam[] {
+  const value = (team: Team) => metric(team, view, basis, perGame);
+  const ranked = [...teams]
+    .sort((a, b) => value(b) - value(a) || a.team_name.localeCompare(b.team_name))
+    .map((team, index) => ({team, rank: index + 1}));
+
+  if (order === "low") {
+    return [...ranked].sort(
+      (a, b) => value(a.team) - value(b.team) || a.team.team_name.localeCompare(b.team.team_name),
+    );
+  }
+  if (order === "alpha") {
+    return [...ranked].sort((a, b) => a.team.team_name.localeCompare(b.team.team_name));
+  }
+  return ranked;
 }
 
 export function formatMetric(value: number, view: View, perGame: boolean): string {

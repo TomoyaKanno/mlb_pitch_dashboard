@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {leagueTotals, metric, rawMetric, type Team} from "./metrics";
+import {leagueTotals, metric, rankTeams, rawMetric, type Team} from "./metrics";
 
 const team: Team = {
   team_id: 119,
@@ -25,6 +25,31 @@ describe("static dashboard metrics", () => {
   it("normalizes count metrics per game without changing shares", () => {
     expect(metric(team, "total", "adjusted", true)).toBe(150);
     expect(metric(team, "share", "adjusted", true)).toBeCloseTo(6_100 / 15_000);
+  });
+
+  it("ranks by the displayed per-game metric", () => {
+    const highVolume = {...team, team_id: 120, team_name: "High Volume", games: 4, total: 200};
+    const highRate = {...team, team_id: 121, team_name: "High Rate", games: 1, total: 100};
+
+    expect(rankTeams([highVolume, highRate], "total", "adjusted", "high", false))
+      .toEqual([
+        {team: highVolume, rank: 1},
+        {team: highRate, rank: 2},
+      ]);
+    expect(rankTeams([highVolume, highRate], "total", "adjusted", "high", true))
+      .toEqual([
+        {team: highRate, rank: 1},
+        {team: highVolume, rank: 2},
+      ]);
+  });
+
+  it("keeps metric ranks when rows are reordered", () => {
+    const first = {...team, team_id: 120, team_name: "Alpha", total: 100};
+    const second = {...team, team_id: 121, team_name: "Zulu", total: 200};
+
+    expect(rankTeams([first, second], "total", "adjusted", "alpha", false)
+      .map(({team: row, rank}) => [row.team_name, rank]))
+      .toEqual([["Alpha", 2], ["Zulu", 1]]);
   });
 
   it("sums league summary fields", () => {

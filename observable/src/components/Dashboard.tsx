@@ -1,6 +1,6 @@
 import {useMemo, useState} from "npm:react";
 import {
-  context, formatMetric, label, leagueTotals, metric, rawMetric,
+  context, formatMetric, label, leagueTotals, metric, rankTeams,
   type Basis, type LeagueTotals, type Order, type Team, type View,
 } from "./metrics.js";
 
@@ -70,14 +70,7 @@ function TeamTable({teams, league, view, basis, order, perGame}: {
   teams: Team[]; league: LeagueTotals; view: View; basis: Basis; order: Order; perGame: boolean;
 }) {
   const effectivePerGame = view === "share" ? false : perGame;
-  const ranked = [...teams]
-    .sort((a, b) => rawMetric(b, view, basis) - rawMetric(a, view, basis) || a.team_name.localeCompare(b.team_name))
-    .map((team, index) => ({team, rank: index + 1}));
-  const rows = order === "low"
-    ? [...ranked].sort((a, b) => rawMetric(a.team, view, basis) - rawMetric(b.team, view, basis))
-    : order === "alpha"
-      ? [...ranked].sort((a, b) => a.team.team_name.localeCompare(b.team.team_name))
-      : ranked;
+  const rows = rankTeams(teams, view, basis, order, effectivePerGame);
   const maximum = Math.max(...rows.map(({team}) => Math.abs(metric(team, view, basis, effectivePerGame))), 1);
   return (
     <section className="table-shell">
