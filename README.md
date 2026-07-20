@@ -4,14 +4,34 @@ A self-contained dashboard that calculates team pitch workloads directly from th
 
 ## Quick start
 
+The frontend is a React + TypeScript app built with Vite; the FastAPI backend serves the built bundle. Build the frontend once, then run the backend:
+
 ```bash
+# 1. Build the frontend
+cd frontend
+npm install
+npm run build
+cd ..
+
+# 2. Run the backend (serves the built bundle at /)
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Open <http://127.0.0.1:8000>, then press **Refresh from MLB**. The first full-season refresh makes one schedule request plus one boxscore request for each completed game. Later refreshes fetch only completed games not already stored unless **Force rebuild** is selected.
+Open <http://127.0.0.1:8000>, then press **Refresh from MLB**.
+
+### Frontend development
+
+For hot-reload while working on the UI, run the Vite dev server alongside the backend. It proxies `/api` and `/health` to `uvicorn`, so both feel like one origin:
+
+```bash
+uvicorn app.main:app --reload          # terminal 1 (API on :8000)
+cd frontend && npm run dev             # terminal 2 (UI on :5173)
+```
+
+Open the Vite URL (default <http://127.0.0.1:5173>) during development. `npm run typecheck` runs the TypeScript compiler without emitting. The Docker image builds the frontend automatically (multi-stage), so no manual build step is needed for containerized runs. The first full-season refresh makes one schedule request plus one boxscore request for each completed game. Later refreshes fetch only completed games not already stored unless **Force rebuild** is selected.
 
 The status line reports the exact API-call count for each refresh.
 
