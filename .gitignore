@@ -10,3 +10,6 @@ data/*.sqlite3-*
 node_modules/
 frontend/dist/
 
+# Observable static site
+observable/dist/
+observable/src/.observablehq/
