@@ -1,5 +1,5 @@
 {
-  "api_calls": 1491,
+  "api_calls": 47,
   "current_games": 1490,
   "files": {
     "appearances/2026-03.jsonl": {
@@ -24,7 +24,7 @@
     },
     "fetch-state.json": {
       "bytes": 363621,
-      "sha256": "aa4b0751489ad82801d8d13f37d1ea849543103d29330a24aca49a22e73b967e"
+      "sha256": "acdcd0cbd357350fed690b81d3b5df48010892dfa9eb0ed314ccd4cd826f2057"
     },
     "games/2026-03.jsonl": {
       "bytes": 5700,
@@ -48,9 +48,9 @@
     }
   },
   "games_failed": 0,
-  "games_fetched": 1490,
-  "games_requested": 1490,
-  "generated_at": "2026-07-20T16:58:44.964992+00:00",
+  "games_fetched": 46,
+  "games_requested": 46,
+  "generated_at": "2026-07-20T17:10:40.988903+00:00",
   "missing_games": 0,
   "result": "complete",
   "scheduled_games": 1490,
