@@ -15,6 +15,19 @@ Open <http://127.0.0.1:8000>, then press **Refresh from MLB**. The first full-se
 
 The status line reports the exact API-call count for each refresh.
 
+### Request pacing and resilience
+
+Outbound requests to the MLB API are both concurrency-capped and rate-limited. The concurrency cap bounds how many boxscore requests are in flight; the rate limit paces how fast new requests may start, so a small pool cannot burst hundreds of requests per second when responses come back quickly. Throttled (`429`) and server (`5xx`) responses are retried with jittered exponential backoff, honoring a numeric `Retry-After` header when the server sends one.
+
+A single game whose request exhausts its retries no longer aborts the whole refresh: it is skipped, the remaining games are stored and classified, and the count of skipped games is shown in the status line. Run the refresh again to backfill the skipped games (they are simply treated as not-yet-stored).
+
+Tune the load with environment variables:
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `MLB_CONCURRENCY` | `8` | Maximum in-flight requests |
+| `MLB_RATE_LIMIT` | `5` | Maximum request starts per second (`0` disables pacing) |
+
 ## What the two role bases mean
 
 **Official appearance** follows each game's `gamesStarted` flag: the first official pitcher is SP and everyone else is RP.

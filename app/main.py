@@ -42,6 +42,7 @@ class RefreshManager:
             "season": date.today().year,
             "games_total": 0,
             "games_processed": 0,
+            "games_failed": 0,
             "api_calls": 0,
             "error": None,
         }
@@ -60,6 +61,7 @@ class RefreshManager:
                 "season": request.season,
                 "games_total": 0,
                 "games_processed": 0,
+                "games_failed": 0,
                 "api_calls": 0,
                 "error": None,
             }
@@ -79,8 +81,12 @@ class RefreshManager:
                         self.state["games_processed"] += 1
                         self.state["api_calls"] = client.api_calls
 
-                    await fetch_game_batch(client, pending, save)
-                    self.state.update(phase="classifying roles", api_calls=client.api_calls)
+                    failures = await fetch_game_batch(client, pending, save)
+                    self.state.update(
+                        phase="classifying roles",
+                        api_calls=client.api_calls,
+                        games_failed=len(failures),
+                    )
 
                     overrides: dict[str, Any] = {}
                     if OVERRIDES_PATH.exists():
@@ -94,7 +100,8 @@ class RefreshManager:
                         "last_refresh_at": finished_at,
                         "last_refresh_season": request.season,
                         "last_api_calls": client.api_calls,
-                        "last_games_fetched": len(pending),
+                        "last_games_fetched": len(pending) - len(failures),
+                        "last_games_failed": len(failures),
                         "completed_games": len(games),
                     }
                     await asyncio.to_thread(database.set_metadata, metadata)
