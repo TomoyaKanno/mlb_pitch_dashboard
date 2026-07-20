@@ -190,7 +190,9 @@ function formatStatus(status) {
   }
   elements.statusStrip.classList.remove("failed");
   elements.statusText.textContent = status.last_refresh_at ? `Last refreshed ${new Date(status.last_refresh_at).toLocaleString()}` : "No refresh has run yet";
-  elements.statusDetail.textContent = status.last_api_calls !== undefined ? `${integer.format(status.last_api_calls)} API calls · ${integer.format(status.completed_games || 0)} completed games` : "";
+  const skipped = Number(status.last_games_failed || 0);
+  const skippedNote = skipped ? ` · ${integer.format(skipped)} games skipped (retry to backfill)` : "";
+  elements.statusDetail.textContent = status.last_api_calls !== undefined ? `${integer.format(status.last_api_calls)} API calls · ${integer.format(status.completed_games || 0)} completed games${skippedNote}` : "";
 }
 
 async function pollStatus() {
