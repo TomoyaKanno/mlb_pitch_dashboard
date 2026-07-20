@@ -105,6 +105,10 @@ docker run --rm -p 8000:8000 -v "$PWD/data:/data" mlb-pitch-dashboard
 
 Run one application worker so the in-process refresh lock and progress state remain authoritative. SQLite data lives at `data/mlb.sqlite3` locally or `/data/mlb.sqlite3` in the container.
 
+## Continuous integration
+
+GitHub Actions runs the Python tests plus the frontend type-check, tests, and production build on every pull request and every push to `main`. It has read-only repository access and does not deploy or merge code. See [`docs/continuous-integration.md`](docs/continuous-integration.md) for what each check does and how it differs from local validation.
+
 ## Data and usage note
 
 This is an unofficial personal project. MLB endpoints and response shapes can change without notice. Use a reasonable refresh cadence and review MLB's applicable terms before publishing or commercializing a deployment.
