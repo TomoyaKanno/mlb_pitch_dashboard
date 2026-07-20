@@ -210,3 +210,4 @@ async def fetch_game_batch(
             if not task.done():
                 task.cancel()
     return failures
+

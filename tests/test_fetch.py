@@ -3,8 +3,8 @@ import time
 
 import httpx
 
-import app.mlb as mlb_module
-from app.mlb import MLBClient, RateLimiter, fetch_game_batch
+import pipeline.mlb as mlb_module
+from pipeline.mlb import MLBClient, RateLimiter, fetch_game_batch
 
 
 class StubClient:
@@ -104,3 +104,4 @@ def test_client_rejects_invalid_pacing_configuration():
             pass
         else:  # pragma: no cover - defensive assertion branch
             raise AssertionError(f"Expected invalid configuration to fail: {kwargs}")
+

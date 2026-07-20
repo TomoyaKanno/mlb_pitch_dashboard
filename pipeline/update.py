@@ -8,9 +8,8 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-from app.classify import Appearance, classify_appearances
-from app.mlb import MLBClient, fetch_game_batch
-
+from .classify import Appearance, classify_appearances
+from .mlb import MLBClient, fetch_game_batch
 from .schema import AppearanceRecord, FetchStateRecord, GameRecord, Snapshot
 from .storage import load_snapshot, write_snapshot
 from .validation import SnapshotValidationError, validate_snapshot
