@@ -1,0 +1,164 @@
+from __future__ import annotations
+
+import asyncio
+from datetime import datetime, timezone
+
+import pytest
+
+from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, Snapshot
+from pipeline.storage import load_snapshot
+from pipeline.update import games_to_refresh, update_season
+from pipeline.validation import SnapshotValidationError, validate_snapshot
+
+
+NOW = datetime(2026, 7, 20, 12, tzinfo=timezone.utc)
+
+
+def game(game_pk: int, game_date: str) -> dict:
+    return {"game_pk": game_pk, "game_date": game_date, "season": 2026, "status": "Final"}
+
+
+def boxscore(game_pk: int) -> list[dict]:
+    return [
+        {
+            "game_pk": game_pk,
+            "team_id": 100,
+            "team_name": "Away",
+            "pitcher_id": game_pk * 10 + 1,
+            "pitcher_name": "Away Starter",
+            "pitches": 82,
+            "official_started": True,
+            "appearance_order": 0,
+        },
+        {
+            "game_pk": game_pk,
+            "team_id": 100,
+            "team_name": "Away",
+            "pitcher_id": game_pk * 10 + 2,
+            "pitcher_name": "Away Reliever",
+            "pitches": 24,
+            "official_started": False,
+            "appearance_order": 1,
+        },
+        {
+            "game_pk": game_pk,
+            "team_id": 200,
+            "team_name": "Home",
+            "pitcher_id": game_pk * 10 + 3,
+            "pitcher_name": "Home Starter",
+            "pitches": 91,
+            "official_started": True,
+            "appearance_order": 0,
+        },
+    ]
+
+
+class FakeClient:
+    def __init__(self, schedule, boxes, failures=None):
+        self.schedule = schedule
+        self.boxes = boxes
+        self.failures = failures or set()
+        self.api_calls = 0
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *_):
+        return None
+
+    async def completed_games(self, season):
+        self.api_calls += 1
+        return self.schedule
+
+    async def boxscore_appearances(self, value):
+        self.api_calls += 1
+        if value["game_pk"] in self.failures:
+            raise RuntimeError("temporary MLB failure")
+        return self.boxes[value["game_pk"]]
+
+
+def factory(schedule, boxes, failures=None):
+    return lambda: FakeClient(schedule, boxes, failures)
+
+
+def test_bootstrap_then_incremental_run_only_loads_schedule(tmp_path):
+    schedule = [game(1, "2026-06-01"), game(2, "2026-06-02")]
+    boxes = {1: boxscore(1), 2: boxscore(2)}
+    first = asyncio.run(
+        update_season(2026, tmp_path, reconcile_days=0, now=NOW, client_factory=factory(schedule, boxes))
+    )
+    second = asyncio.run(
+        update_season(2026, tmp_path, reconcile_days=0, now=NOW, client_factory=factory(schedule, boxes))
+    )
+
+    assert first.api_calls == 3
+    assert first.games_requested == 2
+    assert second.api_calls == 1
+    assert second.games_requested == 0
+    snapshot = load_snapshot(tmp_path, 2026)
+    assert len(snapshot.games) == 2
+    assert len(snapshot.appearances) == 6
+    assert (tmp_path / "seasons/2026/games/2026-06.jsonl").exists()
+    assert (tmp_path / "seasons/2026/manifest.json").exists()
+
+
+def test_recent_failure_preserves_last_known_good_data_as_stale(tmp_path):
+    schedule = [game(1, "2026-07-19")]
+    boxes = {1: boxscore(1)}
+    asyncio.run(
+        update_season(2026, tmp_path, reconcile_days=7, now=NOW, client_factory=factory(schedule, boxes))
+    )
+    summary = asyncio.run(
+        update_season(
+            2026,
+            tmp_path,
+            reconcile_days=7,
+            now=NOW,
+            client_factory=factory(schedule, boxes, failures={1}),
+        )
+    )
+
+    snapshot = load_snapshot(tmp_path, 2026)
+    assert len(snapshot.appearances) == 3
+    assert snapshot.fetch_state[1].fetch_status == "failed"
+    assert snapshot.fetch_state[1].last_success_at is not None
+    assert summary.stale_games == 1
+    assert summary.missing_games == 0
+
+
+def test_refresh_plan_includes_missing_failed_and_recent_games():
+    games = [GameRecord.from_dict(game(1, "2026-06-01")), GameRecord.from_dict(game(2, "2026-07-19"))]
+    snapshot = Snapshot(season=2026)
+    snapshot.fetch_state[1] = FetchStateRecord(1, "failed", NOW.isoformat(), None, "x", 1)
+    snapshot.fetch_state[2] = FetchStateRecord(2, "success", NOW.isoformat(), NOW.isoformat(), None, 1)
+    snapshot.appearances[(2, 100, 21)] = AppearanceRecord(
+        2, "2026-07-19", 2026, 100, "Away", 21, "Pitcher", 10, True, 0, "SP", "official starter"
+    )
+
+    planned = games_to_refresh(games, snapshot, force=False, reconcile_days=7, as_of=NOW.date())
+    assert [row.game_pk for row in planned] == [1, 2]
+
+
+def test_validation_rejects_success_without_two_official_starters():
+    snapshot = Snapshot(season=2026)
+    snapshot.games[1] = GameRecord.from_dict(game(1, "2026-06-01"))
+    snapshot.fetch_state[1] = FetchStateRecord(1, "success", NOW.isoformat(), NOW.isoformat(), None, 1)
+    snapshot.appearances[(1, 100, 11)] = AppearanceRecord(
+        1, "2026-06-01", 2026, 100, "Away", 11, "Pitcher", 12, False, 0, "RP", "official reliever"
+    )
+
+    with pytest.raises(SnapshotValidationError):
+        validate_snapshot(snapshot)
+
+
+def test_schedule_regression_is_rejected_before_writing(tmp_path):
+    schedule = [game(1, "2026-06-01")]
+    boxes = {1: boxscore(1)}
+    asyncio.run(
+        update_season(2026, tmp_path, reconcile_days=0, now=NOW, client_factory=factory(schedule, boxes))
+    )
+
+    with pytest.raises(SnapshotValidationError, match="previously completed"):
+        asyncio.run(
+            update_season(2026, tmp_path, reconcile_days=0, now=NOW, client_factory=factory([], {}))
+        )
