@@ -6,7 +6,7 @@ on:
       - ".github/workflows/deploy-pages.yml"
       - "config/dashboard.json"
       - "observable/**"
-      - "pipeline/export.py"
+      - "pipeline/**"
   push:
     branches:
       - main
@@ -14,19 +14,21 @@ on:
       - ".github/workflows/deploy-pages.yml"
       - "config/dashboard.json"
       - "observable/**"
-      - "pipeline/export.py"
+      - "pipeline/**"
   workflow_dispatch:
   workflow_run:
     workflows:
       - Refresh dashboard data
     types:
       - completed
+    branches:
+      - main
 
 permissions:
   contents: read
 
 concurrency:
-  group: github-pages
+  group: ${{ github.event_name == 'pull_request' && format('pages-pr-{0}', github.event.pull_request.number) || 'github-pages' }}
   cancel-in-progress: true
 
 jobs:
@@ -93,6 +95,9 @@ jobs:
               raise SystemExit("refusing to deploy a failed data snapshot")
           if payload["data_commit"] != os.environ["DASHBOARD_DATA_SHA"]:
               raise SystemExit("dashboard data revision does not match checked-out data")
+          index_html = Path("source/observable/dist/index.html").read_text()
+          if "_node/react@" in index_html:
+              raise SystemExit("built dashboard contains a second React runtime")
           print(
               f"Validated {len(payload['teams'])} teams from "
               f"{payload['status']['current_games']} current games"
