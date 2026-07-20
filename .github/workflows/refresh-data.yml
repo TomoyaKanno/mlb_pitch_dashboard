@@ -1,10 +1,13 @@
 name: Refresh dashboard data
 
 on:
+  schedule:
+    - cron: "17 5 * 3-11 *"
+      timezone: "America/New_York"
   workflow_dispatch:
     inputs:
       season:
-        description: "Four-digit MLB season; blank uses the current UTC year"
+        description: "Four-digit MLB season; blank uses config/dashboard.json"
         required: false
         type: string
       force:
@@ -50,13 +53,14 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Validate inputs
+        working-directory: source
         env:
           SEASON_INPUT: ${{ inputs.season }}
-          RECONCILE_INPUT: ${{ inputs.reconcile_days }}
+          RECONCILE_INPUT: ${{ inputs.reconcile_days || '7' }}
         run: |
           season="$SEASON_INPUT"
           if [[ -z "$season" ]]; then
-            season="$(date -u +%Y)"
+            season="$(python -c 'import json; print(json.load(open("config/dashboard.json"))["season"])')"
           fi
           if [[ ! "$season" =~ ^[0-9]{4}$ ]] || (( season < 2000 || season > 2100 )); then
             echo "Season must be a four-digit year from 2000 through 2100" >&2
