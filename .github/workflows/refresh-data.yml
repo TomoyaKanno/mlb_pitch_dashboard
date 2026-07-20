@@ -1,0 +1,136 @@
+name: Refresh dashboard data
+
+on:
+  workflow_dispatch:
+    inputs:
+      season:
+        description: "Four-digit MLB season; blank uses the current UTC year"
+        required: false
+        type: string
+      force:
+        description: "Request every completed game instead of updating incrementally"
+        required: true
+        default: false
+        type: boolean
+      reconcile_days:
+        description: "Re-fetch this many recent days during the current season"
+        required: true
+        default: "7"
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dashboard-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Validate and persist snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          path: source
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: source/requirements.txt
+
+      - name: Install pipeline dependencies
+        working-directory: source
+        run: python -m pip install -r requirements.txt
+
+      - name: Validate inputs
+        env:
+          SEASON_INPUT: ${{ inputs.season }}
+          RECONCILE_INPUT: ${{ inputs.reconcile_days }}
+        run: |
+          season="$SEASON_INPUT"
+          if [[ -z "$season" ]]; then
+            season="$(date -u +%Y)"
+          fi
+          if [[ ! "$season" =~ ^[0-9]{4}$ ]] || (( season < 2000 || season > 2100 )); then
+            echo "Season must be a four-digit year from 2000 through 2100" >&2
+            exit 1
+          fi
+          if [[ ! "$RECONCILE_INPUT" =~ ^[0-9]+$ ]] || (( RECONCILE_INPUT > 60 )); then
+            echo "Reconciliation window must be an integer from 0 through 60" >&2
+            exit 1
+          fi
+          echo "SEASON=$season" >> "$GITHUB_ENV"
+          echo "RECONCILE_DAYS=$RECONCILE_INPUT" >> "$GITHUB_ENV"
+          echo "DATA_DIR=$GITHUB_WORKSPACE/dashboard-data" >> "$GITHUB_ENV"
+
+      - name: Prepare dashboard-data worktree
+        working-directory: source
+        env:
+          DATA_BRANCH: dashboard-data
+        run: |
+          if git ls-remote --exit-code --heads origin "$DATA_BRANCH" >/dev/null 2>&1; then
+            git fetch --no-tags origin "+refs/heads/$DATA_BRANCH:refs/remotes/origin/$DATA_BRANCH"
+            git worktree add --detach "$DATA_DIR" "refs/remotes/origin/$DATA_BRANCH"
+          else
+            git worktree add --detach "$DATA_DIR" HEAD
+            git -C "$DATA_DIR" switch --orphan "$DATA_BRANCH"
+            git -C "$DATA_DIR" rm -rf --ignore-unmatch .
+          fi
+          cp docs/data-branch-readme.md "$DATA_DIR/README.md"
+
+      - name: Update season snapshot
+        working-directory: source
+        env:
+          FORCE_REFRESH: ${{ inputs.force }}
+        run: |
+          args=(
+            --season "$SEASON"
+            --data-dir "$DATA_DIR"
+            --reconcile-days "$RECONCILE_DAYS"
+          )
+          if [[ "$FORCE_REFRESH" == "true" ]]; then
+            args+=(--force)
+          fi
+          python -m pipeline.update "${args[@]}" | tee "$RUNNER_TEMP/refresh-summary.json"
+
+      - name: Reload and verify persisted snapshot
+        working-directory: source
+        run: python -m pipeline.check --season "$SEASON" --data-dir "$DATA_DIR"
+
+      - name: Commit validated data
+        env:
+          DATA_BRANCH: dashboard-data
+        run: |
+          git -C "$DATA_DIR" config user.name "github-actions[bot]"
+          git -C "$DATA_DIR" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$DATA_DIR" add --all
+          if git -C "$DATA_DIR" diff --cached --quiet; then
+            echo "The validated snapshot produced no file changes."
+          else
+            git -C "$DATA_DIR" commit -m "Update MLB data for $SEASON"
+            git -C "$DATA_DIR" push origin "HEAD:refs/heads/$DATA_BRANCH"
+          fi
+
+      - name: Write run summary
+        if: always()
+        run: |
+          {
+            echo "## Dashboard data refresh"
+            echo "- Season: $SEASON"
+            echo "- Data branch: dashboard-data"
+            if [[ -f "$RUNNER_TEMP/refresh-summary.json" ]]; then
+              echo "- Refresh output:"
+              echo '```json'
+              cat "$RUNNER_TEMP/refresh-summary.json"
+              echo '```'
+            else
+              echo "- Refresh did not produce a summary; inspect the failed step above."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
