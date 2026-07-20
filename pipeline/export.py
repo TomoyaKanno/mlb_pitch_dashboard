@@ -70,7 +70,7 @@ def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
         "schema_version": 1,
         "season": season,
         "generated_at": manifest["generated_at"],
-        "code_commit": os.getenv("GITHUB_SHA"),
+        "code_commit": os.getenv("DASHBOARD_CODE_SHA") or os.getenv("GITHUB_SHA"),
         "data_commit": os.getenv("DASHBOARD_DATA_SHA"),
         "status": {
             "result": manifest["result"],

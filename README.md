@@ -1,8 +1,20 @@
 # MLB Pitch Workload Dashboard
 
-A self-contained dashboard that calculates team pitch workloads directly from the public MLB Stats API, stores game-level results in SQLite, and exposes both official appearance and role-adjusted SP/RP views.
+A dashboard that calculates team pitch workloads directly from the public MLB Stats API and exposes both official appearance and role-adjusted SP/RP views. Production uses validated build-time snapshots; the original React/FastAPI application remains available as a local runtime fallback.
 
-## Quick start
+## Production static dashboard
+
+The Observable Framework app in `observable/` is built from the durable `dashboard-data` branch and deployed to GitHub Pages as an ephemeral Actions artifact. The browser never calls MLB, and a failed refresh or build leaves the last successful site online. See [`docs/deployment.md`](docs/deployment.md) for automation, one-time Pages setup, and recovery.
+
+For local UI work with the committed fixture:
+
+```bash
+cd observable
+npm ci
+npm run dev
+```
+
+## Runtime fallback
 
 The frontend is a React + TypeScript app built with Vite; the FastAPI backend serves the built bundle. Build the frontend once, then run the backend:
 
@@ -107,7 +119,7 @@ Run one application worker so the in-process refresh lock and progress state rem
 
 ## Continuous integration
 
-GitHub Actions runs the Python tests plus the frontend type-check, tests, and production build on every pull request and every push to `main`. It has read-only repository access and does not deploy or merge code. See [`docs/continuous-integration.md`](docs/continuous-integration.md) for what each check does and how it differs from local validation.
+GitHub Actions validates the Python pipeline, runtime frontend, and Observable static site on every pull request and push to `main`. Relevant pull requests also build against the real data branch without deploying. The separate production workflow deploys only after merge or a successful data refresh. See [`docs/continuous-integration.md`](docs/continuous-integration.md) and [`docs/deployment.md`](docs/deployment.md).
 
 ## Data and usage note
 

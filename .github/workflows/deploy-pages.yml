@@ -1,0 +1,126 @@
+name: Build and deploy dashboard
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/deploy-pages.yml"
+      - "config/dashboard.json"
+      - "observable/**"
+      - "pipeline/export.py"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy-pages.yml"
+      - "config/dashboard.json"
+      - "observable/**"
+      - "pipeline/export.py"
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Refresh dashboard data
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build validated Pages artifact
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          path: source
+          persist-credentials: false
+
+      - name: Check out validated data
+        uses: actions/checkout@v7
+        with:
+          ref: dashboard-data
+          path: dashboard-data
+          persist-credentials: false
+
+      - name: Set build metadata
+        run: |
+          echo "DASHBOARD_CODE_SHA=$(git -C source rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "DASHBOARD_DATA_SHA=$(git -C dashboard-data rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "DASHBOARD_DATA_DIR=$GITHUB_WORKSPACE/dashboard-data" >> "$GITHUB_ENV"
+          echo "DASHBOARD_SEASON=$(python -c 'import json; print(json.load(open("source/config/dashboard.json"))["season"])')" >> "$GITHUB_ENV"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: source/observable/package-lock.json
+
+      - name: Install static-site dependencies
+        working-directory: source/observable
+        run: npm ci
+
+      - name: Build from validated snapshot
+        working-directory: source/observable
+        env:
+          OBSERVABLE_TELEMETRY_DISABLE: "true"
+        run: npm run build
+
+      - name: Verify browser payload
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          files = list(Path("source/observable/dist/_file/data").glob("dashboard.*.json"))
+          if len(files) != 1:
+              raise SystemExit(f"expected one dashboard payload, found {len(files)}")
+          payload = json.loads(files[0].read_text())
+          if payload["season"] != int(os.environ["DASHBOARD_SEASON"]):
+              raise SystemExit("built the wrong season")
+          if len(payload["teams"]) != 30:
+              raise SystemExit(f"expected 30 MLB teams, found {len(payload['teams'])}")
+          if payload["status"]["result"] == "failed":
+              raise SystemExit("refusing to deploy a failed data snapshot")
+          if payload["data_commit"] != os.environ["DASHBOARD_DATA_SHA"]:
+              raise SystemExit("dashboard data revision does not match checked-out data")
+          print(
+              f"Validated {len(payload['teams'])} teams from "
+              f"{payload['status']['current_games']} current games"
+          )
+          PY
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: source/observable/dist
+
+  deploy:
+    name: Deploy GitHub Pages
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Deploy artifact
+        id: deployment
+        uses: actions/deploy-pages@v5

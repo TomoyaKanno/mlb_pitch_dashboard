@@ -8,12 +8,13 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 data_dir = os.getenv("DASHBOARD_DATA_DIR")
+config = json.loads((REPOSITORY_ROOT / "config" / "dashboard.json").read_text())
 
 if data_dir:
     sys.path.insert(0, str(REPOSITORY_ROOT))
     from pipeline.export import export_dashboard
 
-    season = int(os.getenv("DASHBOARD_SEASON", "2026"))
+    season = int(os.getenv("DASHBOARD_SEASON", config["season"]))
     payload = export_dashboard(Path(data_dir), season)
 else:
     fixture = REPOSITORY_ROOT / "observable" / "fixtures" / "dashboard.json"
