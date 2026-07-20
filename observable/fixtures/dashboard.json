@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "season": 2026,
+  "generated_at": "2026-07-20T17:10:40.988903+00:00",
+  "code_commit": null,
+  "data_commit": null,
+  "status": {
+    "result": "complete",
+    "api_calls": 47,
+    "games_requested": 46,
+    "games_fetched": 46,
+    "games_failed": 0,
+    "scheduled_games": 1490,
+    "current_games": 1490,
+    "stale_games": 0,
+    "missing_games": 0
+  },
+  "teams": [
+    {
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers",
+      "games": 100,
+      "total": 15120,
+      "official_sp": 8320,
+      "official_rp": 6800,
+      "adjusted_sp": 8670,
+      "adjusted_rp": 6450,
+      "bulk_to_sp": 430,
+      "opener_to_rp": 80,
+      "review_count": 2
+    },
+    {
+      "team_id": 147,
+      "team_name": "New York Yankees",
+      "games": 99,
+      "total": 14940,
+      "official_sp": 8460,
+      "official_rp": 6480,
+      "adjusted_sp": 8460,
+      "adjusted_rp": 6480,
+      "bulk_to_sp": 0,
+      "opener_to_rp": 0,
+      "review_count": 1
+    },
+    {
+      "team_id": 121,
+      "team_name": "New York Mets",
+      "games": 100,
+      "total": 14680,
+      "official_sp": 7990,
+      "official_rp": 6690,
+      "adjusted_sp": 8160,
+      "adjusted_rp": 6520,
+      "bulk_to_sp": 220,
+      "opener_to_rp": 50,
+      "review_count": 3
+    },
+    {
+      "team_id": 136,
+      "team_name": "Seattle Mariners",
+      "games": 98,
+      "total": 14390,
+      "official_sp": 8230,
+      "official_rp": 6160,
+      "adjusted_sp": 8120,
+      "adjusted_rp": 6270,
+      "bulk_to_sp": 40,
+      "opener_to_rp": 150,
+      "review_count": 2
+    }
+  ]
+}
