@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -18,13 +18,27 @@ from .mlb import MLBClient, fetch_game_batch
 
 
 ROOT = Path(__file__).resolve().parents[1]
-STATIC_DIR = Path(__file__).resolve().parent / "static"
+FRONTEND_DIST = Path(os.getenv("MLB_FRONTEND_DIST", ROOT / "frontend" / "dist"))
+INDEX_FILE = FRONTEND_DIST / "index.html"
+ASSETS_DIR = FRONTEND_DIST / "assets"
 DB_PATH = Path(os.getenv("MLB_DB_PATH", ROOT / "data" / "mlb.sqlite3"))
 OVERRIDES_PATH = Path(os.getenv("MLB_ROLE_OVERRIDES", ROOT / "config" / "role_overrides.json"))
 
 app = FastAPI(title="MLB Pitch Workload Dashboard", version="0.1.0")
-app.mount("/assets", StaticFiles(directory=STATIC_DIR), name="assets")
+if ASSETS_DIR.is_dir():
+    app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 database = Database(DB_PATH)
+
+
+def frontend_index() -> Response:
+    if INDEX_FILE.exists():
+        return FileResponse(INDEX_FILE)
+    return HTMLResponse(
+        "<h1>Frontend not built</h1>"
+        "<p>Run <code>cd frontend &amp;&amp; npm install &amp;&amp; npm run build</code>, "
+        "or use <code>npm run dev</code> for a hot-reload dev server.</p>",
+        status_code=503,
+    )
 
 
 class RefreshRequest(BaseModel):
@@ -122,8 +136,8 @@ refresh_manager = RefreshManager()
 
 
 @app.get("/")
-async def index() -> FileResponse:
-    return FileResponse(STATIC_DIR / "index.html")
+async def index() -> Response:
+    return frontend_index()
 
 
 @app.get("/health")
@@ -155,3 +169,13 @@ async def audit(
 ) -> dict[str, Any]:
     rows = await asyncio.to_thread(database.audit, season, limit)
     return {"season": season, "appearances": rows}
+
+
+@app.get("/{full_path:path}")
+async def spa_fallback(full_path: str) -> Response:
+    # Client-side routes (e.g. future /team/:id pages) resolve to the SPA entry
+    # point. API and asset paths are handled by their own routes/mounts above;
+    # anything left under those prefixes is a genuine 404.
+    if full_path.startswith(("api/", "assets/")):
+        raise HTTPException(status_code=404, detail="Not found")
+    return frontend_index()

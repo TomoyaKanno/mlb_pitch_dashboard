@@ -178,4 +178,3 @@ footer { margin-top: 12px; color: var(--muted); font-size: 0.78rem; line-height:
   th, td { padding: 9px 7px; }
   .metric { grid-template-columns: 1fr; gap: 5px; }
 }
-
