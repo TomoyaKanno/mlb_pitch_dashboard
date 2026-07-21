@@ -132,6 +132,7 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
     assert away["bulk_to_sp"] == 70
     assert away["opener_to_rp"] == 30
     assert payload["status"]["current_games"] == 1
+    assert payload["bullpen_usage"] == aggregate_bullpen_usage(snapshot)
 
 
 def test_team_timeseries_daily_increments_reconcile_to_season_totals(tmp_path):
