@@ -8,3 +8,6 @@ __pycache__/
 node_modules/
 observable/dist/
 observable/src/.observablehq/
+
+# Local editor / agent tooling
+.claude/

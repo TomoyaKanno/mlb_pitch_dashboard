@@ -4,7 +4,7 @@
 
 An interactive static dashboard that ranks all 30 MLB teams by pitches thrown and separates starter and reliever workload. It calculates its aggregates from the public MLB Stats API, preserves validated season snapshots in git, and publishes a browser-only site through GitHub Pages.
 
-The Observable Framework application in `observable/` is the only supported user interface. Production has no application server, runtime database, or browser-to-MLB request path.
+The Observable Framework application in `observable/` is the only supported user interface. Production has no application server or runtime database, and the browser makes no MLB Stats API calls — every pitch aggregate is precomputed at build time. The browser does load static display assets, currently team logos, directly from MLB's public CDN so those images never need to be committed to the repository or served from Pages. This keeps the deployment a pure static GitHub Pages site.
 
 ## What the dashboard measures
 

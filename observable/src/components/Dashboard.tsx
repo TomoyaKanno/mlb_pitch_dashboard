@@ -83,7 +83,21 @@ function TeamTable({teams, league, view, basis, order, perGame}: {
             const width = Math.max(2, Math.abs(value) / maximum * 100);
             return (
               <tr key={team.team_id}>
-                <td className="rank">{rank}</td><td className="team">{team.team_name}</td>
+                <td className="rank">{rank}</td>
+                <td className="team">
+                  <span className="team-name">
+                    <img
+                      className="team-logo"
+                      src={`https://www.mlbstatic.com/team-logos/${team.team_id}.svg`}
+                      alt=""
+                      width={22}
+                      height={22}
+                      loading="lazy"
+                      onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+                    />
+                    {team.team_name}
+                  </span>
+                </td>
                 <td><div className="metric"><strong>{formatMetric(value, view, effectivePerGame)}</strong><span className="track"><span className="fill" style={{width: `${width}%`}} /></span></div></td>
                 <td className="context secondary">{context(team, league, view, basis)}</td>
               </tr>
