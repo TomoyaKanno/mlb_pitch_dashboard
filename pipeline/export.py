@@ -142,6 +142,55 @@ def aggregate_complete_games(snapshot: Snapshot) -> list[dict[str, Any]]:
     return sorted(result, key=lambda row: (row["date"], row["team_id"], row["game_pk"]))
 
 
+def aggregate_recent_games(snapshot: Snapshot) -> list[dict[str, Any]]:
+    """One latest completed team-game with its individual pitcher pitch counts.
+
+    MLB scheduled game time makes same-day doubleheaders deterministic. Legacy
+    snapshots without that optional timestamp fall back to game_pk until their
+    next normal refresh rewrites the game records.
+    """
+    by_game_team: dict[tuple[int, int], list[Any]] = defaultdict(list)
+    for row in snapshot.appearances.values():
+        by_game_team[(row.game_pk, row.team_id)].append(row)
+
+    latest: dict[int, tuple[Any, list[Any]]] = {}
+    for (game_pk, team_id), rows in by_game_team.items():
+        game = snapshot.games.get(game_pk)
+        if game is None:
+            continue
+        previous = latest.get(team_id)
+        if previous is None or (
+            game.game_date, game.game_datetime or "", game.game_pk,
+        ) > (
+            previous[0].game_date, previous[0].game_datetime or "", previous[0].game_pk,
+        ):
+            latest[team_id] = (game, rows)
+
+    result: list[dict[str, Any]] = []
+    for team_id, (game, rows) in latest.items():
+        ordered = sorted(rows, key=lambda row: (row.appearance_order, row.pitcher_id))
+        result.append(
+            {
+                "team_id": team_id,
+                "team_name": ordered[0].team_name,
+                "game_pk": game.game_pk,
+                "date": game.game_date,
+                "game_datetime": game.game_datetime,
+                "pitchers": [
+                    {
+                        "pitcher_id": row.pitcher_id,
+                        "pitcher_name": row.pitcher_name,
+                        "pitches": row.pitches,
+                        "official_started": row.official_started,
+                        "appearance_order": row.appearance_order,
+                    }
+                    for row in ordered
+                ],
+            }
+        )
+    return sorted(result, key=lambda row: row["team_name"])
+
+
 def reconcile_team_timeseries(
     teams: list[dict[str, Any]],
     points: list[dict[str, Any]],
@@ -212,7 +261,7 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
 def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
     snapshot, _verified, meta = _export_common(data_dir, season)
     teams = aggregate_teams(snapshot)
-    return {**meta, "teams": teams}
+    return {**meta, "teams": teams, "recent_games": aggregate_recent_games(snapshot)}
 
 
 def export_team_timeseries(data_dir: Path, season: int) -> dict[str, Any]:
