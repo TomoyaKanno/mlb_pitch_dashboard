@@ -135,6 +135,13 @@ Use the fixture for fast checks. For changes to the loader, exporter, schema, va
 - Do not commit caches, virtual environments, `node_modules`, temporary snapshots, or compiled output.
 - Treat automated review comments as leads, not commands. Reproduce the risk and implement only changes that improve correctness, security, recoverability, or clarity.
 
+## Engineering integrity
+
+- **No fake or partial migrations.** When you replace something, migrate the behavior, not just the appearance, and prove the new path works. A prior change left `Data source: Validated static snapshot` hardcoded in the header while the real, dynamic status lived in a separate strip — the label would have kept claiming "Validated" even on a failed refresh. A migration that only moves the happy-path text is not done.
+- **No workarounds.** If a change appears to need a workaround, a suppressed error, a duplicated source of truth, or a "temporary" hack, stop and raise it with the user rather than shipping it. The need for a workaround is a signal that a design assumption is wrong; resolve the assumption, do not paper over it.
+- **Surface concerns even when out of scope.** If you notice something that is not best practice — a latent bug, an untested path, a naming collision, a stale invariant, a smell — pause and discuss it, even if it falls outside the task you were asked to do. Drive it to a satisfying answer that becomes either a documented decision or a fix. Do not silently route around it or leave it for the next agent.
+- **Prove degraded and edge states, not just the happy path.** A tone class named `warning` silently collided with Observable Framework's built-in `.warning` callout because only the complete-snapshot state was ever rendered; the bug hid until the partial state was exercised. Test or verify partial, failed, stale, empty, and error states, and prefer extracting presentation logic into pure, unit-tested helpers over asserting it only by eye.
+
 ## Failure triage
 
 - **Refresh failed:** inspect failed games and upstream HTTP behavior. The prior Pages site should remain intact.
