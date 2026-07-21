@@ -140,8 +140,12 @@ class MLBClient:
                     "game_date": official_date,
                     "season": season,
                     "status": status.get("detailedState", "Final"),
+                    "game_datetime": game.get("gameDate"),
                 }
-        return sorted(games.values(), key=lambda item: (item["game_date"], item["game_pk"]))
+        return sorted(
+            games.values(),
+            key=lambda item: (item["game_date"], item.get("game_datetime") or "", item["game_pk"]),
+        )
 
     async def boxscore_appearances(self, game: dict[str, Any]) -> list[dict[str, Any]]:
         payload = await self.get_json(f"/game/{game['game_pk']}/boxscore")
