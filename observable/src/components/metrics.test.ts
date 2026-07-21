@@ -1,5 +1,8 @@
 import {describe, expect, it} from "vitest";
-import {leagueTotals, metric, rankTeams, rawMetric, type Team} from "./metrics";
+import {
+  coverageText, leagueTotals, metric, rankTeams, rawMetric,
+  statusLabel, statusTone, type CoverageStatus, type Team,
+} from "./metrics";
 
 const team: Team = {
   team_id: 119,
@@ -57,5 +60,41 @@ describe("static dashboard metrics", () => {
     expect(doubled.total).toBe(30_000);
     expect(doubled.adjusted_sp).toBe(17_800);
     expect(doubled.review_count).toBe(4);
+  });
+});
+
+describe("snapshot status presentation", () => {
+  const complete: CoverageStatus = {
+    result: "complete", scheduled_games: 1_490, current_games: 1_490,
+    stale_games: 0, missing_games: 0,
+  };
+
+  it("labels each snapshot result", () => {
+    expect(statusLabel("complete")).toBe("Validated snapshot");
+    expect(statusLabel("partial")).toBe("Partial snapshot");
+    expect(statusLabel("failed")).toBe("Failed snapshot");
+  });
+
+  it("uses namespaced tone classes so they cannot collide with Observable's .warning callout", () => {
+    expect(statusTone("complete")).toBe("");
+    expect(statusTone("partial")).toBe("status-warning");
+    expect(statusTone("failed")).toBe("status-failed");
+    // A bare "warning"/"failed" would trigger Observable Framework's built-in
+    // callout styling; assert the namespaced prefix stays in place.
+    expect(statusTone("partial")).not.toBe("warning");
+    expect(statusTone("failed")).not.toBe("failed");
+  });
+
+  it("shows plain coverage when every game is current", () => {
+    expect(coverageText(complete)).toBe("1,490 / 1,490");
+  });
+
+  it("appends stale and missing counts only when nonzero", () => {
+    expect(coverageText({...complete, result: "partial", current_games: 1_472, stale_games: 12, missing_games: 6}))
+      .toBe("1,472 / 1,490 · 12 stale · 6 missing");
+    expect(coverageText({...complete, result: "partial", current_games: 1_478, stale_games: 12}))
+      .toBe("1,478 / 1,490 · 12 stale");
+    expect(coverageText({...complete, result: "partial", current_games: 1_484, missing_games: 6}))
+      .toBe("1,484 / 1,490 · 6 missing");
   });
 });

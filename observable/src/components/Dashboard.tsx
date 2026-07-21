@@ -1,6 +1,7 @@
 import {useMemo, useState} from "npm:react";
 import {
-  context, formatMetric, label, leagueTotals, metric, rankTeams,
+  context, coverageText, formatMetric, label, leagueTotals, metric, rankTeams,
+  statusLabel, statusTone,
   type Basis, type LeagueTotals, type Order, type Team, type View,
 } from "./metrics.js";
 
@@ -38,21 +39,13 @@ const FRAMINGS: {view: View; label: string}[] = [
 
 function SnapshotPanel({data}: {data: DashboardData}) {
   const status = data.status;
-  const tone = status.result === "failed" ? "status-failed" : status.result === "partial" ? "status-warning" : "";
-  const statusLabel = status.result === "complete" ? "Validated snapshot" : `${status.result[0].toUpperCase()}${status.result.slice(1)} snapshot`;
-  const coverage = [
-    status.stale_games ? `${integer.format(status.stale_games)} stale` : "",
-    status.missing_games ? `${integer.format(status.missing_games)} missing` : "",
-  ].filter(Boolean).join(" · ");
+  const tone = statusTone(status.result);
+  const coverageTone = status.stale_games || status.missing_games ? tone || undefined : undefined;
   return (
     <div className="snapshot-panel">
       <span>Season</span><strong>{data.season}</strong>
-      <span>Status</span><strong className={tone || undefined} aria-live="polite">{statusLabel}</strong>
-      <span>Games</span>
-      <strong className={coverage ? tone || undefined : undefined}>
-        {integer.format(status.current_games)} / {integer.format(status.scheduled_games)}
-        {coverage ? ` · ${coverage}` : ""}
-      </strong>
+      <span>Status</span><strong className={tone || undefined} aria-live="polite">{statusLabel(status.result)}</strong>
+      <span>Games</span><strong className={coverageTone}>{coverageText(status)}</strong>
       <span>API calls</span><strong>{integer.format(status.api_calls)}</strong>
       <span>Updated</span><strong>{new Date(data.generated_at).toLocaleString()}</strong>
     </div>
