@@ -24,33 +24,33 @@
     },
     "fetch-state.json": {
       "bytes": 367281,
-      "sha256": "4f74f757d9a2f96f9397ae3cc6cd9b4fc73b6f388ac50ce88e087b1dc2eae769"
+      "sha256": "3b416490e43d48b586af481e15decc14ff7cdc6f3b64c88f27b6bd154b7fa2c6"
     },
     "games/2026-03.jsonl": {
-      "bytes": 5700,
-      "sha256": "ab580bdd7cee2c872ee36a6ebb6f2cd5610e0d9969c59a36d641955edd2c5fea"
+      "bytes": 8664,
+      "sha256": "2f9a95b4ea5603f64519cb959512b7ecaf0419321bfcad9566638954e1b40581"
     },
     "games/2026-04.jsonl": {
-      "bytes": 29410,
-      "sha256": "02fba2ef089637a1e5299ecdcdeaf339ba1cbda56899f5d8ec06d96d35c490d7"
+      "bytes": 44698,
+      "sha256": "b835dabf1064aac0555b222902e5319c3299560d2cbfb0c0f86d8d07e87eb61c"
     },
     "games/2026-05.jsonl": {
-      "bytes": 31425,
-      "sha256": "fd2e017dd85e27ef9dafaa3b4c13476bd8f6a4cdf66b20eb8e6f726cce7211b5"
+      "bytes": 47766,
+      "sha256": "24ea9fac96001730e0cc30987b13a05a05fb29ebac4cf8e78c4e2b37bb757960"
     },
     "games/2026-06.jsonl": {
-      "bytes": 29550,
-      "sha256": "0f1645b6d998a1a9acbdd3687ec3de004c3710cb26455e9b759a2f84bad9c095"
+      "bytes": 44916,
+      "sha256": "8110f5a1ad2ddf5fca08aa5f058970f1d02b4fb261fba35e185edcf32cf41853"
     },
     "games/2026-07.jsonl": {
-      "bytes": 16800,
-      "sha256": "8ad148f6b9b4e2df8aab3f3818633943a34a1d64b7448b465aca836c149e9dd7"
+      "bytes": 25536,
+      "sha256": "85262ab34294dc1ea317cbae363369dcb72180243c103c157b18710fcb779366"
     }
   },
   "games_failed": 0,
   "games_fetched": 61,
   "games_requested": 61,
-  "generated_at": "2026-07-21T11:20:12.761551+00:00",
+  "generated_at": "2026-07-21T12:48:05.729830+00:00",
   "missing_games": 0,
   "result": "complete",
   "scheduled_games": 1505,
