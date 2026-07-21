@@ -34,7 +34,10 @@ concurrency:
 jobs:
   build:
     name: Build validated Pages artifact
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    # A manual run may select any ref; only main may build an artifact eligible for Pages.
+    if: >-
+      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') &&
+      (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -129,7 +132,12 @@ jobs:
 
   deploy:
     name: Deploy GitHub Pages
-    if: github.event_name != 'pull_request'
+    # push is already restricted to main and workflow_run is branch-filtered above.
+    # Keep the manual path explicit so a feature-branch dispatch cannot deploy.
+    if: >-
+      needs.build.result == 'success' &&
+      github.event_name != 'pull_request' &&
+      (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10

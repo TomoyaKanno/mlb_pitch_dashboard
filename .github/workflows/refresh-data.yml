@@ -30,6 +30,8 @@ concurrency:
 
 jobs:
   refresh:
+    # Scheduled runs use the default branch; never let a manually selected ref write dashboard-data.
+    if: github.ref == 'refs/heads/main'
     name: Validate and persist snapshot
     runs-on: ubuntu-latest
     timeout-minutes: 45
