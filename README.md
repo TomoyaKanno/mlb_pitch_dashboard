@@ -146,7 +146,7 @@ Observable Framework renders TSX with its self-hosted React runtime. Components 
 | `Refresh dashboard data` | Incrementally update and validate `dashboard-data` | Repository contents only |
 | `Build and deploy dashboard` | Validate real data, build the static site, and deploy after merge or refresh | Pages deployment only in the deploy job |
 
-Pull requests build against the real data branch but do not deploy. Production refresh handoffs are accepted only from `main`, and PR validation has a separate concurrency group so it cannot cancel a production deployment.
+Pull requests build against the real data branch but do not deploy. Manual refreshes and manual Pages deploys are accepted only from `main`; a selected feature branch is skipped rather than changing `dashboard-data` or publishing. Production refresh handoffs are also accepted only from `main`, and PR validation has a separate concurrency group so it cannot cancel a production deployment.
 
 See [continuous integration](docs/continuous-integration.md), [the data contract](docs/data-contract.md), [data-branch operations](docs/data-branch-workflow.md), and [deployment recovery](docs/deployment.md).
 
