@@ -120,31 +120,16 @@ tbody tr:last-child td { border-bottom: 0; }
 td.rank, .metric strong { font-variant-numeric: tabular-nums; }
 .context { width: 34%; }
 .team { font-weight: 650; }
-.team-select {
-  display: block;
-  width: 100%;
-  min-height: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  color: inherit;
-  background: transparent;
-  font: inherit;
-  font-weight: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-.team-select:hover,
-.team-select:focus-visible,
-.team-select[aria-pressed="true"] { color: var(--accent); border-color: transparent; }
-.team-select:disabled,
-.team-select:disabled:hover {
-  color: inherit;
-  cursor: default;
-  opacity: 1;
-}
 .team-name { display: flex; align-items: center; gap: 9px; }
 .team-logo { flex: none; width: 22px; height: 22px; object-fit: contain; }
+tbody tr.team-row { cursor: pointer; }
+tbody tr.team-row:hover td,
+tbody tr.team-row:focus-visible td { background: var(--accent-soft); }
+tbody tr.team-row:focus-visible { outline: none; }
+tbody tr.team-row:focus-visible td:first-child {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+tbody tr.team-row[aria-pressed="true"] .team { color: var(--accent); }
 tbody tr.selected td { background: var(--accent-soft); }
 .table-with-panel {
   display: grid;
@@ -159,6 +144,22 @@ tbody tr.selected td { background: var(--accent-soft); }
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
+  opacity: 0;
+  transform: translateX(14px);
+  transition: opacity 200ms ease, transform 200ms ease;
+  pointer-events: none;
+}
+.team-series-panel.is-open {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .team-series-panel {
+    transition: none;
+    transform: none;
+  }
+  .team-series-panel.is-open { transform: none; }
 }
 .team-series-header {
   display: flex;
@@ -226,6 +227,9 @@ tbody tr.selected td { background: var(--accent-soft); }
   min-height: 36px;
   padding: 6px 8px;
 }
+.team-series-chart-wrap {
+  position: relative;
+}
 .team-series-chart {
   display: block;
   width: 100%;
@@ -233,6 +237,7 @@ tbody tr.selected td { background: var(--accent-soft); }
   color: var(--accent);
   background: var(--surface-2);
   border-radius: 8px;
+  cursor: crosshair;
 }
 .team-series-chart.share-chart {
   color: var(--series-line);
@@ -240,10 +245,62 @@ tbody tr.selected td { background: var(--accent-soft); }
 }
 .series-sp-area { fill: var(--series-sp); fill-opacity: 0.85; }
 .series-rp-area { fill: var(--series-rp); fill-opacity: 0.85; }
+.series-axis {
+  stroke: var(--border);
+  stroke-width: 1;
+  pointer-events: none;
+}
+.series-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+  stroke-opacity: 0.55;
+  pointer-events: none;
+}
+.series-axis-label {
+  fill: var(--muted);
+  font-size: 9px;
+  pointer-events: none;
+}
+.series-hover-guide {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  pointer-events: none;
+}
+.series-hover-dot {
+  fill: var(--accent);
+  stroke: var(--surface);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+.share-chart .series-hover-dot { fill: var(--series-line); }
+.series-tooltip {
+  position: absolute;
+  top: 8px;
+  z-index: 1;
+  max-width: min(100%, 220px);
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: .75rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.series-tooltip.start { transform: translateX(0); }
+.series-tooltip.end { transform: translateX(-100%); }
 .team-series-legend { margin: 8px 0 0; }
 .legend-sp { color: var(--series-sp); font-weight: 650; }
 .legend-rp { color: var(--series-rp); font-weight: 650; }
 .team-series-meta { margin: 10px 0 0; }
+.team-series-cgs {
+  margin: 6px 0 0;
+  line-height: 1.45;
+}
 .metric { display: grid; grid-template-columns: minmax(70px, auto) 1fr; gap: 12px; align-items: center; padding-right: 14px; }
 .track { position: relative; height: 7px; overflow: visible; border-radius: 999px; background: var(--surface-2); }
 .fill { display: flex; min-width: 2px; height: 100%; overflow: hidden; border-radius: inherit; background: var(--accent); }
@@ -273,7 +330,11 @@ tbody tr.selected td { background: var(--accent-soft); }
   .context { display: none; }
   .rank { width: 48px; }
   .table-with-panel { grid-template-columns: 1fr; }
-  .team-series-panel { position: static; }
+  .team-series-panel {
+    position: static;
+    transform: translateY(12px);
+  }
+  .team-series-panel.is-open { transform: translateY(0); }
 }
 @media (max-width: 480px) {
   .shell { width: min(100% - 18px, 1180px); padding-top: 22px; }

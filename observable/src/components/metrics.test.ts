@@ -1,8 +1,10 @@
 import {describe, expect, it} from "vitest";
 import {
-  averageBarPercent, averageMetric, coverageText, formatSeriesValue, metricSeries,
-  leagueTotals, metric, nextSort, rankTeams, rawMetric, seriesSupported, seriesTitle,
-  statusLabel, statusTone, type CoverageStatus, type Team, type TeamDayPoint,
+  averageBarPercent, averageMetric, completeGamesForTeam, completeGameSummary, coverageText,
+  formatSeriesValue, metricSeries, leagueTotals, metric, monthAxisTicks, nearestSeriesIndexByDate,
+  nextSort, niceCeil, rankTeams, rawMetric, seriesDateDomain, seriesSupported, seriesTitle,
+  seriesTooltipText, statusLabel, statusTone, valueAxisTicks, type CompleteGame, type CoverageStatus,
+  type Team, type TeamDayPoint,
 } from "./metrics";
 
 const team: Team = {
@@ -145,6 +147,69 @@ describe("static dashboard metrics", () => {
     expect(seriesTitle("share", "adjusted", "cumulative")).toBe("Season-to-date adjusted SP / RP split");
     expect(seriesTitle("share", "adjusted", "daily")).toBe("Daily adjusted SP / RP split");
     expect(formatSeriesValue(0.401, "share")).toBe("40.1%");
+  });
+
+  it("uses a shared linear date domain for every team chart", () => {
+    expect(seriesDateDomain([])).toBeNull();
+    expect(seriesDateDomain([
+      {date: "2026-04-02"},
+      {date: "2026-03-26"},
+      {date: "2026-07-19"},
+    ])).toEqual({start: "2026-03-26", end: "2026-07-19"});
+  });
+
+  it("maps pointer x to the nearest day on the shared calendar scale", () => {
+    const domain = {start: "2026-03-01", end: "2026-07-01"};
+    const series = [
+      {date: "2026-03-01", value: 1},
+      {date: "2026-05-01", value: 2},
+      {date: "2026-07-01", value: 3},
+    ];
+    expect(nearestSeriesIndexByDate([], domain, 0, 400, 10)).toBe(-1);
+    expect(nearestSeriesIndexByDate(series, domain, 0, 400, 0)).toBe(0);
+    expect(nearestSeriesIndexByDate(series, domain, 0, 400, 400)).toBe(2);
+    expect(nearestSeriesIndexByDate(series, domain, 0, 400, 200)).toBe(1);
+  });
+
+  it("labels each month once on the shared x-axis", () => {
+    const ticks = monthAxisTicks({start: "2026-03-26", end: "2026-07-19"});
+    expect(ticks.map((tick) => tick.label)).toEqual(["Mar", "Apr", "May", "Jun", "Jul"]);
+    // Partial March is labeled near its visible midpoint, not jammed on the 1st.
+    expect(ticks[0]?.date).toBe("2026-03-28");
+    expect(ticks[1]?.date).toBe("2026-04-15");
+  });
+
+  it("builds tidy y-axis ticks", () => {
+    expect(niceCeil(15_450)).toBe(20_000);
+    expect(valueAxisTicks(0, 15_450, "total")).toEqual([0, 10_000, 20_000]);
+    expect(valueAxisTicks(0, 1, "share")).toEqual([0, 0.25, 0.5, 0.75, 1]);
+  });
+
+  it("formats series tooltip copy for pitch and share views", () => {
+    expect(seriesTooltipText({date: "2026-04-01", value: 1234}, "total")).toBe("2026-04-01 · 1,234");
+    expect(seriesTooltipText({date: "2026-04-01", value: 0.403}, "share"))
+      .toBe("2026-04-01 · 59.7% SP · 40.3% RP");
+  });
+
+  it("summarizes game-grain complete games with pitchers", () => {
+    const games: CompleteGame[] = [
+      {
+        date: "2026-04-01", game_pk: 1, team_id: 119, team_name: "Dodgers",
+        pitches: 98, pitcher_id: 1, pitcher_name: "Yamamoto",
+      },
+      {
+        date: "2026-07-19", game_pk: 10, team_id: 119, team_name: "Dodgers",
+        pitches: 108, pitcher_id: 1, pitcher_name: "Yamamoto",
+      },
+      {
+        date: "2026-07-19", game_pk: 11, team_id: 147, team_name: "Yankees",
+        pitches: 99, pitcher_id: 2, pitcher_name: "Cole",
+      },
+    ];
+    expect(completeGamesForTeam(games, 119)).toHaveLength(2);
+    expect(completeGameSummary(completeGamesForTeam(games, 119)))
+      .toBe("Complete games (no RP): 2 · Apr 1 Yamamoto · Jul 19 Yamamoto");
+    expect(completeGameSummary([])).toBe("No complete games (0 official RP pitches) yet.");
   });
 });
 

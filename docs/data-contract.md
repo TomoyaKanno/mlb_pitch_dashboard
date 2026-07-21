@@ -33,9 +33,11 @@ Appearance records include both MLB's official `gamesStarted` designation and th
 | Artifact | Loader | Contents |
 | --- | --- | --- |
 | Season team totals | `observable/src/data/dashboard.json.py` | One row per team; powers the ranking table |
-| Team timeseries | `observable/src/data/team-timeseries.json.py` | One row per `(game_date, team_id)` with activity; daily increments for the team timeline panel |
+| Team timeseries | `observable/src/data/team-timeseries.json.py` | Daily team increments for the timeline, plus game-grain `complete_games` (0 official RP, with pitcher) |
 
-Daily team points must reconcile to season team totals: summing each metric (and game counts) across dates for a team equals that team's dashboard row. The dashboard derives cumulative series with a prefix sum (`metricSeries`); daily/timecourse mode plots each day's increment (share uses that day's SP/RP split). Role adjustment has no timeline yet. Player-level series can follow the same sibling-export pattern later; appearance rows are already pitcher-dated.
+Daily team points must reconcile to season team totals: summing each metric (and game counts) across dates for a team equals that team's dashboard row. The dashboard derives cumulative series with a prefix sum (`metricSeries`); daily/timecourse mode plots each day's increment (share uses that day's SP/RP split). Role adjustment has no timeline yet.
+
+Complete games are listed at **game** grain, not calendar day: a doubleheader can hide a CG inside a day total that still has RP pitches from the other game. Each `complete_games` row is a `(game_pk, team_id)` with zero official RP pitches and a single pitcher. Player-level series can follow the same sibling-export pattern later; appearance rows are already pitcher-dated.
 
 ## Failure behavior
 

@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from pipeline.export import (
+    aggregate_complete_games,
     aggregate_team_timeseries,
     aggregate_teams,
     export_dashboard,
@@ -150,6 +151,46 @@ def test_team_timeseries_daily_increments_reconcile_to_season_totals(tmp_path):
     assert away_days[1]["opener_to_rp"] == 30
 
     reconcile_team_timeseries(dashboard["teams"], series["points"])
+    assert series["complete_games"] == []
+
+
+def test_complete_games_are_game_grain_so_doubleheaders_keep_cgs():
+    """A CG + bullpen game the same day must not hide the CG in day totals."""
+    snapshot = Snapshot(season=2026)
+    # Game 10: true CG (no RP).
+    snapshot.appearances[(10, 119, 607192)] = AppearanceRecord(
+        10, "2026-07-19", 2026, 119, "Los Angeles Dodgers", 607192, "Yoshinobu Yamamoto",
+        108, True, 0, "SP", "official starter",
+    )
+    # Game 11: same date, bullpen used — day total will show official_rp > 0.
+    snapshot.appearances[(11, 119, 607192)] = AppearanceRecord(
+        11, "2026-07-19", 2026, 119, "Los Angeles Dodgers", 607192, "Yoshinobu Yamamoto",
+        70, True, 0, "SP", "official starter",
+    )
+    snapshot.appearances[(11, 119, 608331)] = AppearanceRecord(
+        11, "2026-07-19", 2026, 119, "Los Angeles Dodgers", 608331, "Reliever",
+        30, False, 1, "RP", "official reliever",
+    )
+
+    points = aggregate_team_timeseries(snapshot)
+    day = next(point for point in points if point["team_id"] == 119)
+    assert day["date"] == "2026-07-19"
+    assert day["games"] == 2
+    assert day["official_rp"] == 30
+    assert day["official_sp"] == 178
+
+    complete = aggregate_complete_games(snapshot)
+    assert complete == [
+        {
+            "date": "2026-07-19",
+            "game_pk": 10,
+            "team_id": 119,
+            "team_name": "Los Angeles Dodgers",
+            "pitches": 108,
+            "pitcher_id": 607192,
+            "pitcher_name": "Yoshinobu Yamamoto",
+        }
+    ]
 
 
 def test_reconcile_team_timeseries_detects_drift():

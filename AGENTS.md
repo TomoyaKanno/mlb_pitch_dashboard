@@ -82,8 +82,9 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 - Team and metric column headers sort ascending/descending (there is no Order dropdown);
 - ranks follow the displayed metric even when rows are reordered by header sort;
 - Total bars show dual-tone adjusted SP/RP fills and an MLB-average notch;
-- clicking a team opens the side timeline (Cumulative / Timecourse); Role adjustment disables team clicks and closes any open panel;
-- the panel shows the team badge, series chart, and context moved out of the table column;
+- clicking any table row opens the side timeline (Cumulative / Timecourse) with a short slide; Role adjustment disables row clicks and closes any open panel;
+- the panel chart uses the shared season date axis, hover tooltip, and game-grain complete-game list with pitcher names;
+- the panel shows the team badge and context moved out of the table column;
 - snapshot diagnostics (status, coverage, generation time, API calls) appear in the footer strip below the content;
 - the browser console has no application errors.
 
@@ -95,7 +96,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 4. `pipeline.check` reloads those files and repeats structural and coverage validation.
 5. The refresh workflow commits changed files to `dashboard-data`.
 6. A successful `workflow_run` handoff builds from current `main` plus the validated data branch.
-7. `pipeline.export` produces the season team payload and the sibling team timeseries; Observable renders both in the table and the team timeline panel.
+7. `pipeline.export` produces the season team payload and the sibling team timeseries (daily points plus `complete_games`); Observable renders both in the table and the team timeline panel.
 8. GitHub Pages receives the compiled artifact; no compiled files are committed.
 
 Never commit a snapshot before the persisted reload check succeeds.
@@ -121,7 +122,7 @@ npm test
 OBSERVABLE_TELEMETRY_DISABLE=true npm run build
 ```
 
-Use the fixture for fast checks. For changes to the loader, exporter, schema, validation, or deployment path, also build against `dashboard-data` and verify both the 30-team season payload and the reconciled `team-timeseries` artifact (matching season and data revision). For UI/runtime changes, add the browser smoke test above.
+Use the fixture for fast checks. For changes to the loader, exporter, schema, validation, or deployment path, also build against `dashboard-data` and verify the 30-team season payload, reconciled `team-timeseries` points, and `complete_games` list (matching season and data revision). For UI/runtime changes, add the browser smoke test above.
 
 ### Workflow changes
 

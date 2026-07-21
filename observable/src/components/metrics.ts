@@ -185,6 +185,154 @@ export function formatSeriesValue(value: number, view: View): string {
   return integer.format(rounded);
 }
 
+export interface DateDomain {
+  start: string;
+  end: string;
+}
+
+export function dateMs(date: string): number {
+  const [year, month, day] = date.split("-").map(Number);
+  return Date.UTC(year, month - 1, day);
+}
+
+export interface CompleteGame {
+  date: string;
+  game_pk: number;
+  team_id: number;
+  team_name: string;
+  pitches: number;
+  pitcher_id: number;
+  pitcher_name: string;
+}
+
+export function completeGamesForTeam(games: CompleteGame[], teamId: number): CompleteGame[] {
+  return games
+    .filter((game) => game.team_id === teamId)
+    .sort((a, b) => a.date.localeCompare(b.date) || a.game_pk - b.game_pk);
+}
+
+const shortMonthDay = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+
+export function formatCompleteGameDate(date: string): string {
+  return shortMonthDay.format(new Date(dateMs(date)));
+}
+
+// Game-grain CGs from the export (not day rollups — doubleheaders keep each CG).
+export function completeGameSummary(games: CompleteGame[]): string {
+  if (games.length === 0) return "No complete games (0 official RP pitches) yet.";
+  const labels = games.map((game) => {
+    const when = formatCompleteGameDate(game.date);
+    return `${when} ${game.pitcher_name}`;
+  });
+  return `Complete games (no RP): ${games.length} · ${labels.join(" · ")}`;
+}
+
+function formatUtcDate(ms: number): string {
+  const date = new Date(ms);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+// Shared season window for every team chart — min/max dates across the payload.
+export function seriesDateDomain(points: Iterable<{date: string}>): DateDomain | null {
+  let start = "";
+  let end = "";
+  for (const point of points) {
+    if (!start || point.date < start) start = point.date;
+    if (!end || point.date > end) end = point.date;
+  }
+  return start && end ? {start, end} : null;
+}
+
+export function dateToX(date: string, domain: DateDomain, left: number, width: number): number {
+  const start = dateMs(domain.start);
+  const span = dateMs(domain.end) - start || 1;
+  return left + ((dateMs(date) - start) / span) * width;
+}
+
+// Nearest team day to the calendar date under the pointer (linear shared x-scale).
+export function nearestSeriesIndexByDate(
+  series: CumulativePoint[],
+  domain: DateDomain,
+  left: number,
+  width: number,
+  x: number,
+): number {
+  if (series.length === 0 || width <= 0) return -1;
+  const start = dateMs(domain.start);
+  const span = dateMs(domain.end) - start || 1;
+  const clamped = Math.min(left + width, Math.max(left, x));
+  const target = start + ((clamped - left) / width) * span;
+  let best = 0;
+  let bestDist = Infinity;
+  for (let index = 0; index < series.length; index += 1) {
+    const dist = Math.abs(dateMs(series[index].date) - target);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = index;
+    }
+  }
+  return best;
+}
+
+// One label per calendar month intersecting the shared domain.
+// X sits at the midpoint of that month's visible span so partial opening
+// months (e.g. Mar 26 start) do not collide with the next 1st.
+export function monthAxisTicks(domain: DateDomain): {date: string; label: string}[] {
+  const month = new Intl.DateTimeFormat("en-US", {month: "short", timeZone: "UTC"});
+  const startMs = dateMs(domain.start);
+  const endMs = dateMs(domain.end);
+  let year = Number(domain.start.slice(0, 4));
+  let monthIndex = Number(domain.start.slice(5, 7)) - 1;
+  const ticks: {date: string; label: string}[] = [];
+  while (true) {
+    const firstOfMonth = Date.UTC(year, monthIndex, 1);
+    const nextMonth = Date.UTC(year, monthIndex + 1, 1);
+    if (firstOfMonth > endMs) break;
+    const visibleStart = Math.max(firstOfMonth, startMs);
+    const visibleEnd = Math.min(nextMonth - 86_400_000, endMs);
+    if (visibleStart > visibleEnd) break;
+    const mid = visibleStart + (visibleEnd - visibleStart) / 2;
+    ticks.push({date: formatUtcDate(Math.round(mid)), label: month.format(firstOfMonth)});
+    monthIndex += 1;
+    if (monthIndex === 12) {
+      monthIndex = 0;
+      year += 1;
+    }
+  }
+  return ticks;
+}
+
+export function niceCeil(value: number): number {
+  if (value <= 0) return 1;
+  const exp = 10 ** Math.floor(Math.log10(value));
+  const fraction = value / exp;
+  const nice = fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10;
+  return nice * exp;
+}
+
+export function valueAxisTicks(min: number, max: number, view: View): number[] {
+  if (view === "share") return [0, 0.25, 0.5, 0.75, 1];
+  const top = niceCeil(Math.max(max, min, 1));
+  if (top <= 0) return [0];
+  return [0, top / 2, top];
+}
+
+export function seriesTooltipText(point: CumulativePoint, view: View): string {
+  if (view === "share") {
+    const rp = formatSeriesValue(point.value, view);
+    const sp = formatSeriesValue(1 - point.value, view);
+    return `${point.date} · ${sp} SP · ${rp} RP`;
+  }
+  return `${point.date} · ${formatSeriesValue(point.value, view)}`;
+}
+
 // Header-click sort: same column toggles direction; a new column uses its default
 // (metric → highest first, team → A–Z).
 export function nextSort(

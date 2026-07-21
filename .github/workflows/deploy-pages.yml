@@ -109,13 +109,16 @@ jobs:
               raise SystemExit("dashboard data revision does not match checked-out data")
           if series["data_commit"] != payload["data_commit"]:
               raise SystemExit("team-timeseries data revision does not match dashboard")
+          if not isinstance(series.get("complete_games"), list):
+              raise SystemExit("team-timeseries missing complete_games list")
           reconcile_team_timeseries(payload["teams"], series["points"])
           index_html = Path("source/observable/dist/index.html").read_text()
           if "_node/react@" in index_html:
               raise SystemExit("built dashboard contains a second React runtime")
           print(
-              f"Validated {len(payload['teams'])} teams and {len(series['points'])} "
-              f"team-day points from {payload['status']['current_games']} current games"
+              f"Validated {len(payload['teams'])} teams, {len(series['points'])} "
+              f"team-day points, and {len(series['complete_games'])} complete games "
+              f"from {payload['status']['current_games']} current games"
           )
           PY
 

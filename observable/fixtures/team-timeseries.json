@@ -128,5 +128,25 @@
       "opener_to_rp": 0,
       "review_count": 1
     }
+  ],
+  "complete_games": [
+    {
+      "date": "2026-04-01",
+      "game_pk": 1,
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers",
+      "pitches": 105,
+      "pitcher_id": 607192,
+      "pitcher_name": "Yoshinobu Yamamoto"
+    },
+    {
+      "date": "2026-07-01",
+      "game_pk": 2,
+      "team_id": 147,
+      "team_name": "New York Yankees",
+      "pitches": 99,
+      "pitcher_id": 543037,
+      "pitcher_name": "Gerrit Cole"
+    }
   ]
 }
