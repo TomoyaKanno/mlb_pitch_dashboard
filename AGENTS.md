@@ -23,7 +23,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 - `pipeline/update.py` — incremental refresh orchestration and failure-state transitions.
 - `pipeline/validation.py` — in-memory structural and arithmetic invariants.
 - `pipeline/check.py` — persisted snapshot reload and integrity verification.
-- `pipeline/export.py` — validated browser-ready team aggregation and sibling team timeseries.
+- `pipeline/export.py` — validated browser-ready season aggregation, latest-game pitcher workloads, and sibling team timeseries.
 - `observable/src/data/dashboard.json.py` — build-time bridge from the snapshot to the season table payload.
 - `observable/src/data/team-timeseries.json.py` — build-time bridge for daily team-increment series.
 - `observable/src/components/Dashboard.tsx` — production React dashboard.
@@ -84,6 +84,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 - Total bars show dual-tone adjusted SP/RP fills and an MLB-average notch;
 - clicking any table row opens the side timeline (Cumulative / Timecourse) with a short slide; Role adjustment disables row clicks and closes any open panel;
 - the panel chart uses the shared season date axis, hover tooltip, and game-grain complete-game list with pitcher names;
+- the Season leaders / Recent strain selector works; Recent strain defaults to LAD and the team picker shows pitcher names, SP/RP designation, and pitch counts from the selected team’s latest completed game;
 - the panel shows the team badge and context moved out of the table column;
 - snapshot diagnostics (status, coverage, generation time, API calls) appear in the footer strip below the content;
 - the browser console has no application errors.
@@ -96,7 +97,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 4. `pipeline.check` reloads those files and repeats structural and coverage validation.
 5. The refresh workflow commits changed files to `dashboard-data`.
 6. A successful `workflow_run` handoff builds from current `main` plus the validated data branch.
-7. `pipeline.export` produces the season team payload and the sibling team timeseries (daily points plus `complete_games`); Observable renders both in the table and the team timeline panel.
+7. `pipeline.export` produces the season team payload (including one latest completed-game pitcher list per team) and the sibling team timeseries (daily points plus `complete_games`); Observable renders the season leaders table, timeline panel, and Recent strain screen.
 8. GitHub Pages receives the compiled artifact; no compiled files are committed.
 
 Never commit a snapshot before the persisted reload check succeeds.
