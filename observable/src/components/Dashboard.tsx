@@ -36,22 +36,26 @@ const FRAMINGS: {view: View; label: string}[] = [
   {view: "adjustment", label: "Role adjustment"},
 ];
 
-function StatusStrip({data}: {data: DashboardData}) {
+function SnapshotPanel({data}: {data: DashboardData}) {
   const status = data.status;
-  const tone = status.result === "failed" ? "failed" : status.result === "partial" ? "warning" : "";
-  const prefix = status.result === "complete" ? "Validated snapshot" : `${status.result[0].toUpperCase()}${status.result.slice(1)} snapshot`;
+  const tone = status.result === "failed" ? "status-failed" : status.result === "partial" ? "status-warning" : "";
+  const statusLabel = status.result === "complete" ? "Validated snapshot" : `${status.result[0].toUpperCase()}${status.result.slice(1)} snapshot`;
   const coverage = [
     status.stale_games ? `${integer.format(status.stale_games)} stale` : "",
     status.missing_games ? `${integer.format(status.missing_games)} missing` : "",
   ].filter(Boolean).join(" · ");
   return (
-    <section className={`status-strip${tone ? ` ${tone}` : ""}`} aria-live="polite">
-      <span>{prefix}</span>
-      <span>
-        {integer.format(status.current_games)}/{integer.format(status.scheduled_games)} games
-        {coverage ? ` · ${coverage}` : ""} · {integer.format(status.api_calls)} API calls
-      </span>
-    </section>
+    <div className="snapshot-panel">
+      <span>Season</span><strong>{data.season}</strong>
+      <span>Status</span><strong className={tone || undefined} aria-live="polite">{statusLabel}</strong>
+      <span>Games</span>
+      <strong className={coverage ? tone || undefined : undefined}>
+        {integer.format(status.current_games)} / {integer.format(status.scheduled_games)}
+        {coverage ? ` · ${coverage}` : ""}
+      </strong>
+      <span>API calls</span><strong>{integer.format(status.api_calls)}</strong>
+      <span>Updated</span><strong>{new Date(data.generated_at).toLocaleString()}</strong>
+    </div>
   );
 }
 
@@ -124,13 +128,8 @@ export function Dashboard({data}: {data: DashboardData}) {
           <h1>Who has thrown the most pitches?</h1>
           <p className="lede">Compare total, starter, and bullpen workloads with an auditable adjustment for openers and bulk appearances.</p>
         </div>
-        <div className="snapshot-panel">
-          <span>Season</span><strong>{data.season}</strong>
-          <span>Data source</span><strong>Validated static snapshot</strong>
-          <span>Updated</span><strong>{new Date(data.generated_at).toLocaleString()}</strong>
-        </div>
+        <SnapshotPanel data={data} />
       </header>
-      <StatusStrip data={data} />
       <LeagueGrid league={league} />
       <section className="controls" aria-label="Table controls">
         <div className="framing">
