@@ -107,6 +107,41 @@ def aggregate_team_timeseries(snapshot: Snapshot) -> list[dict[str, Any]]:
     return sorted(result, key=lambda point: (point["date"], point["team_id"]))
 
 
+def aggregate_complete_games(snapshot: Snapshot) -> list[dict[str, Any]]:
+    """Team-games with zero official RP pitches (true complete games).
+
+    Must be game-grain, not calendar-day: a doubleheader can pair a CG with a
+    bullpen game, so the day total still has official_rp > 0.
+    """
+    by_game_team: dict[tuple[int, int], list[Any]] = defaultdict(list)
+    for row in snapshot.appearances.values():
+        by_game_team[(row.game_pk, row.team_id)].append(row)
+
+    result: list[dict[str, Any]] = []
+    for (game_pk, team_id), rows in by_game_team.items():
+        rows = sorted(rows, key=lambda item: item.appearance_order)
+        total = sum(row.pitches for row in rows)
+        official_rp = sum(row.pitches for row in rows if not row.official_started)
+        if total <= 0 or official_rp > 0:
+            continue
+        pitcher_ids = {row.pitcher_id for row in rows}
+        if len(pitcher_ids) != 1:
+            continue
+        pitcher = rows[0]
+        result.append(
+            {
+                "date": pitcher.game_date,
+                "game_pk": game_pk,
+                "team_id": team_id,
+                "team_name": pitcher.team_name,
+                "pitches": total,
+                "pitcher_id": pitcher.pitcher_id,
+                "pitcher_name": pitcher.pitcher_name,
+            }
+        )
+    return sorted(result, key=lambda row: (row["date"], row["team_id"], row["game_pk"]))
+
+
 def reconcile_team_timeseries(
     teams: list[dict[str, Any]],
     points: list[dict[str, Any]],
@@ -185,7 +220,11 @@ def export_team_timeseries(data_dir: Path, season: int) -> dict[str, Any]:
     teams = aggregate_teams(snapshot)
     points = aggregate_team_timeseries(snapshot)
     reconcile_team_timeseries(teams, points)
-    return {**meta, "points": points}
+    return {
+        **meta,
+        "points": points,
+        "complete_games": aggregate_complete_games(snapshot),
+    }
 
 
 def main() -> None:
@@ -196,7 +235,7 @@ def main() -> None:
         "--kind",
         choices=("dashboard", "team-timeseries"),
         default="dashboard",
-        help="dashboard = season team totals; team-timeseries = daily team increments",
+        help="dashboard = season team totals; team-timeseries = daily increments + complete games",
     )
     args = parser.parse_args()
     if args.kind == "team-timeseries":

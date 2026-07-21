@@ -1,10 +1,11 @@
 import {useEffect, useMemo, useRef, useState} from "npm:react";
 import {
-  averageBarPercent, averageMetric, context, coverageText, formatMetric, formatSeriesValue,
-  label, leagueTotals, metric, metricSeries, nextSort, rankTeams, seriesSupported, seriesTitle,
-  statusLabel, statusTone,
-  type Basis, type CumulativePoint, type LeagueTotals, type SeriesMode, type SortColumn,
-  type SortDirection, type Team, type TeamDayPoint, type View,
+  averageBarPercent, averageMetric, completeGamesForTeam, completeGameSummary, context, coverageText,
+  dateToX, formatMetric, formatSeriesValue, label, leagueTotals, metric, metricSeries,
+  monthAxisTicks, nearestSeriesIndexByDate, nextSort, niceCeil, rankTeams, seriesDateDomain,
+  seriesSupported, seriesTitle, seriesTooltipText, statusLabel, statusTone, valueAxisTicks,
+  type Basis, type CompleteGame, type CumulativePoint, type DateDomain, type LeagueTotals,
+  type SeriesMode, type SortColumn, type SortDirection, type Team, type TeamDayPoint, type View,
 } from "./metrics.js";
 
 interface Status {
@@ -33,6 +34,7 @@ interface TeamTimeseriesData {
   schema_version: number;
   season: number;
   points: TeamDayPoint[];
+  complete_games: CompleteGame[];
 }
 
 const integer = new Intl.NumberFormat("en-US");
@@ -104,63 +106,98 @@ function SortHeader({
   );
 }
 
-function pointX(index: number, count: number, width: number): number {
-  return count === 1 ? width / 2 : (index / (count - 1)) * width;
+function seriesValueDomain(
+  series: CumulativePoint[],
+  view: View,
+): {min: number; max: number} {
+  if (view === "share") return {min: 0, max: 1};
+  const values = series.map((point) => point.value);
+  return {
+    min: Math.min(0, ...values),
+    max: niceCeil(Math.max(...values, 1)),
+  };
+}
+
+function pointY(value: number, domain: {min: number; max: number}, top: number, height: number): number {
+  const span = domain.max - domain.min || 1;
+  return top + height - ((value - domain.min) / span) * height;
 }
 
 function seriesPath(
   series: CumulativePoint[],
-  width: number,
-  height: number,
-  domain: {min: number; max: number} = {min: Math.min(0, ...series.map((point) => point.value)), max: Math.max(...series.map((point) => point.value), 1)},
+  dateDomain: DateDomain,
+  valueDomain: {min: number; max: number},
+  plot: {left: number; top: number; width: number; height: number},
 ): string {
   if (series.length === 0) return "";
-  const span = domain.max - domain.min || 1;
   return series.map((point, index) => {
-    const x = pointX(index, series.length, width);
-    const y = height - ((point.value - domain.min) / span) * height;
+    const x = dateToX(point.date, dateDomain, plot.left, plot.width);
+    const y = pointY(point.value, valueDomain, plot.top, plot.height);
     return `${index === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`;
   }).join(" ");
 }
 
 function shareAreas(
   series: CumulativePoint[],
-  width: number,
-  height: number,
+  dateDomain: DateDomain,
+  plot: {left: number; top: number; width: number; height: number},
 ): {rp: string; sp: string; line: string} {
   // Share series value is season-to-date RP share (0–1). Shade below = RP, above = SP.
-  const line = seriesPath(series, width, height, {min: 0, max: 1});
+  const valueDomain = {min: 0, max: 1};
+  const line = seriesPath(series, dateDomain, valueDomain, plot);
   if (series.length === 0) return {rp: "", sp: "", line: ""};
-  const firstX = pointX(0, series.length, width).toFixed(1);
-  const lastX = pointX(series.length - 1, series.length, width).toFixed(1);
+  const firstX = dateToX(series[0].date, dateDomain, plot.left, plot.width).toFixed(1);
+  const lastX = dateToX(series[series.length - 1].date, dateDomain, plot.left, plot.width).toFixed(1);
+  const bottom = plot.top + plot.height;
+  const top = plot.top;
   return {
     line,
-    rp: `${line} L${lastX} ${height} L${firstX} ${height} Z`,
-    sp: `${line} L${lastX} 0 L${firstX} 0 Z`,
+    rp: `${line} L${lastX} ${bottom} L${firstX} ${bottom} Z`,
+    sp: `${line} L${lastX} ${top} L${firstX} ${top} Z`,
   };
 }
 
+function chartPointerX(event: {currentTarget: SVGSVGElement; clientX: number}, width: number): number {
+  const rect = event.currentTarget.getBoundingClientRect();
+  if (rect.width <= 0) return 0;
+  return ((event.clientX - rect.left) / rect.width) * width;
+}
+
+function formatAxisValue(value: number, view: View): string {
+  if (view === "share") return `${Math.round(value * 100)}%`;
+  if (value >= 1000) return `${Math.round(value / 1000)}k`;
+  return integer.format(Math.round(value));
+}
+
 function TeamSeriesPanel({
-  team, series, view, basis, mode, contextText, onModeChange, onClose,
+  team, series, dateDomain, completeGames, view, basis, mode, contextText, open, onModeChange, onClose,
 }: {
   team: Team;
   series: CumulativePoint[];
+  dateDomain: DateDomain;
+  completeGames: CompleteGame[];
   view: View;
   basis: Basis;
   mode: SeriesMode;
   contextText: string;
+  open: boolean;
   onModeChange: (mode: SeriesMode) => void;
   onClose: () => void;
 }) {
   const width = 320;
-  const height = 160;
+  const height = 188;
+  const plot = {left: 36, top: 10, width: 276, height: 140};
   const first = series[0];
   const last = series[series.length - 1];
-  const share = view === "share" ? shareAreas(series, width, height) : null;
-  const path = share ? share.line : seriesPath(series, width, height);
+  const valueDomain = seriesValueDomain(series, view);
+  const share = view === "share" ? shareAreas(series, dateDomain, plot) : null;
+  const path = share ? share.line : seriesPath(series, dateDomain, valueDomain, plot);
   const title = seriesTitle(view, basis, mode);
+  const xTicks = monthAxisTicks(dateDomain);
+  const yTicks = valueAxisTicks(valueDomain.min, valueDomain.max, view);
   const copyRef = useRef<HTMLDivElement>(null);
   const [badgePx, setBadgePx] = useState(64);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   useEffect(() => {
     const el = copyRef.current;
     if (!el || typeof ResizeObserver === "undefined") return;
@@ -170,8 +207,31 @@ function TeamSeriesPanel({
     ro.observe(el);
     return () => ro.disconnect();
   }, [title, team.team_name, contextText]);
+  useEffect(() => {
+    setHoverIndex(null);
+  }, [team.team_id, view, basis, mode]);
+
+  const hover = hoverIndex == null ? null : series[hoverIndex] ?? null;
+  const hoverX = hover ? dateToX(hover.date, dateDomain, plot.left, plot.width) : 0;
+  const hoverY = hover ? pointY(hover.value, valueDomain, plot.top, plot.height) : 0;
+  const plotBottom = plot.top + plot.height;
+
+  function handleChartMove(event: {currentTarget: SVGSVGElement; clientX: number}) {
+    setHoverIndex(nearestSeriesIndexByDate(
+      series,
+      dateDomain,
+      plot.left,
+      plot.width,
+      chartPointerX(event, width),
+    ));
+  }
+
   return (
-    <aside className="team-series-panel" aria-label={`${team.team_name} pitch timeline`}>
+    <aside
+      className={`team-series-panel${open ? " is-open" : ""}`}
+      aria-label={`${team.team_name} pitch timeline`}
+      aria-hidden={!open}
+    >
       <div className="team-series-header">
         <div className="team-series-identity">
           <div
@@ -206,20 +266,101 @@ function TeamSeriesPanel({
         <p className="secondary">No dated pitch points for this team.</p>
       ) : (
         <>
-          <svg
-            className={`team-series-chart${share ? " share-chart" : ""}`}
-            viewBox={`0 0 ${width} ${height}`}
-            role="img"
-            aria-label={title}
-          >
-            {share ? (
-              <>
-                <path className="series-sp-area" d={share.sp} />
-                <path className="series-rp-area" d={share.rp} />
-              </>
+          <div className="team-series-chart-wrap">
+            <svg
+              className={`team-series-chart${share ? " share-chart" : ""}`}
+              viewBox={`0 0 ${width} ${height}`}
+              role="img"
+              aria-label={title}
+              onMouseMove={handleChartMove}
+              onMouseLeave={() => setHoverIndex(null)}
+            >
+              {yTicks.map((tick) => {
+                const y = pointY(tick, valueDomain, plot.top, plot.height);
+                return (
+                  <g key={`y-${tick}`}>
+                    <line
+                      className="series-grid"
+                      x1={plot.left}
+                      x2={plot.left + plot.width}
+                      y1={y}
+                      y2={y}
+                    />
+                    <text
+                      className="series-axis-label"
+                      x={plot.left - 6}
+                      y={y}
+                      textAnchor="end"
+                      dominantBaseline="middle"
+                    >
+                      {formatAxisValue(tick, view)}
+                    </text>
+                  </g>
+                );
+              })}
+              {xTicks.map((tick) => {
+                const x = dateToX(tick.date, dateDomain, plot.left, plot.width);
+                return (
+                  <text
+                    key={`x-${tick.date}`}
+                    className="series-axis-label"
+                    x={x}
+                    y={plotBottom + 14}
+                    textAnchor="middle"
+                  >
+                    {tick.label}
+                  </text>
+                );
+              })}
+              <line
+                className="series-axis"
+                x1={plot.left}
+                x2={plot.left}
+                y1={plot.top}
+                y2={plotBottom}
+              />
+              <line
+                className="series-axis"
+                x1={plot.left}
+                x2={plot.left + plot.width}
+                y1={plotBottom}
+                y2={plotBottom}
+              />
+              {share ? (
+                <>
+                  <path className="series-sp-area" d={share.sp} />
+                  <path className="series-rp-area" d={share.rp} />
+                </>
+              ) : null}
+              <path d={path} fill="none" stroke="currentColor" strokeWidth="2" />
+              {hover ? (
+                <>
+                  <line
+                    className="series-hover-guide"
+                    x1={hoverX}
+                    x2={hoverX}
+                    y1={plot.top}
+                    y2={plotBottom}
+                  />
+                  <circle
+                    className="series-hover-dot"
+                    cx={hoverX}
+                    cy={hoverY}
+                    r={4}
+                  />
+                </>
+              ) : null}
+            </svg>
+            {hover ? (
+              <div
+                className={`series-tooltip${hoverX < width * 0.25 ? " start" : hoverX > width * 0.75 ? " end" : ""}`}
+                style={{left: `${(hoverX / width) * 100}%`}}
+                role="status"
+              >
+                {seriesTooltipText(hover, view)}
+              </div>
             ) : null}
-            <path d={path} fill="none" stroke="currentColor" strokeWidth="2" />
-          </svg>
+          </div>
           {share ? (
             <p className="secondary team-series-legend">
               <span className="legend-sp">SP above</span>
@@ -232,6 +373,7 @@ function TeamSeriesPanel({
             {view === "share" ? " RP" : ""}
             {mode === "daily" ? " (latest day)" : ""} · {series.length} days
           </p>
+          <p className="secondary team-series-cgs">{completeGameSummary(completeGames)}</p>
         </>
       )}
     </aside>
@@ -284,31 +426,40 @@ function TeamTable({
             const splitTotal = view === "total" && team.total > 0;
             const spShare = splitTotal ? (team.adjusted_sp / team.total) * 100 : 0;
             const selected = selectedTeamId === team.team_id;
+            const rowClass = [
+              seriesEnabled ? "team-row" : undefined,
+              selected ? "selected" : undefined,
+            ].filter(Boolean).join(" ") || undefined;
             return (
-              <tr key={team.team_id} className={selected ? "selected" : undefined}>
+              <tr
+                key={team.team_id}
+                className={rowClass}
+                role={seriesEnabled ? "button" : undefined}
+                tabIndex={seriesEnabled ? 0 : undefined}
+                aria-pressed={seriesEnabled ? selected : undefined}
+                title={seriesEnabled ? undefined : "Timeline unavailable for this framing"}
+                onClick={seriesEnabled ? () => onSelectTeam(team.team_id) : undefined}
+                onKeyDown={seriesEnabled ? (event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onSelectTeam(team.team_id);
+                  }
+                } : undefined}
+              >
                 <td className="rank">{rank}</td>
                 <td className="team">
-                  <button
-                    type="button"
-                    className="team-select"
-                    aria-pressed={selected}
-                    disabled={!seriesEnabled}
-                    title={seriesEnabled ? undefined : "Timeline unavailable for this framing"}
-                    onClick={() => onSelectTeam(team.team_id)}
-                  >
-                    <span className="team-name">
-                      <img
-                        className="team-logo"
-                        src={`https://www.mlbstatic.com/team-logos/${team.team_id}.svg`}
-                        alt=""
-                        width={22}
-                        height={22}
-                        loading="lazy"
-                        onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
-                      />
-                      {team.team_name}
-                    </span>
-                  </button>
+                  <span className="team-name">
+                    <img
+                      className="team-logo"
+                      src={`https://www.mlbstatic.com/team-logos/${team.team_id}.svg`}
+                      alt=""
+                      width={22}
+                      height={22}
+                      loading="lazy"
+                      onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+                    />
+                    {team.team_name}
+                  </span>
                 </td>
                 <td>
                   <div className="metric">
@@ -354,13 +505,54 @@ export function Dashboard({
   const [perGame, setPerGame] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
   const [seriesMode, setSeriesMode] = useState<SeriesMode>("cumulative");
+  const [panelOpen, setPanelOpen] = useState(false);
+  const closingRef = useRef(false);
   const league = useMemo(() => leagueTotals(data.teams), [data.teams]);
+  const dateDomain = useMemo(() => seriesDateDomain(timeseries.points), [timeseries.points]);
   const roleView = view === "sp" || view === "rp" || view === "share";
   const selectedTeam = data.teams.find((team) => team.team_id === selectedTeamId) ?? null;
   const selectedSeries = useMemo(
     () => (selectedTeamId == null ? [] : metricSeries(timeseries.points, selectedTeamId, view, basis, seriesMode)),
     [timeseries.points, selectedTeamId, view, basis, seriesMode],
   );
+  const completeGames = useMemo(
+    () => (selectedTeamId == null
+      ? []
+      : completeGamesForTeam(timeseries.complete_games, selectedTeamId)),
+    [timeseries.complete_games, selectedTeamId],
+  );
+
+  function beginClose() {
+    closingRef.current = true;
+    setPanelOpen(false);
+  }
+
+  useEffect(() => {
+    if (selectedTeamId == null) {
+      setPanelOpen(false);
+      return;
+    }
+    closingRef.current = false;
+    let inner = 0;
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setPanelOpen(true));
+    });
+    return () => {
+      cancelAnimationFrame(outer);
+      cancelAnimationFrame(inner);
+    };
+  }, [selectedTeamId]);
+
+  useEffect(() => {
+    if (panelOpen || !closingRef.current || selectedTeamId == null) return;
+    const reduce = typeof window !== "undefined"
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timer = window.setTimeout(() => {
+      closingRef.current = false;
+      setSelectedTeamId(null);
+    }, reduce ? 0 : 220);
+    return () => clearTimeout(timer);
+  }, [panelOpen, selectedTeamId]);
 
   function handleSort(column: SortColumn) {
     const next = nextSort(sortColumn, sortDirection, column);
@@ -370,15 +562,20 @@ export function Dashboard({
 
   function handleView(next: View) {
     setView(next);
-    if (!seriesSupported(next)) setSelectedTeamId(null);
+    if (!seriesSupported(next) && selectedTeamId != null) beginClose();
   }
 
   function handleSelectTeam(teamId: number) {
     if (!seriesSupported(view)) return;
-    setSelectedTeamId((current) => (current === teamId ? null : teamId));
+    if (selectedTeamId === teamId && panelOpen) {
+      beginClose();
+      return;
+    }
+    setSelectedTeamId(teamId);
   }
 
-  const showSeries = selectedTeam != null && seriesSupported(view);
+  const showPanel = selectedTeam != null && dateDomain != null;
+  const layoutWithPanel = showPanel;
 
   return (
     <main className="shell">
@@ -395,7 +592,7 @@ export function Dashboard({
         {roleView && <label>Role basis<select value={basis} onChange={(event) => setBasis(event.target.value as Basis)}><option value="adjusted">Role-adjusted</option><option value="official">Official appearance</option></select></label>}
         {view !== "share" && <label className="check"><input type="checkbox" checked={perGame} onChange={(event) => setPerGame(event.target.checked)} />Per game</label>}
       </section>
-      <div className={showSeries ? "table-with-panel" : undefined}>
+      <div className={layoutWithPanel ? "table-with-panel" : undefined}>
         <TeamTable
           teams={data.teams}
           league={league}
@@ -404,22 +601,25 @@ export function Dashboard({
           sortColumn={sortColumn}
           sortDirection={sortDirection}
           perGame={perGame}
-          selectedTeamId={showSeries ? selectedTeamId : null}
+          selectedTeamId={showPanel ? selectedTeamId : null}
           seriesEnabled={seriesSupported(view)}
-          showContext={!showSeries}
+          showContext={!showPanel}
           onSort={handleSort}
           onSelectTeam={handleSelectTeam}
         />
-        {showSeries && selectedTeam ? (
+        {showPanel && selectedTeam && dateDomain ? (
           <TeamSeriesPanel
             team={selectedTeam}
             series={selectedSeries}
+            dateDomain={dateDomain}
+            completeGames={completeGames}
             view={view}
             basis={basis}
             mode={seriesMode}
             contextText={context(selectedTeam, league, view, basis)}
+            open={panelOpen}
             onModeChange={setSeriesMode}
-            onClose={() => setSelectedTeamId(null)}
+            onClose={beginClose}
           />
         ) : null}
       </div>

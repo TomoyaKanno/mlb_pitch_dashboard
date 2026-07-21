@@ -12,7 +12,7 @@ The Observable Framework application in `observable/` is the only supported user
 - **Official SP and RP workload** using MLB's per-game `gamesStarted` designation.
 - **Role-adjusted SP and RP workload** for opener and bulk-pitcher games.
 - **Bullpen share**, **reclassified pitches**, per-game rates, and appearances that need human review.
-- **Team timelines** (cumulative or daily) for total, SP, RP, and bullpen-share framings, built from the sibling daily timeseries export.
+- **Team timelines** (cumulative or daily) on a shared season calendar axis, with hover tooltips and game-grain complete-game notes (pitcher + date).
 
 The official starter is not inferred from appearance order, pitch count, outing length, or effectiveness. A starter removed after one inning remains an official SP. The role-adjusted view is a separate analytical layer:
 
@@ -40,7 +40,13 @@ flowchart TD
 | `dashboard-data` | Machine-managed normalized season snapshots; never merged into `main` |
 | GitHub Actions artifact | Ephemeral compiled site served by GitHub Pages; never committed |
 
-The deployed browser downloads small team-level aggregates generated at build time: season totals for the ranking table, plus a sibling daily team timeseries for the per-team timeline panel. Data acquisition, role classification, persistence, validation, and export all happen before deployment.
+The deployed browser downloads small team-level aggregates generated at build time: season totals for the ranking table, plus a sibling team timeseries payload (daily increments for the chart and game-grain complete games). Data acquisition, role classification, persistence, validation, and export all happen before deployment.
+
+### Using the timeline panel
+
+- Click any table row to open that team's series beside the table (slides in; Role adjustment disables row clicks).
+- Charts use one shared linear date domain for every team, with month labels on X and tidy value ticks on Y.
+- Hover the series for the nearest game day; complete games (zero official RP pitches in that `game_pk`) are listed under the chart with the pitcher name — never inferred from calendar-day totals, so doubleheaders do not hide a CG.
 
 ## Refresh and deployment lifecycle
 
@@ -74,7 +80,6 @@ The MLB client caps concurrency, paces request starts, retries `429`, `5xx`, and
 - A failed refresh does not trigger deployment.
 - A failed build does not replace the last successful Pages artifact.
 - Snapshot diagnostics (complete/partial status, current/stale/missing games, generation time, and API-call count) live in a quiet full-width strip below the content — useful for troubleshooting, not primary UI.
-- Click a team to open its timeline beside the table (Cumulative or Timecourse). Role adjustment has no timeline yet, so team clicks are disabled in that framing.
 
 ## Local development
 
