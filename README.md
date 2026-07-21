@@ -12,6 +12,7 @@ The Observable Framework application in `observable/` is the only supported user
 - **Official SP and RP workload** using MLB's per-game `gamesStarted` designation.
 - **Role-adjusted SP and RP workload** for opener and bulk-pitcher games.
 - **Bullpen share**, **reclassified pitches**, per-game rates, and appearances that need human review.
+- **Team timelines** (cumulative or daily) for total, SP, RP, and bullpen-share framings, built from the sibling daily timeseries export.
 
 The official starter is not inferred from appearance order, pitch count, outing length, or effectiveness. A starter removed after one inning remains an official SP. The role-adjusted view is a separate analytical layer:
 
@@ -39,7 +40,7 @@ flowchart TD
 | `dashboard-data` | Machine-managed normalized season snapshots; never merged into `main` |
 | GitHub Actions artifact | Ephemeral compiled site served by GitHub Pages; never committed |
 
-The deployed browser downloads a small team-level aggregate generated at build time. Data acquisition, role classification, persistence, validation, and export all happen before deployment.
+The deployed browser downloads small team-level aggregates generated at build time: season totals for the ranking table, plus a sibling daily team timeseries for the per-team timeline panel. Data acquisition, role classification, persistence, validation, and export all happen before deployment.
 
 ## Refresh and deployment lifecycle
 
@@ -51,7 +52,7 @@ The deployed browser downloads a small team-level aggregate generated at build t
 4. Fetch only missing games, prior failures, and games inside the seven-day reconciliation window. A forced run fetches every completed game.
 5. Classify appearances, validate structural and arithmetic invariants, write normalized JSONL partitions, and verify the persisted files and hashes.
 6. Commit the snapshot to `dashboard-data` only after validation succeeds.
-7. Trigger `Build and deploy dashboard`, which checks out current source and data, exports all 30 team totals, builds the site, and deploys a Pages artifact.
+7. Trigger `Build and deploy dashboard`, which checks out current source and data, exports the 30-team season totals and the reconciled team timeseries, builds the site, and deploys a Pages artifact.
 
 The configured season changes intentionally rather than rolling over on January 1. This prevents an empty new-season dataset from replacing an established snapshot before regular-season games exist.
 
@@ -72,7 +73,8 @@ The MLB client caps concurrency, paces request starts, retries `429`, `5xx`, and
 - A schedule regression, corrupt file, hash mismatch, missing official starter, duplicate appearance, unclassified appearance, or unbalanced team total blocks the snapshot write.
 - A failed refresh does not trigger deployment.
 - A failed build does not replace the last successful Pages artifact.
-- The dashboard exposes complete/partial state, current/stale/missing games, generation time, and API-call count.
+- Snapshot diagnostics (complete/partial status, current/stale/missing games, generation time, and API-call count) live in a quiet full-width strip below the content — useful for troubleshooting, not primary UI.
+- Click a team to open its timeline beside the table (Cumulative or Timecourse). Role adjustment has no timeline yet, so team clicks are disabled in that framing.
 
 ## Local development
 

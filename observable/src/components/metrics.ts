@@ -33,6 +33,26 @@ export interface RankedTeam {
   rank: number;
 }
 
+export interface TeamDayPoint {
+  date: string;
+  team_id: number;
+  team_name: string;
+  games: number;
+  total: number;
+  official_sp: number;
+  official_rp: number;
+  adjusted_sp: number;
+  adjusted_rp: number;
+  bulk_to_sp: number;
+  opener_to_rp: number;
+  review_count: number;
+}
+
+export interface CumulativePoint {
+  date: string;
+  value: number;
+}
+
 export type SnapshotResult = "complete" | "partial" | "failed";
 
 export interface CoverageStatus {
@@ -79,6 +99,90 @@ export function averageMetric(teams: Team[], view: View, basis: Basis, perGame: 
 export function averageBarPercent(average: number, maximum: number): number {
   if (maximum <= 0) return 0;
   return Math.min(100, Math.max(0, (Math.abs(average) / maximum) * 100));
+}
+
+export type SeriesMode = "cumulative" | "daily";
+
+// Role adjustment has no series chart yet.
+export function seriesSupported(view: View): boolean {
+  return view !== "adjustment";
+}
+
+function teamDayRows(points: TeamDayPoint[], teamId: number): TeamDayPoint[] {
+  return points
+    .filter((point) => point.team_id === teamId)
+    .sort((a, b) => a.date.localeCompare(b.date) || a.team_id - b.team_id);
+}
+
+function dayMetric(point: TeamDayPoint, view: View, basis: Basis): number {
+  if (view === "total") return point.total;
+  if (view === "sp" || view === "rp") return point[roleKey(basis, view)] as number;
+  if (view === "share") {
+    const rp = point[roleKey(basis, "rp")] as number;
+    return point.total > 0 ? rp / point.total : 0;
+  }
+  return point.adjusted_sp - point.official_sp;
+}
+
+// Series for one team matching the table framing.
+// cumulative: season-to-date running value (share = running RP/total).
+// daily: each day's increment or that day's SP/RP split.
+export function metricSeries(
+  points: TeamDayPoint[],
+  teamId: number,
+  view: View,
+  basis: Basis,
+  mode: SeriesMode = "cumulative",
+): CumulativePoint[] {
+  if (!seriesSupported(view)) return [];
+  const rows = teamDayRows(points, teamId);
+
+  if (mode === "daily") {
+    return rows.map((point) => ({date: point.date, value: dayMetric(point, view, basis)}));
+  }
+
+  if (view === "share") {
+    const rpKey = roleKey(basis, "rp");
+    let runningRp = 0;
+    let runningTotal = 0;
+    return rows.map((point) => {
+      runningRp += point[rpKey] as number;
+      runningTotal += point.total;
+      return {
+        date: point.date,
+        value: runningTotal > 0 ? runningRp / runningTotal : 0,
+      };
+    });
+  }
+
+  let running = 0;
+  return rows.map((point) => {
+    running += dayMetric(point, view, basis);
+    return {date: point.date, value: running};
+  });
+}
+
+export function seriesTitle(view: View, basis: Basis, mode: SeriesMode = "cumulative"): string {
+  const role = basis === "official" ? "official" : "adjusted";
+  if (mode === "daily") {
+    if (view === "total") return "Daily pitches";
+    if (view === "sp") return `Daily ${role} SP pitches`;
+    if (view === "rp") return `Daily ${role} RP pitches`;
+    if (view === "share") return `Daily ${role} SP / RP split`;
+    return "Daily net SP reclassification";
+  }
+  if (view === "total") return "Cumulative pitches";
+  if (view === "sp") return `Cumulative ${role} SP pitches`;
+  if (view === "rp") return `Cumulative ${role} RP pitches`;
+  if (view === "share") return `Season-to-date ${role} SP / RP split`;
+  return "Cumulative net SP reclassification";
+}
+
+export function formatSeriesValue(value: number, view: View): string {
+  if (view === "share") return `${decimal.format(value * 100)}%`;
+  const rounded = Math.round(value);
+  if (view === "adjustment" && rounded > 0) return `+${integer.format(rounded)}`;
+  return integer.format(rounded);
 }
 
 // Header-click sort: same column toggles direction; a new column uses its default

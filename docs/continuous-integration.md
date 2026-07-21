@@ -19,20 +19,20 @@ A newer run for the same branch may cancel an older one so the visible result be
 4. Install `requirements-dev.txt`.
 5. Run `python -m pytest -q`.
 
-These tests cover the MLB client, role classifier, incremental failure behavior, snapshot persistence and integrity, validation invariants, and team export arithmetic.
+These tests cover the MLB client, role classifier, incremental failure behavior, snapshot persistence and integrity, validation invariants, season team export arithmetic, and team-timeseries reconciliation.
 
 ### Static site checks
 
 1. Install Node.js 22 and the locked Observable dependencies.
 2. Run TypeScript checking.
 3. Run Vitest presentation and ranking tests.
-4. Build the static site from the committed fixture.
+4. Build the static site from the committed fixtures (`dashboard.json` and `team-timeseries.json`).
 
 The Python and Node jobs run independently, making the failing layer clear.
 
 ## Production-data build check
 
-Relevant pull requests also trigger the build job in `.github/workflows/deploy-pages.yml`. It checks out the real `dashboard-data` branch, validates the manifest, builds the proposed source against all 30 teams, verifies the browser payload and React runtime, and uploads a short-lived artifact. Its deployment job is skipped on pull requests.
+Relevant pull requests also trigger the build job in `.github/workflows/deploy-pages.yml`. It checks out the real `dashboard-data` branch, validates the manifest, builds the proposed source against all 30 teams, verifies both browser payloads (season totals plus reconciled timeseries) and the React runtime, and uploads a short-lived artifact. Its deployment job is skipped on pull requests.
 
 ## Security and scope
 

@@ -1,7 +1,8 @@
 import {describe, expect, it} from "vitest";
 import {
-  averageBarPercent, averageMetric, coverageText, leagueTotals, metric, nextSort, rankTeams, rawMetric,
-  statusLabel, statusTone, type CoverageStatus, type Team,
+  averageBarPercent, averageMetric, coverageText, formatSeriesValue, metricSeries,
+  leagueTotals, metric, nextSort, rankTeams, rawMetric, seriesSupported, seriesTitle,
+  statusLabel, statusTone, type CoverageStatus, type Team, type TeamDayPoint,
 } from "./metrics";
 
 const team: Team = {
@@ -93,6 +94,57 @@ describe("static dashboard metrics", () => {
     expect(doubled.total).toBe(30_000);
     expect(doubled.adjusted_sp).toBe(17_800);
     expect(doubled.review_count).toBe(4);
+  });
+
+  it("builds cumulative and daily series for the selected framing", () => {
+    const points: TeamDayPoint[] = [
+      {
+        date: "2026-04-02", team_id: 119, team_name: "Los Angeles Dodgers", games: 1,
+        total: 100, official_sp: 60, official_rp: 40, adjusted_sp: 70, adjusted_rp: 30,
+        bulk_to_sp: 10, opener_to_rp: 0, review_count: 0,
+      },
+      {
+        date: "2026-04-01", team_id: 119, team_name: "Los Angeles Dodgers", games: 1,
+        total: 80, official_sp: 50, official_rp: 30, adjusted_sp: 45, adjusted_rp: 35,
+        bulk_to_sp: 0, opener_to_rp: 5, review_count: 0,
+      },
+      {
+        date: "2026-04-01", team_id: 147, team_name: "New York Yankees", games: 1,
+        total: 90, official_sp: 55, official_rp: 35, adjusted_sp: 55, adjusted_rp: 35,
+        bulk_to_sp: 0, opener_to_rp: 0, review_count: 0,
+      },
+    ];
+    expect(metricSeries(points, 119, "total", "adjusted", "cumulative")).toEqual([
+      {date: "2026-04-01", value: 80},
+      {date: "2026-04-02", value: 180},
+    ]);
+    expect(metricSeries(points, 119, "total", "adjusted", "daily")).toEqual([
+      {date: "2026-04-01", value: 80},
+      {date: "2026-04-02", value: 100},
+    ]);
+    expect(metricSeries(points, 119, "sp", "adjusted", "cumulative")).toEqual([
+      {date: "2026-04-01", value: 45},
+      {date: "2026-04-02", value: 115},
+    ]);
+    expect(metricSeries(points, 119, "rp", "official", "daily")).toEqual([
+      {date: "2026-04-01", value: 30},
+      {date: "2026-04-02", value: 40},
+    ]);
+    expect(metricSeries(points, 119, "share", "adjusted", "cumulative")).toEqual([
+      {date: "2026-04-01", value: 35 / 80},
+      {date: "2026-04-02", value: 65 / 180},
+    ]);
+    expect(metricSeries(points, 119, "share", "adjusted", "daily")).toEqual([
+      {date: "2026-04-01", value: 35 / 80},
+      {date: "2026-04-02", value: 30 / 100},
+    ]);
+    expect(metricSeries(points, 119, "adjustment", "adjusted", "cumulative")).toEqual([]);
+    expect(seriesSupported("adjustment")).toBe(false);
+    expect(seriesSupported("share")).toBe(true);
+    expect(metricSeries(points, 999, "total", "adjusted", "daily")).toEqual([]);
+    expect(seriesTitle("share", "adjusted", "cumulative")).toBe("Season-to-date adjusted SP / RP split");
+    expect(seriesTitle("share", "adjusted", "daily")).toBe("Daily adjusted SP / RP split");
+    expect(formatSeriesValue(0.401, "share")).toBe("40.1%");
   });
 });
 

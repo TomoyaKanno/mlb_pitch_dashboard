@@ -12,6 +12,39 @@ from .check import check_persisted_snapshot
 from .schema import Snapshot
 from .storage import load_snapshot
 
+METRIC_KEYS = (
+    "total",
+    "official_sp",
+    "official_rp",
+    "adjusted_sp",
+    "adjusted_rp",
+    "bulk_to_sp",
+    "opener_to_rp",
+    "review_count",
+)
+
+
+def _empty_metrics() -> dict[str, int]:
+    return {key: 0 for key in METRIC_KEYS}
+
+
+def _accumulate_appearance(bucket: dict[str, Any], row: Any) -> None:
+    bucket["total"] += row.pitches
+    bucket["official_sp" if row.official_started else "official_rp"] += row.pitches
+    bucket["adjusted_sp" if row.adjusted_role == "SP" else "adjusted_rp"] += row.pitches
+    if not row.official_started and row.adjusted_role == "SP":
+        bucket["bulk_to_sp"] += row.pitches
+    if row.official_started and row.adjusted_role == "RP":
+        bucket["opener_to_rp"] += row.pitches
+    bucket["review_count"] += int(row.needs_review)
+
+
+def _assert_role_balance(label: str, bucket: dict[str, Any]) -> None:
+    if bucket["total"] != bucket["official_sp"] + bucket["official_rp"]:
+        raise ValueError(f"official role totals do not balance for {label}")
+    if bucket["total"] != bucket["adjusted_sp"] + bucket["adjusted_rp"]:
+        raise ValueError(f"adjusted role totals do not balance for {label}")
+
 
 def aggregate_teams(snapshot: Snapshot) -> list[dict[str, Any]]:
     totals: dict[int, dict[str, Any]] = {}
@@ -21,18 +54,7 @@ def aggregate_teams(snapshot: Snapshot) -> list[dict[str, Any]]:
     for row in snapshot.appearances.values():
         team = totals.setdefault(
             row.team_id,
-            {
-                "team_id": row.team_id,
-                "team_name": row.team_name,
-                "total": 0,
-                "official_sp": 0,
-                "official_rp": 0,
-                "adjusted_sp": 0,
-                "adjusted_rp": 0,
-                "bulk_to_sp": 0,
-                "opener_to_rp": 0,
-                "review_count": 0,
-            },
+            {"team_id": row.team_id, "team_name": row.team_name, **_empty_metrics()},
         )
         previous_name = latest_name.get(row.team_id)
         if previous_name is None or row.game_date >= previous_name[0]:
@@ -40,33 +62,98 @@ def aggregate_teams(snapshot: Snapshot) -> list[dict[str, Any]]:
             team["team_name"] = row.team_name
 
         games[row.team_id].add(row.game_pk)
-        team["total"] += row.pitches
-        team["official_sp" if row.official_started else "official_rp"] += row.pitches
-        team["adjusted_sp" if row.adjusted_role == "SP" else "adjusted_rp"] += row.pitches
-        if not row.official_started and row.adjusted_role == "SP":
-            team["bulk_to_sp"] += row.pitches
-        if row.official_started and row.adjusted_role == "RP":
-            team["opener_to_rp"] += row.pitches
-        team["review_count"] += int(row.needs_review)
+        _accumulate_appearance(team, row)
 
     result: list[dict[str, Any]] = []
     for team_id, team in totals.items():
         team["games"] = len(games[team_id])
-        if team["total"] != team["official_sp"] + team["official_rp"]:
-            raise ValueError(f"official role totals do not balance for team {team_id}")
-        if team["total"] != team["adjusted_sp"] + team["adjusted_rp"]:
-            raise ValueError(f"adjusted role totals do not balance for team {team_id}")
+        _assert_role_balance(f"team {team_id}", team)
         result.append(team)
     return sorted(result, key=lambda team: (-team["total"], team["team_name"]))
 
 
-def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
+def aggregate_team_timeseries(snapshot: Snapshot) -> list[dict[str, Any]]:
+    """Daily team increments: one point per (game_date, team_id) with activity.
+
+    Points are additive facts. Summing a metric across dates for a team equals
+    that team's season total from aggregate_teams. Clients cumsum for charts.
+    """
+    points: dict[tuple[str, int], dict[str, Any]] = {}
+    games: dict[tuple[str, int], set[int]] = defaultdict(set)
+    latest_name: dict[tuple[str, int], str] = {}
+
+    for row in snapshot.appearances.values():
+        key = (row.game_date, row.team_id)
+        point = points.setdefault(
+            key,
+            {
+                "date": row.game_date,
+                "team_id": row.team_id,
+                "team_name": row.team_name,
+                **_empty_metrics(),
+            },
+        )
+        latest_name[key] = row.team_name
+        point["team_name"] = row.team_name
+        games[key].add(row.game_pk)
+        _accumulate_appearance(point, row)
+
+    result: list[dict[str, Any]] = []
+    for key, point in points.items():
+        point["games"] = len(games[key])
+        point["team_name"] = latest_name[key]
+        _assert_role_balance(f"team {point['team_id']} on {point['date']}", point)
+        result.append(point)
+    return sorted(result, key=lambda point: (point["date"], point["team_id"]))
+
+
+def reconcile_team_timeseries(
+    teams: list[dict[str, Any]],
+    points: list[dict[str, Any]],
+) -> None:
+    """Require daily increments to reconstruct season team totals exactly."""
+    by_team: dict[int, dict[str, int]] = defaultdict(_empty_metrics)
+    games: dict[int, int] = defaultdict(int)
+    names: dict[int, str] = {}
+
+    for point in points:
+        team_id = int(point["team_id"])
+        names[team_id] = str(point["team_name"])
+        games[team_id] += int(point["games"])
+        for key in METRIC_KEYS:
+            by_team[team_id][key] += int(point[key])
+
+    team_ids = {int(team["team_id"]) for team in teams}
+    point_ids = set(by_team)
+    if team_ids != point_ids:
+        raise ValueError(
+            "team timeseries team_id set does not match season teams: "
+            f"only_teams={sorted(team_ids - point_ids)} "
+            f"only_series={sorted(point_ids - team_ids)}"
+        )
+
+    for team in teams:
+        team_id = int(team["team_id"])
+        summed = by_team[team_id]
+        for key in METRIC_KEYS:
+            if int(team[key]) != summed[key]:
+                raise ValueError(
+                    f"timeseries {key} for team {team_id} sums to {summed[key]}, "
+                    f"season total is {team[key]}"
+                )
+        if int(team["games"]) != games[team_id]:
+            raise ValueError(
+                f"timeseries games for team {team_id} sum to {games[team_id]}, "
+                f"season total is {team['games']}"
+            )
+
+
+def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any], dict[str, Any]]:
     verified = check_persisted_snapshot(data_dir, season)
     snapshot = load_snapshot(data_dir, season)
     manifest_path = data_dir / "seasons" / str(season) / "manifest.json"
     manifest = json.loads(manifest_path.read_text())
-    teams = aggregate_teams(snapshot)
-    return {
+    meta = {
         "schema_version": 1,
         "season": season,
         "generated_at": manifest["generated_at"],
@@ -83,16 +170,40 @@ def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
             "stale_games": verified["stale_games"],
             "missing_games": verified["missing_games"],
         },
-        "teams": teams,
     }
+    return snapshot, verified, meta
+
+
+def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
+    snapshot, _verified, meta = _export_common(data_dir, season)
+    teams = aggregate_teams(snapshot)
+    return {**meta, "teams": teams}
+
+
+def export_team_timeseries(data_dir: Path, season: int) -> dict[str, Any]:
+    snapshot, _verified, meta = _export_common(data_dir, season)
+    teams = aggregate_teams(snapshot)
+    points = aggregate_team_timeseries(snapshot)
+    reconcile_team_timeseries(teams, points)
+    return {**meta, "points": points}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Export browser-ready MLB dashboard data")
     parser.add_argument("--season", required=True, type=int)
     parser.add_argument("--data-dir", required=True, type=Path)
+    parser.add_argument(
+        "--kind",
+        choices=("dashboard", "team-timeseries"),
+        default="dashboard",
+        help="dashboard = season team totals; team-timeseries = daily team increments",
+    )
     args = parser.parse_args()
-    json.dump(export_dashboard(args.data_dir, args.season), fp=sys.stdout, separators=(",", ":"))
+    if args.kind == "team-timeseries":
+        payload = export_team_timeseries(args.data_dir, args.season)
+    else:
+        payload = export_dashboard(args.data_dir, args.season)
+    json.dump(payload, fp=sys.stdout, separators=(",", ":"))
     print()
 
 
