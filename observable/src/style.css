@@ -1,24 +1,38 @@
 @import url("observablehq:default.css");
-@import url("observablehq:theme-air.css") (prefers-color-scheme: light);
-@import url("observablehq:theme-near-midnight.css") (prefers-color-scheme: dark);
-@import url("observablehq:theme-alt.css");
 @import url("observablehq:theme-wide.css");
 
+/* Light default; dark applies automatically to match the OS appearance. */
 :root {
-  --surface: var(--theme-background);
-  --surface-2: var(--theme-background-alt);
-  --text: var(--theme-foreground);
-  --muted: var(--theme-foreground-muted);
-  --border: var(--theme-foreground-faintest);
-  --accent: #1557b0;
-  --accent-soft: #dceaff;
+  color-scheme: light;
+  --bg: #f6f4fb;
+  --surface: #ffffff;
+  --surface-2: #efeaf8;
+  --text: #1b1730;
+  --muted: #645d80;
+  --border: #e4def2;
+  --accent: #6d28d9;
+  --accent-soft: #e9e2fb;
   --danger: #a52a2a;
   --warning: #8a5a00;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root { --accent: #77aef7; --accent-soft: #243f66; --danger: #ff9a9a; --warning: #ffd166; }
+  :root {
+    color-scheme: dark;
+    --bg: #0f0d1a;
+    --surface: #181425;
+    --surface-2: #221d36;
+    --text: #ece8fb;
+    --muted: #a39cc0;
+    --border: #322b4e;
+    --accent: #a78bfa;
+    --accent-soft: #2e2650;
+    --danger: #ff9a9a;
+    --warning: #ffd166;
+  }
 }
+
+body { background: var(--bg); color: var(--text); }
 
 * { box-sizing: border-box; }
 button, input, select { font: inherit; min-height: 40px; border: 1px solid var(--border); border-radius: 8px; color: var(--text); background: var(--surface); }

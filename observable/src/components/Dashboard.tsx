@@ -46,7 +46,7 @@ function StatusStrip({data}: {data: DashboardData}) {
   ].filter(Boolean).join(" · ");
   return (
     <section className={`status-strip${tone ? ` ${tone}` : ""}`} aria-live="polite">
-      <span>{prefix} · {new Date(data.generated_at).toLocaleString()}</span>
+      <span>{prefix}</span>
       <span>
         {integer.format(status.current_games)}/{integer.format(status.scheduled_games)} games
         {coverage ? ` · ${coverage}` : ""} · {integer.format(status.api_calls)} API calls
@@ -113,6 +113,7 @@ export function Dashboard({data}: {data: DashboardData}) {
         <div className="snapshot-panel">
           <span>Season</span><strong>{data.season}</strong>
           <span>Data source</span><strong>Validated static snapshot</strong>
+          <span>Updated</span><strong>{new Date(data.generated_at).toLocaleString()}</strong>
         </div>
       </header>
       <StatusStrip data={data} />
