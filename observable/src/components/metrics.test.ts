@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 import {
-  coverageText, leagueTotals, metric, rankTeams, rawMetric,
+  averageBarPercent, averageMetric, coverageText, leagueTotals, metric, nextSort, rankTeams, rawMetric,
   statusLabel, statusTone, type CoverageStatus, type Team,
 } from "./metrics";
 
@@ -34,25 +34,58 @@ describe("static dashboard metrics", () => {
     const highVolume = {...team, team_id: 120, team_name: "High Volume", games: 4, total: 200};
     const highRate = {...team, team_id: 121, team_name: "High Rate", games: 1, total: 100};
 
-    expect(rankTeams([highVolume, highRate], "total", "adjusted", "high", false))
+    expect(rankTeams([highVolume, highRate], "total", "adjusted", "metric", "desc", false))
       .toEqual([
         {team: highVolume, rank: 1},
         {team: highRate, rank: 2},
       ]);
-    expect(rankTeams([highVolume, highRate], "total", "adjusted", "high", true))
+    expect(rankTeams([highVolume, highRate], "total", "adjusted", "metric", "desc", true))
       .toEqual([
         {team: highRate, rank: 1},
         {team: highVolume, rank: 2},
       ]);
   });
 
+  it("averages the plotted metric across teams", () => {
+    const a = {...team, team_id: 120, total: 10_000, games: 100, adjusted_rp: 4_000};
+    const b = {...team, team_id: 121, total: 20_000, games: 100, adjusted_rp: 8_000};
+
+    // Unweighted mean of totals: (10k + 20k) / 2.
+    expect(averageMetric([a, b], "total", "adjusted", false)).toBe(15_000);
+    // Per game divides each team by its own games before averaging.
+    expect(averageMetric([a, b], "total", "adjusted", true)).toBe(150);
+    // Mean of per-team bullpen shares: (0.40 + 0.40) / 2.
+    expect(averageMetric([a, b], "share", "adjusted", false)).toBeCloseTo(0.4);
+    expect(averageMetric([], "total", "adjusted", false)).toBe(0);
+  });
+
+  it("places the MLB-average notch on the shared bar scale", () => {
+    expect(averageBarPercent(7_500, 15_000)).toBe(50);
+    expect(averageBarPercent(-3_000, 10_000)).toBe(30);
+    expect(averageBarPercent(12_000, 10_000)).toBe(100);
+    expect(averageBarPercent(1_000, 0)).toBe(0);
+  });
+
   it("keeps metric ranks when rows are reordered", () => {
     const first = {...team, team_id: 120, team_name: "Alpha", total: 100};
     const second = {...team, team_id: 121, team_name: "Zulu", total: 200};
 
-    expect(rankTeams([first, second], "total", "adjusted", "alpha", false)
+    expect(rankTeams([first, second], "total", "adjusted", "team", "asc", false)
       .map(({team: row, rank}) => [row.team_name, rank]))
       .toEqual([["Alpha", 2], ["Zulu", 1]]);
+    expect(rankTeams([first, second], "total", "adjusted", "team", "desc", false)
+      .map(({team: row, rank}) => [row.team_name, rank]))
+      .toEqual([["Zulu", 1], ["Alpha", 2]]);
+    expect(rankTeams([first, second], "total", "adjusted", "metric", "asc", false)
+      .map(({team: row, rank}) => [row.team_name, rank]))
+      .toEqual([["Alpha", 2], ["Zulu", 1]]);
+  });
+
+  it("toggles sort direction on the active column and defaults a new column", () => {
+    expect(nextSort("metric", "desc", "metric")).toEqual({column: "metric", direction: "asc"});
+    expect(nextSort("metric", "asc", "metric")).toEqual({column: "metric", direction: "desc"});
+    expect(nextSort("metric", "desc", "team")).toEqual({column: "team", direction: "asc"});
+    expect(nextSort("team", "asc", "metric")).toEqual({column: "metric", direction: "desc"});
   });
 
   it("sums league summary fields", () => {
