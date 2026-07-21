@@ -39,7 +39,7 @@ flowchart TD
 | `dashboard-data` | Machine-managed normalized season snapshots; never merged into `main` |
 | GitHub Actions artifact | Ephemeral compiled site served by GitHub Pages; never committed |
 
-The deployed browser downloads a small team-level aggregate generated at build time. Data acquisition, role classification, persistence, validation, and export all happen before deployment.
+The deployed browser downloads small team-level aggregates generated at build time (season totals for the table, plus a sibling daily team timeseries for future charts). Data acquisition, role classification, persistence, validation, and export all happen before deployment.
 
 ## Refresh and deployment lifecycle
 
@@ -72,7 +72,7 @@ The MLB client caps concurrency, paces request starts, retries `429`, `5xx`, and
 - A schedule regression, corrupt file, hash mismatch, missing official starter, duplicate appearance, unclassified appearance, or unbalanced team total blocks the snapshot write.
 - A failed refresh does not trigger deployment.
 - A failed build does not replace the last successful Pages artifact.
-- The dashboard exposes complete/partial state, current/stale/missing games, generation time, and API-call count.
+- Snapshot diagnostics (complete/partial status, current/stale/missing games, generation time, and API-call count) live in a quiet full-width strip below the table — useful for troubleshooting, not primary UI.
 
 ## Local development
 

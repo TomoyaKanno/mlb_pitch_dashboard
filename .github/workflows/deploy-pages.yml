@@ -81,26 +81,41 @@ jobs:
           python - <<'PY'
           import json
           import os
+          import sys
           from pathlib import Path
 
-          files = list(Path("source/observable/dist/_file/data").glob("dashboard.*.json"))
-          if len(files) != 1:
-              raise SystemExit(f"expected one dashboard payload, found {len(files)}")
-          payload = json.loads(files[0].read_text())
+          sys.path.insert(0, "source")
+          from pipeline.export import reconcile_team_timeseries
+
+          data_dir = Path("source/observable/dist/_file/data")
+          dashboard_files = list(data_dir.glob("dashboard.*.json"))
+          series_files = list(data_dir.glob("team-timeseries.*.json"))
+          if len(dashboard_files) != 1:
+              raise SystemExit(f"expected one dashboard payload, found {len(dashboard_files)}")
+          if len(series_files) != 1:
+              raise SystemExit(f"expected one team-timeseries payload, found {len(series_files)}")
+
+          payload = json.loads(dashboard_files[0].read_text())
+          series = json.loads(series_files[0].read_text())
           if payload["season"] != int(os.environ["DASHBOARD_SEASON"]):
               raise SystemExit("built the wrong season")
+          if series["season"] != payload["season"]:
+              raise SystemExit("team-timeseries season does not match dashboard")
           if len(payload["teams"]) != 30:
               raise SystemExit(f"expected 30 MLB teams, found {len(payload['teams'])}")
           if payload["status"]["result"] == "failed":
               raise SystemExit("refusing to deploy a failed data snapshot")
           if payload["data_commit"] != os.environ["DASHBOARD_DATA_SHA"]:
               raise SystemExit("dashboard data revision does not match checked-out data")
+          if series["data_commit"] != payload["data_commit"]:
+              raise SystemExit("team-timeseries data revision does not match dashboard")
+          reconcile_team_timeseries(payload["teams"], series["points"])
           index_html = Path("source/observable/dist/index.html").read_text()
           if "_node/react@" in index_html:
               raise SystemExit("built dashboard contains a second React runtime")
           print(
-              f"Validated {len(payload['teams'])} teams from "
-              f"{payload['status']['current_games']} current games"
+              f"Validated {len(payload['teams'])} teams and {len(series['points'])} "
+              f"team-day points from {payload['status']['current_games']} current games"
           )
           PY
 

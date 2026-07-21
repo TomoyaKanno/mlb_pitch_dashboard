@@ -26,6 +26,17 @@ Game and appearance records are partitioned by month to keep automated diffs sma
 
 Appearance records include both MLB's official `gamesStarted` designation and the conservative role-adjusted classification. A short, ineffective official start therefore remains an SP unless the established opener rules identify it as relief usage.
 
+## Browser-ready exports
+
+`pipeline.export` projects the validated snapshot into static JSON consumed at Observable build time. These are read models, not a second source of truth:
+
+| Artifact | Loader | Contents |
+| --- | --- | --- |
+| Season team totals | `observable/src/data/dashboard.json.py` | One row per team; powers the table |
+| Team timeseries | `observable/src/data/team-timeseries.json.py` | One row per `(game_date, team_id)` with activity; daily increments |
+
+Daily team points must reconcile to season team totals: summing each metric (and game counts) across dates for a team equals that team's dashboard row. Clients derive cumulative charts with a prefix sum. Player-level series can follow the same sibling-export pattern later; appearance rows are already pitcher-dated.
+
 ## Failure behavior
 
 - A failed first fetch is recorded as missing.

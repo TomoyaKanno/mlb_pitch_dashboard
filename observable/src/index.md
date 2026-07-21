@@ -4,6 +4,8 @@ title: MLB Pitch Workload
 
 ```js
 const dashboard = FileAttachment("./data/dashboard.json").json();
+// Sibling team-day increments for future timecourse charts; not rendered yet.
+const teamTimeseries = FileAttachment("./data/team-timeseries.json").json();
 ```
 
 ```tsx
