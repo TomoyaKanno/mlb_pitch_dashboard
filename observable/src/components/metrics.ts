@@ -1,6 +1,7 @@
 export type View = "total" | "sp" | "rp" | "share" | "adjustment";
 export type Basis = "adjusted" | "official";
-export type Order = "high" | "low" | "alpha";
+export type SortColumn = "metric" | "team";
+export type SortDirection = "asc" | "desc";
 
 export interface Team {
   team_id: number;
@@ -65,25 +66,58 @@ export function metric(team: Team, view: View, basis: Basis, perGame: boolean): 
   return perGame && view !== "share" ? value / team.games : value;
 }
 
+// Unweighted mean of the plotted metric across teams — the league-average
+// bar length, used to place the "MLB average" notch on each bar.
+export function averageMetric(teams: Team[], view: View, basis: Basis, perGame: boolean): number {
+  if (teams.length === 0) return 0;
+  const total = teams.reduce((sum, team) => sum + metric(team, view, basis, perGame), 0);
+  return total / teams.length;
+}
+
+// Position of the MLB-average notch on the shared bar scale (0–100), matching
+// how fill width uses abs(value) / maximum. Clamped so the marker stays on-track.
+export function averageBarPercent(average: number, maximum: number): number {
+  if (maximum <= 0) return 0;
+  return Math.min(100, Math.max(0, (Math.abs(average) / maximum) * 100));
+}
+
+// Header-click sort: same column toggles direction; a new column uses its default
+// (metric → highest first, team → A–Z).
+export function nextSort(
+  column: SortColumn,
+  direction: SortDirection,
+  clicked: SortColumn,
+): {column: SortColumn; direction: SortDirection} {
+  if (clicked === column) {
+    return {column: clicked, direction: direction === "asc" ? "desc" : "asc"};
+  }
+  return {column: clicked, direction: clicked === "metric" ? "desc" : "asc"};
+}
+
 export function rankTeams(
   teams: Team[],
   view: View,
   basis: Basis,
-  order: Order,
+  sortColumn: SortColumn,
+  sortDirection: SortDirection,
   perGame: boolean,
 ): RankedTeam[] {
   const value = (team: Team) => metric(team, view, basis, perGame);
+  // Ranks always follow the metric (highest = 1), independent of display order.
   const ranked = [...teams]
     .sort((a, b) => value(b) - value(a) || a.team_name.localeCompare(b.team_name))
     .map((team, index) => ({team, rank: index + 1}));
 
-  if (order === "low") {
+  if (sortColumn === "team") {
+    const dir = sortDirection === "asc" ? 1 : -1;
+    return [...ranked].sort(
+      (a, b) => dir * a.team.team_name.localeCompare(b.team.team_name),
+    );
+  }
+  if (sortDirection === "asc") {
     return [...ranked].sort(
       (a, b) => value(a.team) - value(b.team) || a.team.team_name.localeCompare(b.team.team_name),
     );
-  }
-  if (order === "alpha") {
-    return [...ranked].sort((a, b) => a.team.team_name.localeCompare(b.team.team_name));
   }
   return ranked;
 }
