@@ -72,6 +72,11 @@ interface TeamTimeseriesData {
 
 const integer = new Intl.NumberFormat("en-US");
 const decimal = new Intl.NumberFormat("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+function formatDate(value: string): string {
+  return new Intl.DateTimeFormat("en-US", {month: "long", day: "numeric", year: "numeric", timeZone: "UTC"})
+    .format(new Date(value + "T00:00:00Z"));
+}
 const FRAMINGS: {view: View; label: string}[] = [
   {view: "total", label: "Total"},
   {view: "sp", label: "SP workload"},
