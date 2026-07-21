@@ -1,6 +1,6 @@
 # Agent operating guide
 
-This repository is a refreshable MLB pitch-workload dashboard. The supported product is a static Observable Framework site backed by validated snapshots on the `dashboard-data` branch. There is no runtime backend, SQLite database, Vite frontend, Docker application, or browser-side MLB fetch path.
+This repository is a refreshable MLB pitch-workload dashboard. The supported product is a static Observable Framework site backed by validated snapshots on the `dashboard-data` branch. There is no runtime backend, SQLite database, Vite frontend, or Docker application. The browser fetches no pitch data at runtime — every aggregate is precomputed at build time — but it may load static display assets, such as team logos, directly from MLB's public CDN.
 
 Read `README.md`, `docs/data-contract.md`, and `docs/deployment.md` before changing architecture, refresh behavior, storage, or deployment.
 
@@ -44,7 +44,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 7. Status must distinguish current, stale, and missing games. Never report a complete snapshot while any scheduled game is stale or missing.
 8. Reject a schedule that loses a previously persisted completed game.
 9. Validate both in memory and after serialization. Manifest hashes and coverage counts are required data-contract fields.
-10. The production browser receives team aggregates only and makes no MLB API calls.
+10. The production browser fetches no pitch data and makes no MLB Stats API calls; every team aggregate is precomputed at build time. Loading static display assets, such as team logos, from MLB's public CDN is permitted.
 
 ## Source, data, and deployment invariants
 
@@ -59,7 +59,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 9. Changes anywhere under `pipeline/**` must trigger the real-data Pages build.
 10. Keep permissions least-privilege: CI read-only, refresh contents-write, and Pages/id-token permissions only on the deployment job.
 
-Do not introduce a new deployment target, secret, credential-bearing workflow, automatic merge path, external write integration, runtime backend, or client-side MLB fetch path without explicit user approval. Maintenance of the approved GitHub Pages and data-refresh workflows is allowed when part of the requested change.
+Do not introduce a new deployment target, secret, credential-bearing workflow, automatic merge path, external write integration, runtime backend, or client-side MLB data-fetch path without explicit user approval. Loading static display assets from a public CDN is permitted and does not require a backend. Maintenance of the approved GitHub Pages and data-refresh workflows is allowed when part of the requested change.
 
 ## Observable and React rule
 

@@ -1,6 +1,7 @@
 import {useMemo, useState} from "npm:react";
 import {
-  context, formatMetric, label, leagueTotals, metric, rankTeams,
+  context, coverageText, formatMetric, label, leagueTotals, metric, rankTeams,
+  statusLabel, statusTone,
   type Basis, type LeagueTotals, type Order, type Team, type View,
 } from "./metrics.js";
 
@@ -36,22 +37,18 @@ const FRAMINGS: {view: View; label: string}[] = [
   {view: "adjustment", label: "Role adjustment"},
 ];
 
-function StatusStrip({data}: {data: DashboardData}) {
+function SnapshotPanel({data}: {data: DashboardData}) {
   const status = data.status;
-  const tone = status.result === "failed" ? "failed" : status.result === "partial" ? "warning" : "";
-  const prefix = status.result === "complete" ? "Validated snapshot" : `${status.result[0].toUpperCase()}${status.result.slice(1)} snapshot`;
-  const coverage = [
-    status.stale_games ? `${integer.format(status.stale_games)} stale` : "",
-    status.missing_games ? `${integer.format(status.missing_games)} missing` : "",
-  ].filter(Boolean).join(" · ");
+  const tone = statusTone(status.result);
+  const coverageTone = status.stale_games || status.missing_games ? tone || undefined : undefined;
   return (
-    <section className={`status-strip${tone ? ` ${tone}` : ""}`} aria-live="polite">
-      <span>{prefix}</span>
-      <span>
-        {integer.format(status.current_games)}/{integer.format(status.scheduled_games)} games
-        {coverage ? ` · ${coverage}` : ""} · {integer.format(status.api_calls)} API calls
-      </span>
-    </section>
+    <div className="snapshot-panel">
+      <span>Season</span><strong>{data.season}</strong>
+      <span>Status</span><strong className={tone || undefined} aria-live="polite">{statusLabel(status.result)}</strong>
+      <span>Games</span><strong className={coverageTone}>{coverageText(status)}</strong>
+      <span>API calls</span><strong>{integer.format(status.api_calls)}</strong>
+      <span>Updated</span><strong>{new Date(data.generated_at).toLocaleString()}</strong>
+    </div>
   );
 }
 
@@ -83,7 +80,21 @@ function TeamTable({teams, league, view, basis, order, perGame}: {
             const width = Math.max(2, Math.abs(value) / maximum * 100);
             return (
               <tr key={team.team_id}>
-                <td className="rank">{rank}</td><td className="team">{team.team_name}</td>
+                <td className="rank">{rank}</td>
+                <td className="team">
+                  <span className="team-name">
+                    <img
+                      className="team-logo"
+                      src={`https://www.mlbstatic.com/team-logos/${team.team_id}.svg`}
+                      alt=""
+                      width={22}
+                      height={22}
+                      loading="lazy"
+                      onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+                    />
+                    {team.team_name}
+                  </span>
+                </td>
                 <td><div className="metric"><strong>{formatMetric(value, view, effectivePerGame)}</strong><span className="track"><span className="fill" style={{width: `${width}%`}} /></span></div></td>
                 <td className="context secondary">{context(team, league, view, basis)}</td>
               </tr>
@@ -110,13 +121,8 @@ export function Dashboard({data}: {data: DashboardData}) {
           <h1>Who has thrown the most pitches?</h1>
           <p className="lede">Compare total, starter, and bullpen workloads with an auditable adjustment for openers and bulk appearances.</p>
         </div>
-        <div className="snapshot-panel">
-          <span>Season</span><strong>{data.season}</strong>
-          <span>Data source</span><strong>Validated static snapshot</strong>
-          <span>Updated</span><strong>{new Date(data.generated_at).toLocaleString()}</strong>
-        </div>
+        <SnapshotPanel data={data} />
       </header>
-      <StatusStrip data={data} />
       <LeagueGrid league={league} />
       <section className="controls" aria-label="Table controls">
         <div className="framing">

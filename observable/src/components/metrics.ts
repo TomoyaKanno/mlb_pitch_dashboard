@@ -32,6 +32,16 @@ export interface RankedTeam {
   rank: number;
 }
 
+export type SnapshotResult = "complete" | "partial" | "failed";
+
+export interface CoverageStatus {
+  result: SnapshotResult;
+  scheduled_games: number;
+  current_games: number;
+  stale_games: number;
+  missing_games: number;
+}
+
 const integer = new Intl.NumberFormat("en-US");
 const decimal = new Intl.NumberFormat("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1});
 const LEAGUE_KEYS = [
@@ -126,4 +136,27 @@ export function label(view: View, perGame: boolean): string {
   if (view === "rp") return `RP pitches${suffix}`;
   if (view === "share") return "Bullpen share";
   return `Net SP reclassification${suffix}`;
+}
+
+// Tone class for a snapshot result. The values are namespaced (status-*)
+// on purpose: a bare "warning" collides with Observable Framework's built-in
+// .warning callout class, which injects a heading label and border.
+export function statusTone(result: SnapshotResult): "" | "status-warning" | "status-failed" {
+  if (result === "failed") return "status-failed";
+  if (result === "partial") return "status-warning";
+  return "";
+}
+
+export function statusLabel(result: SnapshotResult): string {
+  if (result === "complete") return "Validated snapshot";
+  return `${result[0].toUpperCase()}${result.slice(1)} snapshot`;
+}
+
+export function coverageText(status: CoverageStatus): string {
+  const base = `${integer.format(status.current_games)} / ${integer.format(status.scheduled_games)}`;
+  const extra = [
+    status.stale_games ? `${integer.format(status.stale_games)} stale` : "",
+    status.missing_games ? `${integer.format(status.missing_games)} missing` : "",
+  ].filter(Boolean).join(" · ");
+  return extra ? `${base} · ${extra}` : base;
 }
