@@ -8,6 +8,7 @@ import pytest
 
 from pipeline.export import (
     aggregate_complete_games,
+    aggregate_recent_games,
     aggregate_team_timeseries,
     aggregate_teams,
     export_dashboard,
@@ -191,6 +192,38 @@ def test_complete_games_are_game_grain_so_doubleheaders_keep_cgs():
             "pitcher_name": "Yoshinobu Yamamoto",
         }
     ]
+
+
+def test_recent_games_uses_scheduled_time_for_doubleheader_order():
+    snapshot = Snapshot(season=2026)
+    # The later game intentionally has the lower gamePk, so gamePk ordering would be wrong.
+    snapshot.games[900] = GameRecord(900, "2026-07-20", 2026, "Final", "2026-07-20T17:10:00Z")
+    snapshot.games[800] = GameRecord(800, "2026-07-20", 2026, "Final", "2026-07-20T23:10:00Z")
+    snapshot.appearances[(900, 119, 1)] = AppearanceRecord(
+        900, "2026-07-20", 2026, 119, "Los Angeles Dodgers", 1, "Early pitcher", 88,
+        True, 0, "SP", "official starter",
+    )
+    snapshot.appearances[(800, 119, 2)] = AppearanceRecord(
+        800, "2026-07-20", 2026, 119, "Los Angeles Dodgers", 2, "Late pitcher", 94,
+        True, 0, "SP", "official starter",
+    )
+
+    recent = aggregate_recent_games(snapshot)
+
+    assert recent == [{
+        "team_id": 119,
+        "team_name": "Los Angeles Dodgers",
+        "game_pk": 800,
+        "date": "2026-07-20",
+        "game_datetime": "2026-07-20T23:10:00Z",
+        "pitchers": [{
+            "pitcher_id": 2,
+            "pitcher_name": "Late pitcher",
+            "pitches": 94,
+            "official_started": True,
+            "appearance_order": 0,
+        }],
+    }]
 
 
 def test_reconcile_team_timeseries_detects_drift():

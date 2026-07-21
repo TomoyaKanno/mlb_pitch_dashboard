@@ -68,5 +68,106 @@
       "opener_to_rp": 150,
       "review_count": 2
     }
+  ],
+  "recent_games": [
+    {
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers",
+      "game_pk": 777001,
+      "date": "2026-07-20",
+      "game_datetime": "2026-07-20T20:10:00Z",
+      "pitchers": [
+        {
+          "pitcher_id": 656941,
+          "pitcher_name": "Yoshinobu Yamamoto",
+          "pitches": 96,
+          "official_started": true,
+          "appearance_order": 0
+        },
+        {
+          "pitcher_id": 605483,
+          "pitcher_name": "Alex Vesia",
+          "pitches": 14,
+          "official_started": false,
+          "appearance_order": 1
+        },
+        {
+          "pitcher_id": 571882,
+          "pitcher_name": "Tanner Scott",
+          "pitches": 16,
+          "official_started": false,
+          "appearance_order": 2
+        }
+      ]
+    },
+    {
+      "team_id": 121,
+      "team_name": "New York Mets",
+      "game_pk": 777002,
+      "date": "2026-07-20",
+      "game_datetime": "2026-07-20T17:10:00Z",
+      "pitchers": [
+        {
+          "pitcher_id": 621121,
+          "pitcher_name": "David Peterson",
+          "pitches": 91,
+          "official_started": true,
+          "appearance_order": 0
+        },
+        {
+          "pitcher_id": 657656,
+          "pitcher_name": "Edwin Díaz",
+          "pitches": 17,
+          "official_started": false,
+          "appearance_order": 1
+        }
+      ]
+    },
+    {
+      "team_id": 147,
+      "team_name": "New York Yankees",
+      "game_pk": 777003,
+      "date": "2026-07-20",
+      "game_datetime": "2026-07-20T18:05:00Z",
+      "pitchers": [
+        {
+          "pitcher_id": 543135,
+          "pitcher_name": "Gerrit Cole",
+          "pitches": 98,
+          "official_started": true,
+          "appearance_order": 0
+        },
+        {
+          "pitcher_id": 656794,
+          "pitcher_name": "Luke Weaver",
+          "pitches": 15,
+          "official_started": false,
+          "appearance_order": 1
+        }
+      ]
+    },
+    {
+      "team_id": 136,
+      "team_name": "Seattle Mariners",
+      "game_pk": 777004,
+      "date": "2026-07-20",
+      "game_datetime": "2026-07-20T20:10:00Z",
+      "pitchers": [
+        {
+          "pitcher_id": 669203,
+          "pitcher_name": "Logan Gilbert",
+          "pitches": 102,
+          "official_started": true,
+          "appearance_order": 0
+        },
+        {
+          "pitcher_id": 623143,
+          "pitcher_name": "Andrés Muñoz",
+          "pitches": 13,
+          "official_started": false,
+          "appearance_order": 1
+        }
+      ]
+    }
   ]
 }

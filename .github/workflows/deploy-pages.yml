@@ -106,6 +106,13 @@ jobs:
               raise SystemExit("team-timeseries season does not match dashboard")
           if len(payload["teams"]) != 30:
               raise SystemExit(f"expected 30 MLB teams, found {len(payload['teams'])}")
+          recent_games = payload.get("recent_games")
+          if not isinstance(recent_games, list) or len(recent_games) != len(payload["teams"]):
+              raise SystemExit("dashboard missing one latest completed game per team")
+          if {row["team_id"] for row in recent_games} != {row["team_id"] for row in payload["teams"]}:
+              raise SystemExit("recent-game teams do not match season teams")
+          if any(not row.get("pitchers") for row in recent_games):
+              raise SystemExit("recent game has no pitcher workloads")
           if payload["status"]["result"] == "failed":
               raise SystemExit("refusing to deploy a failed data snapshot")
           if payload["data_commit"] != os.environ["DASHBOARD_DATA_SHA"]:
@@ -120,8 +127,8 @@ jobs:
               raise SystemExit("built dashboard contains a second React runtime")
           print(
               f"Validated {len(payload['teams'])} teams, {len(series['points'])} "
-              f"team-day points, and {len(series['complete_games'])} complete games "
-              f"from {payload['status']['current_games']} current games"
+              f"team-day points, {len(series['complete_games'])} complete games, and "
+              f"{len(recent_games)} recent team games from {payload['status']['current_games']} current games"
           )
           PY
 

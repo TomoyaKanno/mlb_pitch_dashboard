@@ -13,6 +13,7 @@ class GameRecord:
     game_date: str
     season: int
     status: str
+    game_datetime: str | None = None
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "GameRecord":
@@ -21,6 +22,7 @@ class GameRecord:
             game_date=str(value["game_date"]),
             season=int(value["season"]),
             status=str(value["status"]),
+            game_datetime=(str(value["game_datetime"]) if value.get("game_datetime") else None),
         )
 
     def to_dict(self) -> dict[str, Any]:
