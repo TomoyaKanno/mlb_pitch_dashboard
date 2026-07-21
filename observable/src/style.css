@@ -359,3 +359,19 @@ tbody tr.selected td { background: var(--accent-soft); }
   th, td { padding: 9px 7px; }
   .metric { grid-template-columns: 1fr; gap: 5px; }
 }
+
+
+.bullpen-usage { margin-top: 4px; }
+.bullpen-usage-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.bullpen-usage h2 { margin: 2px 0 4px; font-size: 1.25rem; }
+.usage-window { color: var(--muted); font-size: 0.85rem; text-align: right; white-space: nowrap; }
+.heatmap-scroll { overflow-x: auto; margin-top: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.bullpen-heatmap { width: max-content; min-width: 100%; margin: 0; border-collapse: collapse; font-size: 0.82rem; }
+.bullpen-heatmap th, .bullpen-heatmap td { height: 42px; padding: 7px 9px; border-bottom: 1px solid var(--border); text-align: center; }
+.bullpen-heatmap thead th { color: var(--muted); font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+.bullpen-heatmap tbody tr:last-child th, .bullpen-heatmap tbody tr:last-child td { border-bottom: 0; }
+.bullpen-heatmap tbody th { position: sticky; left: 0; z-index: 1; min-width: 138px; background: var(--surface); color: var(--text); text-align: left; }
+.heat-date, .heat-cell { min-width: 48px; }
+.heat-cell { color: var(--muted); font-variant-numeric: tabular-nums; }
+.heat-cell.used { color: var(--text); font-weight: 700; }
+@media (max-width: 640px) { .bullpen-usage-header { align-items: flex-start; flex-direction: column; } .usage-window { text-align: left; } }
