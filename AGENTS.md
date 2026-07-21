@@ -4,6 +4,10 @@ This repository is a refreshable MLB pitch-workload dashboard. The supported pro
 
 Read `README.md`, `docs/data-contract.md`, and `docs/deployment.md` before changing architecture, refresh behavior, storage, or deployment.
 
+## ChatGPT Work mode
+
+When operating inside ChatGPT Work mode, use the native GitHub integration for repository state, pull requests, Actions checks, and job logs. Do not fall back to the local `gh` CLI just because it is customary: it may not be installed or authenticated in that environment. This guidance is specific to ChatGPT Work mode; use the normal repository tooling in other environments.
+
 ## Sources of truth
 
 - `observable/` is the user interface deployed to GitHub Pages.

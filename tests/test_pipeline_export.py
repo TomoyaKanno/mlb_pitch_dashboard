@@ -8,6 +8,7 @@ import pytest
 
 from pipeline.export import (
     aggregate_complete_games,
+    aggregate_bullpen_usage,
     aggregate_recent_games,
     aggregate_team_timeseries,
     aggregate_teams,
@@ -131,6 +132,7 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
     assert away["bulk_to_sp"] == 70
     assert away["opener_to_rp"] == 30
     assert payload["status"]["current_games"] == 1
+    assert payload["bullpen_usage"] == aggregate_bullpen_usage(snapshot)
 
 
 def test_team_timeseries_daily_increments_reconcile_to_season_totals(tmp_path):
@@ -283,3 +285,30 @@ def test_aggregate_helpers_agree_without_persistence():
     assert teams[0]["total"] == 90
     assert [point["total"] for point in points] == [50, 40]
 
+
+def test_bullpen_usage_uses_fourteen_day_window_and_sums_doubleheaders() -> None:
+    snapshot = Snapshot(season=2026)
+    snapshot.games[900] = GameRecord(900, "2026-07-20", 2026, "Final", "2026-07-20T17:10:00Z")
+    snapshot.games[800] = GameRecord(800, "2026-07-20", 2026, "Final", "2026-07-20T23:10:00Z")
+    snapshot.games[700] = GameRecord(700, "2026-07-09", 2026, "Final")
+    snapshot.games[600] = GameRecord(600, "2026-07-06", 2026, "Final")
+    def add(game_pk: int, game_date: str, pitcher_id: int, pitcher_name: str, pitches: int, started: bool) -> None:
+        snapshot.appearances[(game_pk, 17, pitcher_id)] = AppearanceRecord(
+            game_pk, game_date, 2026, 17, "Test Team", pitcher_id, pitcher_name, pitches, started, 1
+        )
+    add(900, "2026-07-20", 1, "Starter", 80, True)
+    add(900, "2026-07-20", 2, "Late Reliever", 12, False)
+    add(800, "2026-07-20", 2, "Late Reliever", 18, False)
+    add(700, "2026-07-09", 3, "Earlier Reliever", 25, False)
+    add(600, "2026-07-06", 4, "Old Reliever", 99, False)
+
+    usage = aggregate_bullpen_usage(snapshot)
+
+    assert usage == [{
+        "team_id": 17, "team_name": "Test Team", "end_date": "2026-07-20",
+        "dates": [f"2026-07-{day:02d}" for day in range(7, 21)],
+        "pitchers": [
+            {"pitcher_id": 2, "pitcher_name": "Late Reliever", "pitches": [0] * 13 + [30]},
+            {"pitcher_id": 3, "pitcher_name": "Earlier Reliever", "pitches": [0, 0, 25] + [0] * 11},
+        ],
+    }]
