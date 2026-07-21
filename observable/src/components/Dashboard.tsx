@@ -20,6 +20,23 @@ interface Status {
   missing_games: number;
 }
 
+interface RecentPitcher {
+  pitcher_id: number;
+  pitcher_name: string;
+  pitches: number;
+  official_started: boolean;
+  appearance_order: number;
+}
+
+interface RecentTeamGame {
+  team_id: number;
+  team_name: string;
+  game_pk: number;
+  date: string;
+  game_datetime: string | null;
+  pitchers: RecentPitcher[];
+}
+
 interface DashboardData {
   schema_version: number;
   season: number;
@@ -28,6 +45,7 @@ interface DashboardData {
   data_commit: string | null;
   status: Status;
   teams: Team[];
+  recent_games: RecentTeamGame[];
 }
 
 interface TeamTimeseriesData {
@@ -380,6 +398,68 @@ function TeamSeriesPanel({
   );
 }
 
+function RecentStrain({
+  games, selectedTeamId, onSelectTeam,
+}: {
+  games: RecentTeamGame[];
+  selectedTeamId: number;
+  onSelectTeam: (teamId: number) => void;
+}) {
+  const selected = games.find((game) => game.team_id === selectedTeamId) ?? games[0] ?? null;
+  if (!selected) {
+    return <p className="secondary recent-empty">No completed team games are available in this snapshot.</p>;
+  }
+  const date = new Date(selected.date + "T12:00:00Z").toLocaleDateString(
+    undefined, {month: "long", day: "numeric", year: "numeric", timeZone: "UTC"},
+  );
+  return (
+    <section className="recent-strain" aria-label="Recent strain">
+      <div className="recent-strain-header">
+        <div>
+          <p className="eyebrow">Last completed game</p>
+          <h2>{selected.team_name}</h2>
+          <p className="secondary">Pitcher workloads from {date}. This is workload context, not a fatigue assessment.</p>
+        </div>
+        <label>
+          Team
+          <select value={selected.team_id} onChange={(event) => onSelectTeam(Number(event.target.value))}>
+            {games.map((game) => <option key={game.team_id} value={game.team_id}>{game.team_name}</option>)}
+          </select>
+        </label>
+      </div>
+      <div className="recent-game-card">
+        <img
+          className="recent-team-logo"
+          src={"https://www.mlbstatic.com/team-logos/" + selected.team_id + ".svg"}
+          alt=""
+          width={54}
+          height={54}
+          onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+        />
+        <div className="recent-game-copy">
+          <strong>{selected.pitchers.reduce((total, pitcher) => total + pitcher.pitches, 0).toLocaleString()} pitches</strong>
+          <span>{selected.pitchers.length} pitchers used · game {selected.game_pk}</span>
+        </div>
+      </div>
+      <div className="table-shell recent-table">
+        <table>
+          <caption>{selected.team_name} pitcher workloads from its last completed game</caption>
+          <thead><tr><th>Pitcher</th><th className="recent-role">Role</th><th className="recent-pitches">Pitches</th></tr></thead>
+          <tbody>
+            {selected.pitchers.map((pitcher) => (
+              <tr key={pitcher.pitcher_id}>
+                <td>{pitcher.pitcher_name}</td>
+                <td className="recent-role">{pitcher.official_started ? "SP" : "RP"}</td>
+                <td className="recent-pitches">{integer.format(pitcher.pitches)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
 function TeamTable({
   teams, league, view, basis, sortColumn, sortDirection, perGame, selectedTeamId, seriesEnabled, showContext, onSort, onSelectTeam,
 }: {
@@ -498,6 +578,8 @@ export function Dashboard({
   data: DashboardData;
   timeseries: TeamTimeseriesData;
 }) {
+  const [screen, setScreen] = useState<"leaders" | "strain">("leaders");
+  const [recentTeamId, setRecentTeamId] = useState(119);
   const [view, setView] = useState<View>("total");
   const [basis, setBasis] = useState<Basis>("adjusted");
   const [sortColumn, setSortColumn] = useState<SortColumn>("metric");
@@ -581,48 +663,60 @@ export function Dashboard({
     <main className="shell">
       <header className="hero">
         <p className="eyebrow">MLB season workload</p>
-        <h1>Who has thrown the most pitches?</h1>
-        <p className="lede">Compare total, starter, and bullpen workloads with an auditable adjustment for openers and bulk appearances.</p>
+        <h1>{screen === "leaders" ? "Who has thrown the most pitches?" : "What did this staff just throw?"}</h1>
+        <p className="lede">{screen === "leaders"
+          ? "Compare total, starter, and bullpen workloads with an auditable adjustment for openers and bulk appearances."
+          : "Review the pitcher workloads from a team's most recently completed game."}</p>
       </header>
-      <LeagueGrid league={league} />
-      <section className="controls" aria-label="Table controls">
-        <div className="framing">
-          {FRAMINGS.map((item) => <button key={item.view} type="button" className={view === item.view ? "active" : undefined} onClick={() => handleView(item.view)}>{item.label}</button>)}
-        </div>
-        {roleView && <label>Role basis<select value={basis} onChange={(event) => setBasis(event.target.value as Basis)}><option value="adjusted">Role-adjusted</option><option value="official">Official appearance</option></select></label>}
-        {view !== "share" && <label className="check"><input type="checkbox" checked={perGame} onChange={(event) => setPerGame(event.target.checked)} />Per game</label>}
-      </section>
-      <div className={layoutWithPanel ? "table-with-panel" : undefined}>
-        <TeamTable
-          teams={data.teams}
-          league={league}
-          view={view}
-          basis={basis}
-          sortColumn={sortColumn}
-          sortDirection={sortDirection}
-          perGame={perGame}
-          selectedTeamId={showPanel ? selectedTeamId : null}
-          seriesEnabled={seriesSupported(view)}
-          showContext={!showPanel}
-          onSort={handleSort}
-          onSelectTeam={handleSelectTeam}
-        />
-        {showPanel && selectedTeam && dateDomain ? (
-          <TeamSeriesPanel
-            team={selectedTeam}
-            series={selectedSeries}
-            dateDomain={dateDomain}
-            completeGames={completeGames}
-            view={view}
-            basis={basis}
-            mode={seriesMode}
-            contextText={context(selectedTeam, league, view, basis)}
-            open={panelOpen}
-            onModeChange={setSeriesMode}
-            onClose={beginClose}
-          />
-        ) : null}
-      </div>
+      <nav className="screen-selector" aria-label="Dashboard screen">
+        <button type="button" className={screen === "leaders" ? "active" : undefined} onClick={() => setScreen("leaders")}>Season leaders</button>
+        <button type="button" className={screen === "strain" ? "active" : undefined} onClick={() => setScreen("strain")}>Recent strain</button>
+      </nav>
+      {screen === "leaders" ? (
+        <>
+          <LeagueGrid league={league} />
+          <section className="controls" aria-label="Table controls">
+            <div className="framing">
+              {FRAMINGS.map((item) => <button key={item.view} type="button" className={view === item.view ? "active" : undefined} onClick={() => handleView(item.view)}>{item.label}</button>)}
+            </div>
+            {roleView && <label>Role basis<select value={basis} onChange={(event) => setBasis(event.target.value as Basis)}><option value="adjusted">Role-adjusted</option><option value="official">Official appearance</option></select></label>}
+            {view !== "share" && <label className="check"><input type="checkbox" checked={perGame} onChange={(event) => setPerGame(event.target.checked)} />Per game</label>}
+          </section>
+          <div className={layoutWithPanel ? "table-with-panel" : undefined}>
+            <TeamTable
+              teams={data.teams}
+              league={league}
+              view={view}
+              basis={basis}
+              sortColumn={sortColumn}
+              sortDirection={sortDirection}
+              perGame={perGame}
+              selectedTeamId={showPanel ? selectedTeamId : null}
+              seriesEnabled={seriesSupported(view)}
+              showContext={!showPanel}
+              onSort={handleSort}
+              onSelectTeam={handleSelectTeam}
+            />
+            {showPanel && selectedTeam && dateDomain ? (
+              <TeamSeriesPanel
+                team={selectedTeam}
+                series={selectedSeries}
+                dateDomain={dateDomain}
+                completeGames={completeGames}
+                view={view}
+                basis={basis}
+                mode={seriesMode}
+                contextText={context(selectedTeam, league, view, basis)}
+                open={panelOpen}
+                onModeChange={setSeriesMode}
+                onClose={beginClose}
+              />
+            ) : null}
+          </div>
+        </>
+      ) : (
+        <RecentStrain games={data.recent_games} selectedTeamId={recentTeamId} onSelectTeam={setRecentTeamId} />
+      )}
       <footer>
         Official appearance uses MLB’s per-game starter flag. Role-adjusted classifications preserve true starters behind openers while flagging ambiguous long outings for review.
         {data.data_commit ? <> Data revision <code>{data.data_commit.slice(0, 8)}</code>.</> : null}
