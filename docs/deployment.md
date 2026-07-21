@@ -21,7 +21,7 @@ The published season is defined once in `config/dashboard.json`. This intentiona
 - when invoked manually;
 - on relevant pull requests, where it builds and validates the real data but does not deploy.
 
-The build reloads the data branch, verifies the manifest and hashes, exports browser-ready aggregates, and requires exactly 30 teams. A failed refresh does not start a production build. A failed build does not reach the deployment job, so GitHub Pages keeps serving the last successful artifact.
+The build reloads the data branch, verifies the manifest and hashes, exports browser-ready aggregates (season team totals and the sibling team timeseries), requires exactly 30 teams, and checks that the timeseries season/`data_commit` match the dashboard payload and reconcile to season totals. A failed refresh does not start a production build. A failed build does not reach the deployment job, so GitHub Pages keeps serving the last successful artifact.
 
 ## One-time GitHub Pages setting
 

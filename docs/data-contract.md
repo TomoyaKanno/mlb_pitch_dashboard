@@ -32,10 +32,10 @@ Appearance records include both MLB's official `gamesStarted` designation and th
 
 | Artifact | Loader | Contents |
 | --- | --- | --- |
-| Season team totals | `observable/src/data/dashboard.json.py` | One row per team; powers the table |
-| Team timeseries | `observable/src/data/team-timeseries.json.py` | One row per `(game_date, team_id)` with activity; daily increments |
+| Season team totals | `observable/src/data/dashboard.json.py` | One row per team; powers the ranking table |
+| Team timeseries | `observable/src/data/team-timeseries.json.py` | One row per `(game_date, team_id)` with activity; daily increments for the team timeline panel |
 
-Daily team points must reconcile to season team totals: summing each metric (and game counts) across dates for a team equals that team's dashboard row. Clients derive cumulative charts with a prefix sum. Player-level series can follow the same sibling-export pattern later; appearance rows are already pitcher-dated.
+Daily team points must reconcile to season team totals: summing each metric (and game counts) across dates for a team equals that team's dashboard row. The dashboard derives cumulative series with a prefix sum (`metricSeries`); daily/timecourse mode plots each day's increment (share uses that day's SP/RP split). Role adjustment has no timeline yet. Player-level series can follow the same sibling-export pattern later; appearance rows are already pitcher-dated.
 
 ## Failure behavior
 

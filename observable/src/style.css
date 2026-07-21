@@ -13,6 +13,11 @@
   --accent: #6d28d9;
   --accent-soft: #e9e2fb;
   --accent-rp: #8b74c9;
+  /* Share chart: separate hues from the subtle Total-bar tones. */
+  --series-sp: #0f766e;
+  --series-rp: #7c3aed;
+  --series-line: #134e4a;
+  --series-plot-bg: #ecfeff;
   --danger: #a52a2a;
   --warning: #8a5a00;
   --avg-notch: #111111;
@@ -31,6 +36,10 @@
     --accent: #a78bfa;
     --accent-soft: #2e2650;
     --accent-rp: #7d6eae;
+    --series-sp: #2dd4bf;
+    --series-rp: #c084fc;
+    --series-line: #f8fafc;
+    --series-plot-bg: #0b1220;
     --danger: #ff9a9a;
     --warning: #ffd166;
     --avg-notch: #ffffff;
@@ -111,9 +120,131 @@ tbody tr:last-child td { border-bottom: 0; }
 td.rank, .metric strong { font-variant-numeric: tabular-nums; }
 .context { width: 34%; }
 .team { font-weight: 650; }
+.team-select {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  font-weight: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.team-select:hover,
+.team-select:focus-visible,
+.team-select[aria-pressed="true"] { color: var(--accent); border-color: transparent; }
+.team-select:disabled,
+.team-select:disabled:hover {
+  color: inherit;
+  cursor: default;
+  opacity: 1;
+}
 .team-name { display: flex; align-items: center; gap: 9px; }
 .team-logo { flex: none; width: 22px; height: 22px; object-fit: contain; }
-.metric { display: grid; grid-template-columns: minmax(70px, auto) 1fr; gap: 12px; align-items: center; }
+tbody tr.selected td { background: var(--accent-soft); }
+.table-with-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.team-series-panel {
+  position: sticky;
+  top: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.team-series-header {
+  display: flex;
+  gap: 10px;
+  align-items: start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.team-series-identity {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+  flex: 1;
+}
+.team-series-badge-slot {
+  flex: none;
+  width: 4rem;
+  height: 4rem;
+}
+.team-series-badge {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.team-series-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.team-series-kicker {
+  margin: 0;
+  color: var(--muted);
+  font-size: .72rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.team-series-title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+.team-series-context {
+  margin: 0;
+  line-height: 1.4;
+}
+.team-series-close {
+  flex: none;
+  min-height: 32px;
+  padding: 4px 10px;
+  font-size: .8rem;
+}
+.team-series-mode {
+  display: grid;
+  gap: 5px;
+  margin: 0 0 12px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 650;
+}
+.team-series-mode select {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 8px;
+}
+.team-series-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--accent);
+  background: var(--surface-2);
+  border-radius: 8px;
+}
+.team-series-chart.share-chart {
+  color: var(--series-line);
+  background: var(--series-plot-bg);
+}
+.series-sp-area { fill: var(--series-sp); fill-opacity: 0.85; }
+.series-rp-area { fill: var(--series-rp); fill-opacity: 0.85; }
+.team-series-legend { margin: 8px 0 0; }
+.legend-sp { color: var(--series-sp); font-weight: 650; }
+.legend-rp { color: var(--series-rp); font-weight: 650; }
+.team-series-meta { margin: 10px 0 0; }
+.metric { display: grid; grid-template-columns: minmax(70px, auto) 1fr; gap: 12px; align-items: center; padding-right: 14px; }
 .track { position: relative; height: 7px; overflow: visible; border-radius: 999px; background: var(--surface-2); }
 .fill { display: flex; min-width: 2px; height: 100%; overflow: hidden; border-radius: inherit; background: var(--accent); }
 /* Total view: left = adjusted SP, right = adjusted RP. Same hue family, soft step. */
@@ -141,6 +272,8 @@ td.rank, .metric strong { font-variant-numeric: tabular-nums; }
   .league-grid { grid-template-columns: repeat(2, 1fr); }
   .context { display: none; }
   .rank { width: 48px; }
+  .table-with-panel { grid-template-columns: 1fr; }
+  .team-series-panel { position: static; }
 }
 @media (max-width: 480px) {
   .shell { width: min(100% - 18px, 1180px); padding-top: 22px; }

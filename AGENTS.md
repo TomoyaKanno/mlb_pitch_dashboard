@@ -27,7 +27,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 - `observable/src/data/dashboard.json.py` — build-time bridge from the snapshot to the season table payload.
 - `observable/src/data/team-timeseries.json.py` — build-time bridge for daily team-increment series.
 - `observable/src/components/Dashboard.tsx` — production React dashboard.
-- `observable/src/components/metrics.ts` — pure presentation, sorting, and ranking calculations.
+- `observable/src/components/metrics.ts` — pure presentation, sorting, ranking, and team-series calculations.
 - `config/dashboard.json` — intentionally selected published season.
 - `config/role_overrides.json` — reviewed `gamePk:playerId` SP/RP exceptions.
 - `.github/workflows/refresh-data.yml` — sole automated writer to `dashboard-data`.
@@ -67,7 +67,7 @@ Do not introduce a new deployment target, secret, credential-bearing workflow, a
 Observable Framework's Markdown JSX renderer uses its self-hosted npm React runtime. Components using hooks must import React symbols from `npm:react`:
 
 ```ts
-import {useMemo, useState} from "npm:react";
+import {useEffect, useMemo, useState} from "npm:react";
 ```
 
 A bare `react` import creates a second runtime alongside Observable's `_npm/react` instance. The code can type-check, pass tests, build, and deploy while the browser crashes with an invalid-hook-call error.
@@ -81,6 +81,9 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 - framing, role-basis, and per-game controls respond;
 - Team and metric column headers sort ascending/descending (there is no Order dropdown);
 - ranks follow the displayed metric even when rows are reordered by header sort;
+- Total bars show dual-tone adjusted SP/RP fills and an MLB-average notch;
+- clicking a team opens the side timeline (Cumulative / Timecourse); Role adjustment disables team clicks and closes any open panel;
+- the panel shows the team badge, series chart, and context moved out of the table column;
 - snapshot diagnostics (status, coverage, generation time, API calls) appear in the footer strip below the content;
 - the browser console has no application errors.
 
@@ -92,7 +95,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 4. `pipeline.check` reloads those files and repeats structural and coverage validation.
 5. The refresh workflow commits changed files to `dashboard-data`.
 6. A successful `workflow_run` handoff builds from current `main` plus the validated data branch.
-7. `pipeline.export` produces the season team payload and the sibling team timeseries consumed by Observable.
+7. `pipeline.export` produces the season team payload and the sibling team timeseries; Observable renders both in the table and the team timeline panel.
 8. GitHub Pages receives the compiled artifact; no compiled files are committed.
 
 Never commit a snapshot before the persisted reload check succeeds.
@@ -118,7 +121,7 @@ npm test
 OBSERVABLE_TELEMETRY_DISABLE=true npm run build
 ```
 
-Use the fixture for fast checks. For changes to the loader, exporter, schema, validation, or deployment path, also build against `dashboard-data` and verify the 30-team payload. For UI/runtime changes, add the browser smoke test above.
+Use the fixture for fast checks. For changes to the loader, exporter, schema, validation, or deployment path, also build against `dashboard-data` and verify both the 30-team season payload and the reconciled `team-timeseries` artifact (matching season and data revision). For UI/runtime changes, add the browser smoke test above.
 
 ### Workflow changes
 
