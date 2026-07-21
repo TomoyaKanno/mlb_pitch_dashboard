@@ -8,6 +8,7 @@ import pytest
 
 from pipeline.export import (
     aggregate_complete_games,
+    aggregate_bullpen_usage,
     aggregate_recent_games,
     aggregate_team_timeseries,
     aggregate_teams,
