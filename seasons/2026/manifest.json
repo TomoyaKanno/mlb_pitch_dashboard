@@ -1,6 +1,6 @@
 {
-  "api_calls": 47,
-  "current_games": 1490,
+  "api_calls": 62,
+  "current_games": 1505,
   "files": {
     "appearances/2026-03.jsonl": {
       "bytes": 200789,
@@ -19,12 +19,12 @@
       "sha256": "3ad72c58401d4115acb4a069efb506fa13d373011b321b89d811636d836f0bc8"
     },
     "appearances/2026-07.jsonl": {
-      "bytes": 539508,
-      "sha256": "5c05732cfd2939907c9dc742b54265df51a47c16829622522da73872b73bf749"
+      "bytes": 577759,
+      "sha256": "0f6aef41ba49f62b05a68d4496bc1b0b09b25066d5c20eb0f535f84a0f91d939"
     },
     "fetch-state.json": {
-      "bytes": 363621,
-      "sha256": "acdcd0cbd357350fed690b81d3b5df48010892dfa9eb0ed314ccd4cd826f2057"
+      "bytes": 367281,
+      "sha256": "4f74f757d9a2f96f9397ae3cc6cd9b4fc73b6f388ac50ce88e087b1dc2eae769"
     },
     "games/2026-03.jsonl": {
       "bytes": 5700,
@@ -43,17 +43,17 @@
       "sha256": "0f1645b6d998a1a9acbdd3687ec3de004c3710cb26455e9b759a2f84bad9c095"
     },
     "games/2026-07.jsonl": {
-      "bytes": 15675,
-      "sha256": "74c006b85d15fee3af88a1302f2d951a80229950b14318be5c9461b2216c7ab8"
+      "bytes": 16800,
+      "sha256": "8ad148f6b9b4e2df8aab3f3818633943a34a1d64b7448b465aca836c149e9dd7"
     }
   },
   "games_failed": 0,
-  "games_fetched": 46,
-  "games_requested": 46,
-  "generated_at": "2026-07-20T17:10:40.988903+00:00",
+  "games_fetched": 61,
+  "games_requested": 61,
+  "generated_at": "2026-07-21T11:20:12.761551+00:00",
   "missing_games": 0,
   "result": "complete",
-  "scheduled_games": 1490,
+  "scheduled_games": 1505,
   "schema_version": 1,
   "season": 2026,
   "stale_games": 0
