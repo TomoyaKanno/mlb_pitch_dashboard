@@ -315,7 +315,7 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
 def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
     snapshot, _verified, meta = _export_common(data_dir, season)
     teams = aggregate_teams(snapshot)
-    return {**meta, "teams": teams, "recent_games": aggregate_recent_games(snapshot)}
+    return {**meta, "teams": teams, "recent_games": aggregate_recent_games(snapshot), "bullpen_usage": aggregate_bullpen_usage(snapshot)}
 
 
 def export_team_timeseries(data_dir: Path, season: int) -> dict[str, Any]:
