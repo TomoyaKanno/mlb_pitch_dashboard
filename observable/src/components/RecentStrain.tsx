@@ -227,7 +227,7 @@ export function RecentStrain({
             </table>
           </div>
         </section>
-        <section className="recent-game-card" aria-label="Next game">
+        <section className="recent-game-card" style={{alignSelf: "start"}} aria-label="Next game">
           <p className="recent-card-label">Next game</p>
           {nextGame ? (
             <div className="recent-game-body">
