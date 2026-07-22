@@ -106,6 +106,26 @@ jobs:
               raise SystemExit("team-timeseries season does not match dashboard")
           if len(payload["teams"]) != 30:
               raise SystemExit(f"expected 30 MLB teams, found {len(payload['teams'])}")
+          player_totals = payload.get("player_totals")
+          if not isinstance(player_totals, list) or len(player_totals) != 30:
+              raise SystemExit("dashboard must include exactly 30 player totals")
+          if len({row.get("pitcher_id") for row in player_totals}) != len(player_totals):
+              raise SystemExit("player totals contain duplicate pitchers")
+          if any(
+              not isinstance(row.get("pitcher_id"), int)
+              or not isinstance(row.get("pitcher_name"), str)
+              or not isinstance(row.get("team_id"), int)
+              or not isinstance(row.get("team_name"), str)
+              or not isinstance(row.get("total"), int)
+              or row["total"] < 0
+              for row in player_totals
+          ):
+              raise SystemExit("player totals contain an invalid row")
+          if player_totals != sorted(
+              player_totals,
+              key=lambda row: (-row["total"], row["pitcher_name"], row["pitcher_id"]),
+          ):
+              raise SystemExit("player totals are not ranked by total pitches")
           recent_games = payload.get("recent_games")
           if not isinstance(recent_games, list) or len(recent_games) != len(payload["teams"]):
               raise SystemExit("dashboard missing one latest completed game per team")
@@ -184,8 +204,8 @@ jobs:
           print(
               f"Validated {len(payload['teams'])} teams, {len(series['points'])} "
               f"team-day points, {len(series['complete_games'])} complete games, "
-              f"{len(recent_games)} recent team games, {len(next_games)} next team games, "
-              f"{len(bullpen_usage)} bullpen windows, "
+              f"{len(player_totals)} player totals, {len(recent_games)} recent team games, "
+              f"{len(next_games)} next team games, {len(bullpen_usage)} bullpen windows, 
               f"and {payload['status']['current_games']} current games"
           )
           PY
