@@ -50,7 +50,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 7. Status must distinguish current, stale, and missing games. Never report a complete snapshot while any scheduled game is stale or missing.
 8. Reject a schedule that loses a previously persisted completed game.
 9. Validate both in memory and after serialization. Manifest hashes and coverage counts are required data-contract fields.
-10. The production browser fetches no pitch data and makes no MLB Stats API calls; every team aggregate is precomputed at build time. Loading static display assets such as team logos and pitcher portraits from MLB's public CDN is permitted.
+10. The production browser fetches no pitch data and makes no MLB Stats API calls; every team and player aggregate is precomputed at build time. Loading static display assets such as team logos and pitcher portraits from MLB's public CDN is permitted.
 
 ## Source, data, and deployment invariants
 
