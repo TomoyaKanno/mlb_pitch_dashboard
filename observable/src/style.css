@@ -76,6 +76,9 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
 .recent-game-copy strong { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 .recent-game-copy span { color: var(--muted); font-size: .82rem; }
 .probable-starter { color: var(--text) !important; }
+.recent-card-table { margin: 2px -16px -16px; overflow: hidden; border-top: 1px solid var(--border); }
+.recent-card-table table { width: 100%; margin: 0; border-collapse: collapse; table-layout: fixed; }
+.recent-card-table th, .recent-card-table td { padding: 9px 12px; }
 .recent-pitches { width: 110px; text-align: right; font-variant-numeric: tabular-nums; }
 .recent-role { width: 100px; }
 .recent-empty { margin-top: 20px; }
