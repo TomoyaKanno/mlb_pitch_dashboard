@@ -38,6 +38,9 @@ def check_persisted_snapshot(data_dir: Path, season: int) -> dict[str, Any]:
     next_games_path = root / "next-games.json"
     if next_games_path.exists():
         actual_files.add("next-games.json")
+    roster_path = root / "roster-pitchers.json"
+    if roster_path.exists():
+        actual_files.add("roster-pitchers.json")
 
     declared_files = manifest.get("files")
     if not isinstance(declared_files, dict):

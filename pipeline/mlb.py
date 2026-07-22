@@ -231,6 +231,127 @@ class MLBClient:
                         games_by_team[candidate["team_id"]] = candidate
         return sorted(games_by_team.values(), key=lambda item: item["team_name"])
 
+    async def pitching_rosters(self, season: int) -> list[dict[str, Any]]:
+        """Return depth-chart and 40-man pitching status for each MLB team.
+
+        Depth-chart rows carry published ``SP`` / bullpen ``P`` / ``CP`` order.
+        The 40-man roster supplies broader status such as minors reassignment
+        for arms who appeared recently but are no longer on the depth chart.
+        Historical seasons return an empty list, matching upcoming-game behavior.
+        """
+        today = date.today()
+        if season != today.year:
+            return []
+
+        teams_payload = await self.get_json(
+            "/teams",
+            params={"sportId": 1, "season": season},
+        )
+        teams = [
+            {
+                "team_id": int(team["id"]),
+                "team_name": str(team.get("name") or f"Team {team['id']}"),
+            }
+            for team in teams_payload.get("teams", [])
+            if team.get("id") is not None
+        ]
+        if not teams:
+            return []
+
+        async def fetch_team(team: dict[str, Any]) -> list[dict[str, Any]]:
+            team_id = int(team["team_id"])
+            team_name = str(team["team_name"])
+            depth_payload, forty_payload = await asyncio.gather(
+                self.get_json(
+                    f"/teams/{team_id}/roster",
+                    params={"rosterType": "depthChart"},
+                ),
+                self.get_json(
+                    f"/teams/{team_id}/roster",
+                    params={"rosterType": "40Man"},
+                ),
+            )
+            merged: dict[int, dict[str, Any]] = {}
+
+            def upsert(
+                row: dict[str, Any],
+                *,
+                depth_role: str | None,
+                depth_order: int | None,
+                replace_depth: bool,
+            ) -> None:
+                person = row.get("person") or {}
+                pitcher_id = person.get("id")
+                if pitcher_id is None:
+                    return
+                pitcher_id = int(pitcher_id)
+                status = row.get("status") or {}
+                status_code = str(status.get("code") or "UNK")
+                status_description = str(status.get("description") or status_code)
+                pitcher_name = str(person.get("fullName") or f"Player {pitcher_id}")
+                jersey_raw = str(row.get("jerseyNumber") or "").strip()
+                jersey_number = jersey_raw or None
+                previous = merged.get(pitcher_id)
+                if previous is None:
+                    merged[pitcher_id] = {
+                        "team_id": team_id,
+                        "team_name": team_name,
+                        "pitcher_id": pitcher_id,
+                        "pitcher_name": pitcher_name,
+                        "depth_role": depth_role,
+                        "depth_order": depth_order,
+                        "status_code": status_code,
+                        "status_description": status_description,
+                        "jersey_number": jersey_number,
+                    }
+                    return
+                previous["pitcher_name"] = pitcher_name
+                previous["status_code"] = status_code
+                previous["status_description"] = status_description
+                if jersey_number:
+                    previous["jersey_number"] = jersey_number
+                if replace_depth:
+                    previous["depth_role"] = depth_role
+                    previous["depth_order"] = depth_order
+
+            depth_order = 0
+            for row in depth_payload.get("roster", []):
+                position = row.get("position") or {}
+                abbrev = str(position.get("abbreviation") or "")
+                if abbrev == "SP":
+                    role = "SP"
+                elif abbrev == "CP":
+                    role = "CP"
+                elif abbrev == "P":
+                    role = "RP"
+                else:
+                    continue
+                upsert(row, depth_role=role, depth_order=depth_order, replace_depth=True)
+                depth_order += 1
+
+            for row in forty_payload.get("roster", []):
+                position = row.get("position") or {}
+                if position.get("type") != "Pitcher" and str(position.get("abbreviation") or "") not in {
+                    "P", "SP", "CP", "TWP",
+                }:
+                    continue
+                upsert(row, depth_role=None, depth_order=None, replace_depth=False)
+
+            return sorted(
+                merged.values(),
+                key=lambda item: (
+                    item["depth_order"] is None,
+                    item["depth_order"] if item["depth_order"] is not None else 10**9,
+                    item["pitcher_name"],
+                ),
+            )
+
+        team_rows = await asyncio.gather(*(fetch_team(team) for team in teams))
+        result: list[dict[str, Any]] = []
+        for rows in team_rows:
+            result.extend(rows)
+        return result
+
     async def boxscore_appearances(self, game: dict[str, Any]) -> list[dict[str, Any]]:
         payload = await self.get_json(f"/game/{game['game_pk']}/boxscore")
         appearances: list[dict[str, Any]] = []

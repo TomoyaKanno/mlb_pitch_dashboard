@@ -19,7 +19,7 @@ A newer run for the same branch may cancel an older one so the visible result be
 4. Install `requirements-dev.txt`.
 5. Run `python -m pytest -q`.
 
-These tests cover the MLB client, role classifier, incremental failure behavior, next-game persistence with optional probable starters, snapshot integrity, validation invariants, season team export arithmetic, and team-timeseries reconciliation.
+These tests cover the MLB client, role classifier, incremental failure behavior, next-game persistence with optional probable starters, pitching roster persistence (depth chart / 40-man), snapshot integrity, validation invariants, season team export arithmetic, probable-starter recent-start export, roster-aware bullpen usage, and team-timeseries reconciliation.
 
 ### Static site checks
 
@@ -32,7 +32,7 @@ The Python and Node jobs run independently, making the failing layer clear.
 
 ## Production-data build check
 
-Relevant pull requests also trigger the build job in `.github/workflows/deploy-pages.yml`. It checks out the real `dashboard-data` branch, validates the manifest, builds the proposed source against all 30 teams, verifies the season totals, latest games, populated next-game records (or the explicit legacy-empty state), 14-day bullpen windows, reconciled timeseries, and React runtime, and uploads a short-lived artifact. Its deployment job is skipped on pull requests.
+Relevant pull requests also trigger the build job in `.github/workflows/deploy-pages.yml`. It checks out the real `dashboard-data` branch, validates the manifest, builds the proposed source against all 30 teams, verifies the season totals, latest games, populated next-game records (or the explicit legacy-empty state), probable-starter recent-start fields when announced, 14-day bullpen windows (including optional roster-aware pitcher fields), reconciled timeseries, and React runtime, and uploads a short-lived artifact. Its deployment job is skipped on pull requests.
 
 ## Security and scope
 

@@ -17,7 +17,14 @@ from pipeline.export import (
     export_team_timeseries,
     reconcile_team_timeseries,
 )
-from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, Snapshot
+from pipeline.schema import (
+    AppearanceRecord,
+    FetchStateRecord,
+    GameRecord,
+    NextGameRecord,
+    RosterPitcherRecord,
+    Snapshot,
+)
 from pipeline.storage import write_snapshot
 
 
@@ -86,7 +93,10 @@ def _write_two_day_snapshot(tmp_path) -> None:
 
 def test_export_matches_runtime_team_aggregation(tmp_path):
     snapshot = Snapshot(season=2026)
-    snapshot.games[1] = GameRecord(1, "2026-07-19", 2026, "Final")
+    snapshot.games[1] = GameRecord(
+        1, "2026-07-19", 2026, "Final", "2026-07-19T23:10:00Z",
+        100, "Away", 200, "Home",
+    )
     snapshot.fetch_state[1] = FetchStateRecord(1, "success", NOW, NOW, None, 1)
     rows = [
         AppearanceRecord(
@@ -150,6 +160,14 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
         "is_home": False,
         "probable_pitcher_id": 11,
         "probable_pitcher_name": "Away Probable",
+        "probable_jersey_number": None,
+        "probable_recent_starts": [{
+            "date": "2026-07-19",
+            "game_pk": 1,
+            "pitches": 30,
+            "opponent_name": "Home",
+        }],
+        "probable_days_rest": 0,
     }]
 
 
@@ -236,13 +254,14 @@ def test_recent_games_uses_scheduled_time_for_doubleheader_order():
         "game_pk": 800,
         "date": "2026-07-20",
         "game_datetime": "2026-07-20T23:10:00Z",
-        "pitchers": [{
-            "pitcher_id": 2,
-            "pitcher_name": "Late pitcher",
-            "pitches": 94,
-            "official_started": True,
-            "appearance_order": 0,
-        }],
+            "pitchers": [{
+                "pitcher_id": 2,
+                "pitcher_name": "Late pitcher",
+                "pitches": 94,
+                "official_started": True,
+                "appearance_order": 0,
+                "jersey_number": None,
+            }],
     }]
 
 
@@ -355,15 +374,78 @@ def test_bullpen_usage_uses_fourteen_day_window_and_sums_doubleheaders() -> None
                     "pitcher_id": 2,
                     "pitcher_name": "Late Reliever",
                     "pitches": [0] * 13 + [30],
+                    "depth_role": None,
+                    "depth_order": None,
+                    "on_depth_chart": False,
+                    "availability": None,
+                    "status_description": None,
                 },
                 {
                     "pitcher_id": 3,
                     "pitcher_name": "Earlier Reliever",
                     "pitches": [0, 0, 25] + [0] * 11,
+                    "depth_role": None,
+                    "depth_order": None,
+                    "on_depth_chart": False,
+                    "availability": None,
+                    "status_description": None,
                 },
             ],
         }
     ]
+
+
+def test_bullpen_usage_includes_unused_depth_arms_and_roster_badges() -> None:
+    snapshot = Snapshot(season=2026)
+    snapshot.games[1] = GameRecord(1, "2026-07-20", 2026, "Final")
+    snapshot.appearances[(1, 17, 10)] = AppearanceRecord(
+        1, "2026-07-20", 2026, 17, "Test Team", 10, "Used Reliever", 20,
+        False, 1, "RP", "official reliever",
+    )
+    snapshot.appearances[(1, 17, 11)] = AppearanceRecord(
+        1, "2026-07-20", 2026, 17, "Test Team", 11, "Starter", 90,
+        True, 0, "SP", "official starter",
+    )
+    snapshot.appearances[(1, 17, 3)] = AppearanceRecord(
+        1, "2026-07-20", 2026, 17, "Test Team", 3, "Injured Reliever", 14,
+        False, 2, "RP", "official reliever",
+    )
+    snapshot.roster_pitchers[(17, 1)] = RosterPitcherRecord(
+        17, "Test Team", 1, "Unused Callup", "RP", 0, "A", "Active",
+    )
+    snapshot.roster_pitchers[(17, 2)] = RosterPitcherRecord(
+        17, "Test Team", 2, "Idle IL Reliever", "RP", 1, "D15", "Injured 15-Day",
+    )
+    snapshot.roster_pitchers[(17, 3)] = RosterPitcherRecord(
+        17, "Test Team", 3, "Injured Reliever", "RP", 2, "D15", "Injured 15-Day",
+    )
+    snapshot.roster_pitchers[(17, 4)] = RosterPitcherRecord(
+        17, "Test Team", 4, "Closer", "CP", 3, "A", "Active",
+    )
+    snapshot.roster_pitchers[(17, 10)] = RosterPitcherRecord(
+        17, "Test Team", 10, "Used Reliever", "RP", 4, "RM", "Reassigned to Minors",
+    )
+    snapshot.roster_pitchers[(17, 99)] = RosterPitcherRecord(
+        17, "Test Team", 99, "Starter Only", "SP", 5, "A", "Active",
+    )
+
+    usage = aggregate_bullpen_usage(snapshot)[0]
+    assert [row["pitcher_name"] for row in usage["pitchers"]] == [
+        "Unused Callup",
+        "Injured Reliever",
+        "Closer",
+        "Used Reliever",
+    ]
+    assert usage["pitchers"][0]["pitches"] == [0] * 14
+    assert usage["pitchers"][0]["on_depth_chart"] is True
+    assert usage["pitchers"][0]["availability"] is None
+    assert usage["pitchers"][1]["availability"] == "IL"
+    assert usage["pitchers"][1]["pitches"][-1] == 14
+    assert usage["pitchers"][2]["depth_role"] == "CP"
+    assert usage["pitchers"][2]["on_depth_chart"] is True
+    assert usage["pitchers"][3]["availability"] == "Minors"
+    assert all(row["pitcher_name"] != "Idle IL Reliever" for row in usage["pitchers"])
+    assert all(row["pitcher_id"] != 99 for row in usage["pitchers"])
 
 
 def test_fixture_bullpen_usage_matches_recent_team_contract() -> None:
@@ -380,11 +462,11 @@ def test_fixture_bullpen_usage_matches_recent_team_contract() -> None:
         assert len(usage["dates"]) == 14
         assert usage["dates"] == sorted(set(usage["dates"]))
         assert usage["end_date"] == usage["dates"][-1]
-        assert all(
-            len(pitcher["pitches"]) == len(usage["dates"])
-            and all(isinstance(value, int) and value >= 0 for value in pitcher["pitches"])
-            for pitcher in usage["pitchers"]
-        )
+        for pitcher in usage["pitchers"]:
+            assert len(pitcher["pitches"]) == len(usage["dates"])
+            assert all(isinstance(value, int) and value >= 0 for value in pitcher["pitches"])
+            assert isinstance(pitcher.get("on_depth_chart"), bool)
+            assert pitcher.get("availability") is None or isinstance(pitcher["availability"], str)
 
 
 
@@ -403,3 +485,61 @@ def test_fixture_next_games_match_recent_team_contract() -> None:
         and bool(row["probable_pitcher_id"] is None) == bool(row["probable_pitcher_name"] is None)
         for row in next_games
     )
+    for row in next_games:
+        starts = row["probable_recent_starts"]
+        assert isinstance(starts, list) and len(starts) <= 3
+        if row["probable_pitcher_id"] is None:
+            assert starts == []
+            assert row["probable_days_rest"] is None
+        else:
+            assert all(
+                {"date", "game_pk", "pitches", "opponent_name"} <= set(start)
+                and isinstance(start["pitches"], int)
+                and start["pitches"] >= 0
+                for start in starts
+            )
+            assert row["probable_days_rest"] is None or (
+                isinstance(row["probable_days_rest"], int) and row["probable_days_rest"] >= 0
+            )
+
+
+def test_probable_starter_exports_last_three_official_starts():
+    snapshot = Snapshot(season=2026)
+    for game_pk, game_date, pitches in (
+        (1, "2026-07-01", 80),
+        (2, "2026-07-07", 95),
+        (3, "2026-07-13", 101),
+        (4, "2026-07-19", 88),
+    ):
+        snapshot.games[game_pk] = GameRecord(
+            game_pk, game_date, 2026, "Final", f"{game_date}T23:10:00Z",
+            100, "Away", 200, "Home",
+        )
+        snapshot.appearances[(game_pk, 100, 11)] = AppearanceRecord(
+            game_pk, game_date, 2026, 100, "Away", 11, "Starter", pitches,
+            True, 0, "SP", "official starter",
+        )
+    # Relief appearance must not count toward start history.
+    snapshot.appearances[(4, 100, 12)] = AppearanceRecord(
+        4, "2026-07-19", 2026, 100, "Away", 12, "Reliever", 20,
+        False, 1, "RP", "official reliever",
+    )
+    snapshot.next_games[100] = NextGameRecord(
+        100, "Away", 5, "2026-07-24", "2026-07-24T23:10:00Z",
+        200, "Home", False, 11, "Starter",
+    )
+    snapshot.next_games[200] = NextGameRecord(
+        200, "Home", 5, "2026-07-24", "2026-07-24T23:10:00Z",
+        100, "Away", True, None, None,
+    )
+
+    rows = {row["team_id"]: row for row in aggregate_next_games(snapshot)}
+    away = rows[100]
+    assert away["probable_recent_starts"] == [
+        {"date": "2026-07-19", "game_pk": 4, "pitches": 88, "opponent_name": "Home"},
+        {"date": "2026-07-13", "game_pk": 3, "pitches": 101, "opponent_name": "Home"},
+        {"date": "2026-07-07", "game_pk": 2, "pitches": 95, "opponent_name": "Home"},
+    ]
+    assert away["probable_days_rest"] == 4
+    assert rows[200]["probable_recent_starts"] == []
+    assert rows[200]["probable_days_rest"] is None

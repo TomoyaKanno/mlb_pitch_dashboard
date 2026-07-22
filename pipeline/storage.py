@@ -13,6 +13,7 @@ from .schema import (
     FetchStateRecord,
     GameRecord,
     NextGameRecord,
+    RosterPitcherRecord,
     SCHEMA_VERSION,
     Snapshot,
 )
@@ -75,6 +76,21 @@ def load_snapshot(data_dir: Path, season: int) -> Snapshot:
             if row.team_id in snapshot.next_games:
                 raise ValueError(f"duplicate next game for team {row.team_id}")
             snapshot.next_games[row.team_id] = row
+
+    roster_path = root / "roster-pitchers.json"
+    if roster_path.exists():
+        payload = json.loads(roster_path.read_text())
+        if int(payload.get("schema_version", 0)) != SCHEMA_VERSION:
+            raise ValueError(f"unsupported schema version in {roster_path}")
+        if int(payload["season"]) != season:
+            raise ValueError(f"roster data in {roster_path} belongs to another season")
+        for value in payload.get("pitchers", []):
+            row = RosterPitcherRecord.from_dict(value)
+            if row.key in snapshot.roster_pitchers:
+                raise ValueError(
+                    f"duplicate roster pitcher {row.pitcher_id} for team {row.team_id}"
+                )
+            snapshot.roster_pitchers[row.key] = row
     return snapshot
 
 
@@ -134,6 +150,23 @@ def write_snapshot(snapshot: Snapshot, refresh: dict[str, Any], data_dir: Path) 
         ],
     }
     partitions["next-games.json"] = json.dumps(next_games_payload, indent=2, sort_keys=True) + "\n"
+    roster_payload = {
+        "schema_version": SCHEMA_VERSION,
+        "season": snapshot.season,
+        "pitchers": [
+            row.to_dict()
+            for row in sorted(
+                snapshot.roster_pitchers.values(),
+                key=lambda item: (
+                    item.team_name,
+                    item.depth_order is None,
+                    item.depth_order if item.depth_order is not None else 10**9,
+                    item.pitcher_name,
+                ),
+            )
+        ],
+    }
+    partitions["roster-pitchers.json"] = json.dumps(roster_payload, indent=2, sort_keys=True) + "\n"
 
     expected = {root / relative for relative in partitions}
     for directory in (root / "games", root / "appearances"):

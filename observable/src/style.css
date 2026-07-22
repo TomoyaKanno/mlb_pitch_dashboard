@@ -76,11 +76,139 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
 .recent-game-copy strong { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 .recent-game-copy span { color: var(--muted); font-size: .82rem; }
 .probable-starter { color: var(--text) !important; }
-.recent-card-table { margin: 2px -16px -16px; overflow: hidden; border-top: 1px solid var(--border); }
-.recent-card-table table { width: 100%; margin: 0; border-collapse: collapse; table-layout: fixed; }
-.recent-card-table th, .recent-card-table td { padding: 9px 12px; }
-.recent-pitches { width: 110px; text-align: right; font-variant-numeric: tabular-nums; }
-.recent-role { width: 100px; }
+.pitcher-appearance-list {
+  display: grid;
+  gap: 0;
+  margin: 2px -16px -16px;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+.pitcher-appearance-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+  padding: 11px 12px;
+  overflow: visible;
+  border-top: 1px solid var(--border);
+}
+.pitcher-appearance-row:first-child { border-top: 0; }
+.pitcher-portrait {
+  flex: none;
+  width: 32px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  object-position: center 18%;
+  background: color-mix(in srgb, var(--surface) 70%, var(--border));
+}
+.pitcher-appearance-copy { display: grid; gap: 2px; min-width: 0; }
+.pitcher-name-stack {
+  position: relative;
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  overflow: visible;
+}
+.pitcher-name-lines {
+  display: grid;
+  gap: 0;
+  align-content: start;
+  min-width: 0;
+}
+.pitcher-first {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: .72rem;
+  font-weight: 550;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pitcher-last {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pitcher-meta {
+  color: var(--muted);
+  font-size: .68rem;
+  font-weight: 650;
+  letter-spacing: .03em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.probable-starter-copy .pitcher-first { font-size: .8rem; }
+.probable-starter-copy .pitcher-last { font-size: 1.35rem; }
+.probable-starter-copy .pitcher-meta { text-transform: none; letter-spacing: 0; font-weight: 550; }
+.pitcher-appearance-pitches {
+  color: var(--text);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+.probable-starter-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  margin-top: 2px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.probable-starter-identity {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+.probable-starter-identity .pitcher-portrait {
+  width: 72px;
+  height: 96px;
+}
+.probable-starter-copy { display: grid; gap: 3px; min-width: 0; }
+.probable-starter-copy strong {
+  overflow: hidden;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.probable-starter-copy span { color: var(--muted); font-size: .82rem; }
+.probable-starter-meta { font-variant-numeric: tabular-nums; }
+.probable-start-history {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.probable-start-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 0;
+  border-top: 1px solid var(--border);
+}
+.probable-start-row:first-child { border-top: 0; padding-top: 0; }
+.probable-start-row:last-child { padding-bottom: 0; }
+.probable-start-copy { display: grid; gap: 2px; min-width: 0; }
+.probable-start-copy strong { font-size: .9rem; font-variant-numeric: tabular-nums; }
+.probable-start-copy span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: .72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.probable-start-empty { margin: 0; }
 .recent-empty { margin-top: 20px; }
 .snapshot-panel {
   display: grid;
@@ -351,6 +479,7 @@ tbody tr.selected td { background: var(--accent-soft); }
   .recent-strain-header { display: grid; align-items: start; }
   .recent-strain-header label { width: 100%; max-width: 360px; }
   .recent-game-grid { grid-template-columns: 1fr; }
+  .probable-starter-panel { grid-template-columns: 1fr; }
   .context { display: none; }
   .rank { width: 48px; }
   .table-with-panel { grid-template-columns: 1fr; }
@@ -378,7 +507,26 @@ tbody tr.selected td { background: var(--accent-soft); }
 .bullpen-heatmap th, .bullpen-heatmap td { height: 42px; padding: 7px 9px; border-bottom: 1px solid var(--border); text-align: center; }
 .bullpen-heatmap thead th { color: var(--muted); font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
 .bullpen-heatmap tbody tr:last-child th, .bullpen-heatmap tbody tr:last-child td { border-bottom: 0; }
-.bullpen-heatmap tbody th { position: sticky; left: 0; z-index: 1; min-width: 138px; background: var(--surface); color: var(--text); text-align: left; }
+.bullpen-heatmap tbody th { position: sticky; left: 0; z-index: 1; min-width: 168px; background: var(--surface); color: var(--text); text-align: left; }
+.bullpen-pitcher-label { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.bullpen-unused th { color: var(--muted); font-weight: 550; }
+.roster-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.roster-badge.il { color: var(--warning); border-color: color-mix(in srgb, var(--warning) 45%, var(--border)); }
+.roster-badge.minors { color: var(--muted); }
+.roster-badge.role { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 .heat-date, .heat-cell { min-width: 48px; }
 .heat-cell { color: var(--muted); font-variant-numeric: tabular-nums; }
 .heat-cell.used { color: var(--text); font-weight: 700; }
