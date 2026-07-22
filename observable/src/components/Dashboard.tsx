@@ -31,9 +31,18 @@ interface DashboardData {
   data_commit: string | null;
   status: Status;
   teams: Team[];
+  player_totals: PlayerTotal[];
   recent_games: RecentTeamGame[];
   next_games: NextTeamGame[];
   bullpen_usage: BullpenUsage[];
+}
+
+interface PlayerTotal {
+  pitcher_id: number;
+  pitcher_name: string;
+  team_id: number;
+  team_name: string;
+  total: number;
 }
 
 interface TeamTimeseriesData {
@@ -47,11 +56,12 @@ const integer = new Intl.NumberFormat("en-US");
 const decimal = new Intl.NumberFormat("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1});
 
 const FRAMINGS: {view: View; label: string}[] = [
-  {view: "total", label: "Total"},
+  {view: "total", label: "Team total"},
   {view: "sp", label: "SP workload"},
   {view: "rp", label: "RP workload"},
   {view: "share", label: "Bullpen share"},
   {view: "adjustment", label: "Role adjustment"},
+  {view: "players", label: "Player total"},
 ];
 
 function ariaSort(
@@ -499,6 +509,70 @@ function TeamTable({
   );
 }
 
+
+function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
+  const maximum = Math.max(...pitchers.map((pitcher) => pitcher.total), 1);
+  return (
+    <section className="table-shell">
+      <table>
+        <caption>Top 30 MLB pitchers ranked by total pitches thrown</caption>
+        <thead>
+          <tr>
+            <th className="rank">Rank</th>
+            <th>Pitcher</th>
+            <th>Current team</th>
+            <th>Total pitches</th>
+          </tr>
+        </thead>
+        <tbody>
+          {pitchers.map((pitcher, index) => {
+            const width = Math.max(2, pitcher.total / maximum * 100);
+            return (
+              <tr key={pitcher.pitcher_id}>
+                <td className="rank">{index + 1}</td>
+                <td className="team">
+                  <span className="team-name">
+                    <img
+                      className="pitcher-portrait"
+                      src={`https://img.mlbstatic.com/mlb-photos/image/upload/w_64,d_people:generic:headshot:67:current.png,q_auto:best,f_auto/v1/people/${pitcher.pitcher_id}/headshot/67/current`}
+                      alt=""
+                      width={24}
+                      height={32}
+                      loading="lazy"
+                      onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+                    />
+                    {pitcher.pitcher_name}
+                  </span>
+                </td>
+                <td className="team">
+                  <span className="team-name">
+                    <img
+                      className="team-logo"
+                      src={`https://www.mlbstatic.com/team-logos/${pitcher.team_id}.svg`}
+                      alt=""
+                      width={22}
+                      height={22}
+                      loading="lazy"
+                      onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+                    />
+                    {pitcher.team_name}
+                  </span>
+                </td>
+                <td>
+                  <div className="metric">
+                    <strong>{integer.format(pitcher.total)}</strong>
+                    <span className="track"><span className="fill" style={{width: `${width}%`}} /></span>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
 export function Dashboard({
   data, timeseries,
 }: {
@@ -521,7 +595,9 @@ export function Dashboard({
   const roleView = view === "sp" || view === "rp" || view === "share";
   const selectedTeam = data.teams.find((team) => team.team_id === selectedTeamId) ?? null;
   const selectedSeries = useMemo(
-    () => (selectedTeamId == null ? [] : metricSeries(timeseries.points, selectedTeamId, view, basis, seriesMode)),
+    () => (selectedTeamId == null || view === "players"
+      ? []
+      : metricSeries(timeseries.points, selectedTeamId, view, basis, seriesMode)),
     [timeseries.points, selectedTeamId, view, basis, seriesMode],
   );
   const completeGames = useMemo(
@@ -583,7 +659,7 @@ export function Dashboard({
     setSelectedTeamId(teamId);
   }
 
-  const showPanel = selectedTeam != null && dateDomain != null;
+  const showPanel = view !== "players" && selectedTeam != null && dateDomain != null;
   const layoutWithPanel = showPanel;
 
   return (
@@ -601,15 +677,18 @@ export function Dashboard({
       </nav>
       {screen === "leaders" ? (
         <>
-          <LeagueGrid league={league} />
+          {view !== "players" ? <LeagueGrid league={league} /> : null}
           <section className="controls" aria-label="Table controls">
             <div className="framing">
               {FRAMINGS.map((item) => <button key={item.view} type="button" className={view === item.view ? "active" : undefined} onClick={() => handleView(item.view)}>{item.label}</button>)}
             </div>
             {roleView && <label>Role basis<select value={basis} onChange={(event) => setBasis(event.target.value as Basis)}><option value="adjusted">Role-adjusted</option><option value="official">Official appearance</option></select></label>}
-            {view !== "share" && <label className="check"><input type="checkbox" checked={perGame} onChange={(event) => setPerGame(event.target.checked)} />Per game</label>}
+            {view !== "share" && view !== "players" && <label className="check"><input type="checkbox" checked={perGame} onChange={(event) => setPerGame(event.target.checked)} />Per game</label>}
           </section>
-          <div className={layoutWithPanel ? "table-with-panel" : undefined}>
+          {view === "players" ? (
+            <PlayerTotalTable pitchers={data.player_totals} />
+          ) : (
+            <div className={layoutWithPanel ? "table-with-panel" : undefined}>
             <TeamTable
               teams={data.teams}
               league={league}
@@ -639,7 +718,8 @@ export function Dashboard({
                 onClose={beginClose}
               />
             ) : null}
-          </div>
+            </div>
+          )}
         </>
       ) : (
         <RecentStrain
