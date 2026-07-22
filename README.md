@@ -8,7 +8,8 @@ The Observable Framework application in `observable/` is the only supported user
 
 ## What the dashboard measures
 
-- **Total pitches** thrown by each team's pitchers.
+- **Team total** pitches thrown by each team's pitchers.
+- **Player total** pitches thrown by the top 30 individual pitchers, including pre-trade appearances and the current team label when roster data is available.
 - **Official SP and RP workload** using MLB's per-game `gamesStarted` designation.
 - **Role-adjusted SP and RP workload** for opener and bulk-pitcher games.
 - **Bullpen share**, **reclassified pitches**, per-game rates, and appearances that need human review.
@@ -44,13 +45,18 @@ flowchart TD
 | `dashboard-data` | Machine-managed normalized season snapshots; never merged into `main` |
 | GitHub Actions artifact | Ephemeral compiled site served by GitHub Pages; never committed |
 
-The deployed browser downloads small team-level aggregates generated at build time: season totals, one latest completed-game pitcher list, one upcoming-game schedule record (optional probable starter plus recent-start context), one 14-day bullpen-usage window enriched with depth-chart roster context per team, plus a sibling team timeseries payload (daily increments for the chart and game-grain complete games). Data acquisition, role classification, persistence, validation, and export all happen before deployment.
+The deployed browser downloads small team- and player-level aggregates generated at build time: team season totals, top-30 player totals, one latest completed-game pitcher list, one upcoming-game schedule record (optional probable starter plus recent-start context), one 14-day bullpen-usage window enriched with depth-chart roster context per team, plus a sibling team timeseries payload (daily increments for the chart and game-grain complete games). Data acquisition, role classification, persistence, validation, and export all happen before deployment.
 
 ### Using the timeline panel
 
 - Click any table row to open that team's series beside the table (slides in; Role adjustment disables row clicks).
 - Charts use one shared linear date domain for every team, with month labels on X and tidy value ticks on Y.
 - Hover the series for the nearest game day; complete games (zero official RP pitches in that `game_pk`) are listed under the chart with the pitcher name — never inferred from calendar-day totals, so doubleheaders do not hide a CG.
+
+### Using Season leaders
+
+- **Team total** ranks all 30 clubs and keeps the existing team timeline available.
+- **Player total** ranks the top 30 individual pitchers by season pitch count. A traded pitcher’s total includes every season appearance and is labeled with his current roster team when available.
 
 ### Using Recent strain
 
@@ -69,7 +75,7 @@ The deployed browser downloads small team-level aggregates generated at build ti
 4. Fetch only missing games, prior failures, and games inside the seven-day reconciliation window. A forced run fetches every completed game.
 5. Classify appearances, validate structural and arithmetic invariants, write normalized JSONL partitions plus next-game and roster read models, and verify the persisted files and hashes.
 6. Commit the snapshot to `dashboard-data` only after validation succeeds.
-7. Trigger `Build and deploy dashboard`, which checks out current source and data, exports the 30-team season totals, latest-game workloads, upcoming games with probable-starter context, roster-aware bullpen windows, and reconciled team timeseries, builds the site, and deploys a Pages artifact.
+7. Trigger `Build and deploy dashboard`, which checks out current source and data, exports the 30-team season totals, top-30 player totals, latest-game workloads, upcoming games with probable-starter context, roster-aware bullpen windows, and reconciled team timeseries, builds the site, and deploys a Pages artifact.
 
 The configured season changes intentionally rather than rolling over on January 1. This prevents an empty new-season dataset from replacing an established snapshot before regular-season games exist.
 
