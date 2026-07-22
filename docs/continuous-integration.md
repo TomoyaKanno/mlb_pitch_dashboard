@@ -32,7 +32,7 @@ The Python and Node jobs run independently, making the failing layer clear.
 
 ## Production-data build check
 
-Relevant pull requests also trigger the build job in `.github/workflows/deploy-pages.yml`. It checks out the real `dashboard-data` branch, validates the manifest, builds the proposed source against all 30 teams, verifies both browser payloads (season totals plus reconciled timeseries) and the React runtime, and uploads a short-lived artifact. Its deployment job is skipped on pull requests.
+Relevant pull requests also trigger the build job in `.github/workflows/deploy-pages.yml`. It checks out the real `dashboard-data` branch, validates the manifest, builds the proposed source against all 30 teams, verifies the season totals, latest games, 14-day bullpen windows, reconciled timeseries, and React runtime, and uploads a short-lived artifact. Its deployment job is skipped on pull requests.
 
 ## Security and scope
 
