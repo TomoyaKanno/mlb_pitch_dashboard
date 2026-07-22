@@ -14,6 +14,16 @@ def validate_snapshot(snapshot: Snapshot) -> None:
     by_game_team: dict[tuple[int, int], list] = defaultdict(list)
     appearances_by_game: dict[int, int] = defaultdict(int)
 
+    for team_id, next_game in snapshot.next_games.items():
+        if team_id != next_game.team_id:
+            errors.append(f"next-game dictionary key mismatch for {team_id}")
+        if next_game.team_id == next_game.opponent_id:
+            errors.append(f"next game {next_game.game_pk} has the same team and opponent")
+        if not next_game.team_name or not next_game.opponent_name:
+            errors.append(f"next game {next_game.game_pk} is missing a team name")
+        if bool(next_game.probable_pitcher_id is None) != bool(next_game.probable_pitcher_name is None):
+            errors.append(f"next game {next_game.game_pk} has incomplete probable-pitcher data")
+
     for game_pk, game in snapshot.games.items():
         if game_pk != game.game_pk:
             errors.append(f"game dictionary key mismatch for {game_pk}")
