@@ -13,7 +13,7 @@ The Observable Framework application in `observable/` is the only supported user
 - **Role-adjusted SP and RP workload** for opener and bulk-pitcher games.
 - **Bullpen share**, **reclassified pitches**, per-game rates, and appearances that need human review.
 - **Team timelines** (cumulative or daily) on a shared season calendar axis, with hover tooltips and game-grain complete-game notes (pitcher + date).
-- **Recent strain**: a team picker (LAD by default) showing each pitcher’s pitch count from that team’s latest completed game. It is workload context, not a fatigue score.
+- **Recent strain**: a team picker (LAD by default) showing the latest completed-game pitcher table and a 14-day bullpen workload heatmap. It is workload context, not a fatigue score.
 
 The official starter is not inferred from appearance order, pitch count, outing length, or effectiveness. A starter removed after one inning remains an official SP. The role-adjusted view is a separate analytical layer:
 
@@ -41,7 +41,7 @@ flowchart TD
 | `dashboard-data` | Machine-managed normalized season snapshots; never merged into `main` |
 | GitHub Actions artifact | Ephemeral compiled site served by GitHub Pages; never committed |
 
-The deployed browser downloads small team-level aggregates generated at build time: season totals and one latest completed-game pitcher list per team in the main payload, plus a sibling team timeseries payload (daily increments for the chart and game-grain complete games). Data acquisition, role classification, persistence, validation, and export all happen before deployment.
+The deployed browser downloads small team-level aggregates generated at build time: season totals, one latest completed-game pitcher list per team, and one 14-day bullpen-usage window per team in the main payload, plus a sibling team timeseries payload (daily increments for the chart and game-grain complete games). Data acquisition, role classification, persistence, validation, and export all happen before deployment.
 
 ### Using the timeline panel
 
@@ -59,7 +59,7 @@ The deployed browser downloads small team-level aggregates generated at build ti
 4. Fetch only missing games, prior failures, and games inside the seven-day reconciliation window. A forced run fetches every completed game.
 5. Classify appearances, validate structural and arithmetic invariants, write normalized JSONL partitions, and verify the persisted files and hashes.
 6. Commit the snapshot to `dashboard-data` only after validation succeeds.
-7. Trigger `Build and deploy dashboard`, which checks out current source and data, exports the 30-team season totals, latest completed-game pitcher workloads, and reconciled team timeseries, builds the site, and deploys a Pages artifact.
+7. Trigger `Build and deploy dashboard`, which checks out current source and data, exports the 30-team season totals, latest completed-game pitcher workloads, 14-day bullpen-usage windows, and reconciled team timeseries, builds the site, and deploys a Pages artifact.
 
 The configured season changes intentionally rather than rolling over on January 1. This prevents an empty new-season dataset from replacing an established snapshot before regular-season games exist.
 
