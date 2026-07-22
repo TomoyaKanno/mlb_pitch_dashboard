@@ -8,7 +8,14 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Callable, TypeVar
 
-from .schema import AppearanceRecord, FetchStateRecord, GameRecord, SCHEMA_VERSION, Snapshot
+from .schema import (
+    AppearanceRecord,
+    FetchStateRecord,
+    GameRecord,
+    NextGameRecord,
+    SCHEMA_VERSION,
+    Snapshot,
+)
 
 
 T = TypeVar("T")
@@ -55,6 +62,19 @@ def load_snapshot(data_dir: Path, season: int) -> Snapshot:
             if row.game_pk in snapshot.fetch_state:
                 raise ValueError(f"duplicate fetch state {row.game_pk}")
             snapshot.fetch_state[row.game_pk] = row
+
+    next_games_path = root / "next-games.json"
+    if next_games_path.exists():
+        payload = json.loads(next_games_path.read_text())
+        if int(payload.get("schema_version", 0)) != SCHEMA_VERSION:
+            raise ValueError(f"unsupported schema version in {next_games_path}")
+        if int(payload["season"]) != season:
+            raise ValueError(f"next-game data in {next_games_path} belongs to another season")
+        for value in payload.get("games", []):
+            row = NextGameRecord.from_dict(value)
+            if row.team_id in snapshot.next_games:
+                raise ValueError(f"duplicate next game for team {row.team_id}")
+            snapshot.next_games[row.team_id] = row
     return snapshot
 
 
@@ -106,6 +126,14 @@ def write_snapshot(snapshot: Snapshot, refresh: dict[str, Any], data_dir: Path) 
         ],
     }
     partitions["fetch-state.json"] = json.dumps(state_payload, indent=2, sort_keys=True) + "\n"
+    next_games_payload = {
+        "schema_version": SCHEMA_VERSION,
+        "season": snapshot.season,
+        "games": [
+            row.to_dict() for row in sorted(snapshot.next_games.values(), key=lambda item: item.team_name)
+        ],
+    }
+    partitions["next-games.json"] = json.dumps(next_games_payload, indent=2, sort_keys=True) + "\n"
 
     expected = {root / relative for relative in partitions}
     for directory in (root / "games", root / "appearances"):
