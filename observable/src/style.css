@@ -376,6 +376,77 @@ tbody tr.selected td { background: var(--accent-soft); }
   min-height: 36px;
   padding: 6px 8px;
 }
+.team-pitcher-usage {
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+}
+
+.team-pitcher-usage-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.team-pitcher-usage-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.team-pitcher-usage-header span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.team-pitcher-usage-list {
+  display: grid;
+  gap: 0;
+  margin: 9px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-pitcher-usage-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.team-pitcher-usage-row:first-child {
+  border-top: 0;
+}
+
+.team-pitcher-usage-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.team-pitcher-usage-copy strong,
+.team-pitcher-usage-copy span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-pitcher-usage-copy strong {
+  font-size: 0.88rem;
+}
+
+.team-pitcher-usage-copy span {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.team-pitcher-usage-value {
+  font-variant-numeric: tabular-nums;
+}
+
 .team-series-chart-wrap {
   position: relative;
 }

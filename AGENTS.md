@@ -27,7 +27,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 - `pipeline/update.py` — incremental refresh orchestration and failure-state transitions.
 - `pipeline/validation.py` — in-memory structural and arithmetic invariants.
 - `pipeline/check.py` — persisted snapshot reload and integrity verification.
-- `pipeline/export.py` — validated browser-ready team and top-30 player aggregation, latest-game and upcoming-game schedule read models (including probable-starter recent starts), roster-aware 14-day bullpen usage, and sibling team timeseries.
+- `pipeline/export.py` — validated browser-ready team and top-30 player aggregation, per-team top-five pitcher workloads for each role framing, latest-game and upcoming-game schedule read models (including probable-starter recent starts), roster-aware 14-day bullpen usage, and sibling team timeseries.
 - `observable/src/data/dashboard.json.py` — build-time bridge from the snapshot to the season table payload.
 - `observable/src/data/team-timeseries.json.py` — build-time bridge for daily team-increment series.
 - `observable/src/components/Dashboard.tsx` — season-leader shell, controls, table, and timeline panel.
@@ -83,12 +83,12 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 
 - the title and dashboard heading render;
 - the table renders 30 teams with production data;
-- framing, role-basis, and per-game controls respond, including **Team total** and the top-30 **Player total** table;
+- framing, role-basis, and per-game controls respond, including **Team total**, the top-30 **Player total** table, and top-five pitcher usage in Team total/SP/RP details;
 - Team and metric column headers sort ascending/descending (there is no Order dropdown);
 - ranks follow the displayed metric even when rows are reordered by header sort;
 - Total bars show dual-tone adjusted SP/RP fills and an MLB-average notch;
 - clicking any table row opens the side timeline (Cumulative / Timecourse) with a short slide; Role adjustment disables row clicks and closes any open panel;
-- the panel chart uses the shared season date axis, hover tooltip, and game-grain complete-game list with pitcher names;
+- the panel chart uses the shared season date axis, hover tooltip, game-grain complete-game list with pitcher names, and the selected-basis top-five pitcher usage list (swingmen can appear in both SP and RP);
 - the Season leaders / Recent strain selector works;
 - Recent strain defaults to LAD and uses the team picker;
 - last completed game shows stacked appearance rows (portrait tile, split first/last name, official SP/RP, pitches) in appearance order;
@@ -107,7 +107,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 4. `pipeline.check` reloads those files and repeats structural and coverage validation.
 5. The refresh workflow commits changed files to `dashboard-data`.
 6. A successful `workflow_run` handoff builds from current `main` plus the validated data branch.
-7. `pipeline.export` produces the season team/player payload (top-30 individual totals plus latest completed-game pitcher list, upcoming game with optional probable starter and recent-start context, roster-aware 14-day bullpen window per team) and the sibling team timeseries (daily points plus `complete_games`); Observable renders the season leaders table, timeline panel, and Recent strain screen.
+7. `pipeline.export` produces the season team/player payload (top-30 individual totals plus per-team top-five pitcher workloads for Team total/official SP/RP/adjusted SP/RP, latest completed-game pitcher list, upcoming game with optional probable starter and recent-start context, roster-aware 14-day bullpen window per team) and the sibling team timeseries (daily points plus `complete_games`); Observable renders the season leaders table, timeline panel, and Recent strain screen.
 8. GitHub Pages receives the compiled artifact; no compiled files are committed.
 
 Never commit a snapshot before the persisted reload check succeeds.
@@ -133,7 +133,7 @@ npm test
 OBSERVABLE_TELEMETRY_DISABLE=true npm run build
 ```
 
-Use the fixture for fast checks. For changes to the loader, exporter, schema, validation, or deployment path, also build against `dashboard-data` and verify the 30-team season payload, one recent game, one upcoming game with consistent optional probable-starter fields (including `probable_recent_starts` / `probable_days_rest` when announced), one valid 14-day bullpen window per team with roster-aware pitcher rows when `roster-pitchers.json` is present, reconciled `team-timeseries` points, and `complete_games` list (matching season and data revision). For UI/runtime changes, add the browser smoke test above.
+Use the fixture for fast checks. For changes to the loader, exporter, schema, validation, or deployment path, also build against `dashboard-data` and verify the 30-team season payload, one top-five pitcher-usage record per team with correctly ranked role-framed lists, one recent game, one upcoming game with consistent optional probable-starter fields (including `probable_recent_starts` / `probable_days_rest` when announced), one valid 14-day bullpen window per team with roster-aware pitcher rows when `roster-pitchers.json` is present, reconciled `team-timeseries` points, and `complete_games` list (matching season and data revision). For UI/runtime changes, add the browser smoke test above.
 
 ### Workflow changes
 

@@ -122,6 +122,56 @@ def aggregate_pitchers(snapshot: Snapshot, *, limit: int = 30) -> list[dict[str,
     )[:limit]
 
 
+def aggregate_team_pitcher_usage(
+    snapshot: Snapshot,
+    *,
+    limit: int = 5,
+) -> list[dict[str, Any]]:
+    """Top per-team pitcher workloads for every season-leader role framing.
+
+    Roles remain appearance-level facts. A swingman can therefore rank in both
+    SP and RP lists, with official and role-adjusted lists reflecting their
+    respective classifications instead of assigning one permanent label.
+    """
+    by_pitcher: dict[tuple[int, int], dict[str, Any]] = {}
+    latest_team_name: dict[int, tuple[str, int, str]] = {}
+
+    for row in snapshot.appearances.values():
+        key = (row.team_id, row.pitcher_id)
+        pitcher = by_pitcher.setdefault(
+            key,
+            {
+                "pitcher_id": row.pitcher_id,
+                "pitcher_name": row.pitcher_name,
+                **_empty_metrics(),
+            },
+        )
+        _accumulate_appearance(pitcher, row)
+        latest = latest_team_name.get(row.team_id)
+        candidate = (row.game_date, row.game_pk, row.team_name)
+        if latest is None or candidate[:2] >= latest[:2]:
+            latest_team_name[row.team_id] = candidate
+
+    by_team: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    for (team_id, _pitcher_id), pitcher in by_pitcher.items():
+        _assert_role_balance(f"pitcher {pitcher['pitcher_id']} on team {team_id}", pitcher)
+        by_team[team_id].append(pitcher)
+
+    result: list[dict[str, Any]] = []
+    for team_id, pitchers in by_team.items():
+        team_name = latest_team_name[team_id][2]
+        leaderboards = {
+            key: sorted(
+                (pitcher for pitcher in pitchers if pitcher[key] > 0),
+                key=lambda pitcher: (-pitcher[key], pitcher["pitcher_name"], pitcher["pitcher_id"]),
+            )[:limit]
+            for key in ("total", "official_sp", "official_rp", "adjusted_sp", "adjusted_rp")
+        }
+        result.append({"team_id": team_id, "team_name": team_name, **leaderboards})
+
+    return sorted(result, key=lambda row: row["team_name"])
+
+
 def aggregate_team_timeseries(snapshot: Snapshot) -> list[dict[str, Any]]:
     """Daily team increments: one point per (game_date, team_id) with activity.
 
@@ -538,6 +588,7 @@ def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
         **meta,
         "teams": teams,
         "player_totals": aggregate_pitchers(snapshot),
+        "team_pitcher_usage": aggregate_team_pitcher_usage(snapshot),
         "recent_games": aggregate_recent_games(snapshot),
         "next_games": aggregate_next_games(snapshot),
         "bullpen_usage": aggregate_bullpen_usage(snapshot),
