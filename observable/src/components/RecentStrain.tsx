@@ -205,6 +205,27 @@ export function RecentStrain({
               <span>{selected.pitchers.length} pitchers used · {formatFullDate(selected.date)}</span>
             </div>
           </div>
+          <div className="recent-card-table">
+            <table>
+              <caption>{selected.team_name} pitcher workloads from its last completed game</caption>
+              <thead>
+                <tr>
+                  <th>Pitcher</th>
+                  <th className="recent-role">Role</th>
+                  <th className="recent-pitches">Pitches</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selected.pitchers.map((pitcher) => (
+                  <tr key={pitcher.pitcher_id}>
+                    <td>{pitcher.pitcher_name}</td>
+                    <td className="recent-role">{pitcher.official_started ? "SP" : "RP"}</td>
+                    <td className="recent-pitches">{integer.format(pitcher.pitches)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
         <section className="recent-game-card" aria-label="Next game">
           <p className="recent-card-label">Next game</p>
@@ -226,27 +247,6 @@ export function RecentStrain({
             </div>
           )}
         </section>
-      </div>
-      <div className="table-shell recent-table">
-        <table>
-          <caption>{selected.team_name} pitcher workloads from its last completed game</caption>
-          <thead>
-            <tr>
-              <th>Pitcher</th>
-              <th className="recent-role">Role</th>
-              <th className="recent-pitches">Pitches</th>
-            </tr>
-          </thead>
-          <tbody>
-            {selected.pitchers.map((pitcher) => (
-              <tr key={pitcher.pitcher_id}>
-                <td>{pitcher.pitcher_name}</td>
-                <td className="recent-role">{pitcher.official_started ? "SP" : "RP"}</td>
-                <td className="recent-pitches">{integer.format(pitcher.pitches)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
       <BullpenHeatmap usage={usage} />
     </section>
