@@ -10,7 +10,7 @@ from typing import Any, Callable
 
 from .classify import Appearance, classify_appearances
 from .mlb import MLBClient, fetch_game_batch
-from .schema import AppearanceRecord, FetchStateRecord, GameRecord, Snapshot
+from .schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, Snapshot
 from .storage import load_snapshot, write_snapshot
 from .validation import SnapshotValidationError, validate_snapshot
 
@@ -95,7 +95,12 @@ async def update_season(
 
     async with client_factory() as client:
         schedule_values = await client.completed_games(season)
+        upcoming_values = await client.upcoming_games(season)
         scheduled = [GameRecord.from_dict(value) for value in schedule_values]
+        next_games = [NextGameRecord.from_dict(value) for value in upcoming_values]
+        next_games_by_team = {row.team_id: row for row in next_games}
+        if len(next_games_by_team) != len(next_games):
+            raise SnapshotValidationError("upcoming schedule contains duplicate teams")
         scheduled_by_pk = {game.game_pk: game for game in scheduled}
         if len(scheduled_by_pk) != len(scheduled):
             raise SnapshotValidationError("schedule contains duplicate game identifiers")
@@ -106,6 +111,7 @@ async def update_season(
             )
 
         snapshot.games = scheduled_by_pk
+        snapshot.next_games = next_games_by_team
         pending = games_to_refresh(
             scheduled,
             snapshot,
