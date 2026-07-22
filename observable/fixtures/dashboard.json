@@ -185,7 +185,7 @@
         },
         {
           "pitcher_id": 657656,
-          "pitcher_name": "Edwin D\u00edaz",
+          "pitcher_name": "Edwin Díaz",
           "pitches": 17,
           "official_started": false,
           "appearance_order": 1,
@@ -235,7 +235,7 @@
         },
         {
           "pitcher_id": 623143,
-          "pitcher_name": "Andr\u00e9s Mu\u00f1oz",
+          "pitcher_name": "Andrés Muñoz",
           "pitches": 13,
           "official_started": false,
           "appearance_order": 1,
@@ -485,7 +485,7 @@
       "pitchers": [
         {
           "pitcher_id": 657656,
-          "pitcher_name": "Edwin D\u00edaz",
+          "pitcher_name": "Edwin Díaz",
           "pitches": [
             0,
             0,
@@ -581,7 +581,7 @@
       "pitchers": [
         {
           "pitcher_id": 623143,
-          "pitcher_name": "Andr\u00e9s Mu\u00f1oz",
+          "pitcher_name": "Andrés Muñoz",
           "pitches": [
             0,
             0,
@@ -603,6 +603,307 @@
           "on_depth_chart": false,
           "availability": null,
           "status_description": null
+        }
+      ]
+    }
+  ],
+  "team_pitcher_usage": [
+    {
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers",
+      "total": [
+        {
+          "pitcher_id": 669203,
+          "pitcher_name": "Yamamoto",
+          "total": 96,
+          "official_sp": 96,
+          "official_rp": 0,
+          "adjusted_sp": 96,
+          "adjusted_rp": 0
+        },
+        {
+          "pitcher_id": 656794,
+          "pitcher_name": "Scott",
+          "total": 16,
+          "official_sp": 0,
+          "official_rp": 16,
+          "adjusted_sp": 0,
+          "adjusted_rp": 16
+        },
+        {
+          "pitcher_id": 681911,
+          "pitcher_name": "Vesia",
+          "total": 14,
+          "official_sp": 0,
+          "official_rp": 14,
+          "adjusted_sp": 0,
+          "adjusted_rp": 14
+        }
+      ],
+      "official_sp": [
+        {
+          "pitcher_id": 669203,
+          "pitcher_name": "Yamamoto",
+          "total": 96,
+          "official_sp": 96,
+          "official_rp": 0,
+          "adjusted_sp": 96,
+          "adjusted_rp": 0
+        }
+      ],
+      "official_rp": [
+        {
+          "pitcher_id": 656794,
+          "pitcher_name": "Scott",
+          "total": 16,
+          "official_sp": 0,
+          "official_rp": 16,
+          "adjusted_sp": 0,
+          "adjusted_rp": 16
+        },
+        {
+          "pitcher_id": 681911,
+          "pitcher_name": "Vesia",
+          "total": 14,
+          "official_sp": 0,
+          "official_rp": 14,
+          "adjusted_sp": 0,
+          "adjusted_rp": 14
+        }
+      ],
+      "adjusted_sp": [
+        {
+          "pitcher_id": 669203,
+          "pitcher_name": "Yamamoto",
+          "total": 96,
+          "official_sp": 96,
+          "official_rp": 0,
+          "adjusted_sp": 96,
+          "adjusted_rp": 0
+        }
+      ],
+      "adjusted_rp": [
+        {
+          "pitcher_id": 656794,
+          "pitcher_name": "Scott",
+          "total": 16,
+          "official_sp": 0,
+          "official_rp": 16,
+          "adjusted_sp": 0,
+          "adjusted_rp": 16
+        },
+        {
+          "pitcher_id": 681911,
+          "pitcher_name": "Vesia",
+          "total": 14,
+          "official_sp": 0,
+          "official_rp": 14,
+          "adjusted_sp": 0,
+          "adjusted_rp": 14
+        }
+      ]
+    },
+    {
+      "team_id": 121,
+      "team_name": "New York Mets",
+      "total": [
+        {
+          "pitcher_id": 656849,
+          "pitcher_name": "Peterson",
+          "total": 91,
+          "official_sp": 91,
+          "official_rp": 0,
+          "adjusted_sp": 91,
+          "adjusted_rp": 0
+        },
+        {
+          "pitcher_id": 621445,
+          "pitcher_name": "Díaz",
+          "total": 17,
+          "official_sp": 0,
+          "official_rp": 17,
+          "adjusted_sp": 0,
+          "adjusted_rp": 17
+        }
+      ],
+      "official_sp": [
+        {
+          "pitcher_id": 656849,
+          "pitcher_name": "Peterson",
+          "total": 91,
+          "official_sp": 91,
+          "official_rp": 0,
+          "adjusted_sp": 91,
+          "adjusted_rp": 0
+        }
+      ],
+      "official_rp": [
+        {
+          "pitcher_id": 621445,
+          "pitcher_name": "Díaz",
+          "total": 17,
+          "official_sp": 0,
+          "official_rp": 17,
+          "adjusted_sp": 0,
+          "adjusted_rp": 17
+        }
+      ],
+      "adjusted_sp": [
+        {
+          "pitcher_id": 656849,
+          "pitcher_name": "Peterson",
+          "total": 91,
+          "official_sp": 91,
+          "official_rp": 0,
+          "adjusted_sp": 91,
+          "adjusted_rp": 0
+        }
+      ],
+      "adjusted_rp": [
+        {
+          "pitcher_id": 621445,
+          "pitcher_name": "Díaz",
+          "total": 17,
+          "official_sp": 0,
+          "official_rp": 17,
+          "adjusted_sp": 0,
+          "adjusted_rp": 17
+        }
+      ]
+    },
+    {
+      "team_id": 136,
+      "team_name": "Seattle Mariners",
+      "total": [
+        {
+          "pitcher_id": 669302,
+          "pitcher_name": "Gilbert",
+          "total": 102,
+          "official_sp": 102,
+          "official_rp": 0,
+          "adjusted_sp": 102,
+          "adjusted_rp": 0
+        },
+        {
+          "pitcher_id": 650895,
+          "pitcher_name": "Muñoz",
+          "total": 13,
+          "official_sp": 0,
+          "official_rp": 13,
+          "adjusted_sp": 0,
+          "adjusted_rp": 13
+        }
+      ],
+      "official_sp": [
+        {
+          "pitcher_id": 669302,
+          "pitcher_name": "Gilbert",
+          "total": 102,
+          "official_sp": 102,
+          "official_rp": 0,
+          "adjusted_sp": 102,
+          "adjusted_rp": 0
+        }
+      ],
+      "official_rp": [
+        {
+          "pitcher_id": 650895,
+          "pitcher_name": "Muñoz",
+          "total": 13,
+          "official_sp": 0,
+          "official_rp": 13,
+          "adjusted_sp": 0,
+          "adjusted_rp": 13
+        }
+      ],
+      "adjusted_sp": [
+        {
+          "pitcher_id": 669302,
+          "pitcher_name": "Gilbert",
+          "total": 102,
+          "official_sp": 102,
+          "official_rp": 0,
+          "adjusted_sp": 102,
+          "adjusted_rp": 0
+        }
+      ],
+      "adjusted_rp": [
+        {
+          "pitcher_id": 650895,
+          "pitcher_name": "Muñoz",
+          "total": 13,
+          "official_sp": 0,
+          "official_rp": 13,
+          "adjusted_sp": 0,
+          "adjusted_rp": 13
+        }
+      ]
+    },
+    {
+      "team_id": 147,
+      "team_name": "New York Yankees",
+      "total": [
+        {
+          "pitcher_id": 543037,
+          "pitcher_name": "Cole",
+          "total": 98,
+          "official_sp": 98,
+          "official_rp": 0,
+          "adjusted_sp": 98,
+          "adjusted_rp": 0
+        },
+        {
+          "pitcher_id": 596133,
+          "pitcher_name": "Weaver",
+          "total": 15,
+          "official_sp": 0,
+          "official_rp": 15,
+          "adjusted_sp": 0,
+          "adjusted_rp": 15
+        }
+      ],
+      "official_sp": [
+        {
+          "pitcher_id": 543037,
+          "pitcher_name": "Cole",
+          "total": 98,
+          "official_sp": 98,
+          "official_rp": 0,
+          "adjusted_sp": 98,
+          "adjusted_rp": 0
+        }
+      ],
+      "official_rp": [
+        {
+          "pitcher_id": 596133,
+          "pitcher_name": "Weaver",
+          "total": 15,
+          "official_sp": 0,
+          "official_rp": 15,
+          "adjusted_sp": 0,
+          "adjusted_rp": 15
+        }
+      ],
+      "adjusted_sp": [
+        {
+          "pitcher_id": 543037,
+          "pitcher_name": "Cole",
+          "total": 98,
+          "official_sp": 98,
+          "official_rp": 0,
+          "adjusted_sp": 98,
+          "adjusted_rp": 0
+        }
+      ],
+      "adjusted_rp": [
+        {
+          "pitcher_id": 596133,
+          "pitcher_name": "Weaver",
+          "total": 15,
+          "official_sp": 0,
+          "official_rp": 15,
+          "adjusted_sp": 0,
+          "adjusted_rp": 15
         }
       ]
     }
