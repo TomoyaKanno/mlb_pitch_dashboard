@@ -205,7 +205,7 @@ jobs:
               f"Validated {len(payload['teams'])} teams, {len(series['points'])} "
               f"team-day points, {len(series['complete_games'])} complete games, "
               f"{len(player_totals)} player totals, {len(recent_games)} recent team games, "
-              f"{len(next_games)} next team games, {len(bullpen_usage)} bullpen windows, 
+              f"{len(next_games)} next team games, {len(bullpen_usage)} bullpen windows, "
               f"and {payload['status']['current_games']} current games"
           )
           PY
