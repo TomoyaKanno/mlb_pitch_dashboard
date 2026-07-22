@@ -128,6 +128,20 @@ jobs:
                   pitcher_name = game.get("probable_pitcher_name")
                   if (pitcher_id is None) != (pitcher_name is None):
                       raise SystemExit("next game has incomplete probable-pitcher data")
+                  starts = game.get("probable_recent_starts")
+                  if not isinstance(starts, list) or len(starts) > 3:
+                      raise SystemExit("probable_recent_starts must be a list of at most 3 starts")
+                  days_rest = game.get("probable_days_rest")
+                  if pitcher_id is None:
+                      if starts or days_rest is not None:
+                          raise SystemExit("unannounced probable starter must have empty start history")
+                  elif days_rest is not None and (not isinstance(days_rest, int) or days_rest < 0):
+                      raise SystemExit("probable_days_rest must be a non-negative int or null")
+                  for start in starts:
+                      if not isinstance(start.get("pitches"), int) or start["pitches"] < 0:
+                          raise SystemExit("probable start pitches must be a non-negative int")
+                      if "date" not in start or "game_pk" not in start:
+                          raise SystemExit("probable start missing date or game_pk")
           bullpen_usage = payload.get("bullpen_usage")
           if not isinstance(bullpen_usage, list) or len(bullpen_usage) != len(payload["teams"]):
               raise SystemExit("dashboard missing one bullpen-usage window per team")
@@ -149,6 +163,12 @@ jobs:
                   for pitcher in pitchers
               ):
                   raise SystemExit("bullpen-usage pitch arrays do not match the date window")
+              for pitcher in pitchers:
+                  if "on_depth_chart" in pitcher and not isinstance(pitcher["on_depth_chart"], bool):
+                      raise SystemExit("bullpen-usage on_depth_chart must be a boolean when present")
+                  availability = pitcher.get("availability")
+                  if availability is not None and not isinstance(availability, str):
+                      raise SystemExit("bullpen-usage availability must be a string or null")
           if payload["status"]["result"] == "failed":
               raise SystemExit("refusing to deploy a failed data snapshot")
           if payload["data_commit"] != os.environ["DASHBOARD_DATA_SHA"]:

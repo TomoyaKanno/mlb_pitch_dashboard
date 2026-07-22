@@ -20,12 +20,25 @@ dashboard-data/
       appearances/2026-03.jsonl
       fetch-state.json
       next-games.json
+      roster-pitchers.json
       manifest.json
 ```
 
-Game and appearance records are partitioned by month to keep automated diffs small. Administrative fetch state and the current next-game read model are separate from baseball facts. The manifest identifies schema version 1, coverage, API calls, failures, and SHA-256 hashes for every data file.
+Game and appearance records are partitioned by month to keep automated diffs small. Administrative fetch state, the current next-game read model, and pitching depth/40-man roster status are separate from baseball facts. The manifest identifies schema version 1, coverage, API calls, failures, and SHA-256 hashes for every data file.
 
 Appearance records include both MLB's official `gamesStarted` designation and the conservative role-adjusted classification. A short, ineffective official start therefore remains an SP unless the established opener rules identify it as relief usage.
+
+### `roster-pitchers.json`
+
+For the current calendar season, refresh fetches each team's `rosterType=depthChart` and `rosterType=40Man` pitching rows and persists them as `RosterPitcherRecord`s:
+
+- Depth-chart abbreviations map to `depth_role`: `SP`, bullpen `P` → `RP`, closer `CP`.
+- Depth order preserves MLB's published order within the chart.
+- Status codes come from MLB (`A`, `D10`/`D15`/`D60`, `RM`, …). Export maps those to compact `availability` badges (`IL`, `Minors`) for the bullpen UI.
+- Optional `jersey_number` is stored when MLB provides one. The current UI does not render jersey watermarks; the field remains available for a later presentation experiment.
+- Historical seasons skip the roster fetch (empty file contents / empty snapshot map), matching upcoming-game behavior.
+
+Legacy snapshots without `roster-pitchers.json` remain valid; export then falls back to appearance-only bullpen rows.
 
 ## Browser-ready exports
 
@@ -33,16 +46,16 @@ Appearance records include both MLB's official `gamesStarted` designation and th
 
 | Artifact | Loader | Contents |
 | --- | --- | --- |
-| Season dashboard | `observable/src/data/dashboard.json.py` | One season-total row, one latest completed game, one upcoming-game record (with optional probable starter), and one 14-day bullpen-usage window per team |
+| Season dashboard | `observable/src/data/dashboard.json.py` | One season-total row, one latest completed game, one upcoming-game record (optional probable starter with recent-start context), and one 14-day roster-aware bullpen-usage window per team |
 | Team timeseries | `observable/src/data/team-timeseries.json.py` | Daily team increments for the timeline, plus game-grain `complete_games` (0 official RP, with pitcher) |
 
 Daily team points must reconcile to season team totals: summing each metric (and game counts) across dates for a team equals that team's dashboard row. The dashboard derives cumulative series with a prefix sum (`metricSeries`); daily/timecourse mode plots each day's increment (share uses that day's SP/RP split). Role adjustment has no timeline yet.
 
-Recent games are selected at **game** grain. `GameRecord.game_datetime` stores MLB's scheduled `gameDate`, so a doubleheader chooses the later scheduled game even when its `game_pk` does not sort last. Old snapshots without this optional field use `game_pk` only until their next normal refresh rewrites the game records.
+Recent games are selected at **game** grain. `GameRecord.game_datetime` stores MLB's scheduled `gameDate`, so a doubleheader chooses the later scheduled game even when its `game_pk` does not sort last. Old snapshots without this optional field use `game_pk` only until their next normal refresh rewrites the game records. Pitchers are ordered by `appearance_order` and may include an optional `jersey_number` from the roster snapshot.
 
-Each `next_games` row is the earliest non-final regular-season game returned for a team in the 14-day schedule window. It includes the opponent and home/away context. MLB may omit a `probable_pitcher`; consumers must display that as unannounced rather than infer one. Existing snapshots created before this read model legitimately export an empty `next_games` list until their next successful refresh.
+Each `next_games` row is the earliest non-final regular-season game returned for a team in the 14-day schedule window. It includes the opponent and home/away context. MLB may omit a `probable_pitcher`; consumers must display that as unannounced rather than infer one. When a probable starter is present, the export also includes `probable_recent_starts` (up to three most recent official `gamesStarted` appearances with date, pitches, and opponent), `probable_days_rest` (calendar days between the latest of those starts and the upcoming game, minus one), and optional `probable_jersey_number`. Unannounced rows keep an empty start list and a null days-rest value. Existing snapshots created before this read model legitimately export an empty `next_games` list until their next successful refresh.
 
-Each `bullpen_usage` row contains 14 unique, ordered calendar dates ending on that team's latest completed-game date. Pitch arrays align positionally with those dates and contain non-negative official-reliever pitch counts. Doubleheader appearances are summed into the same calendar-day cell; official starters are excluded.
+Each `bullpen_usage` row contains 14 unique, ordered calendar dates ending on that team's latest completed-game date. Pitch arrays align positionally with those dates and contain non-negative official-reliever pitch counts. Doubleheader appearances are summed into the same calendar-day cell; official starters are excluded. Depth-chart bullpen arms (`RP` / closer `CP`) are included even with zero pitches so unused active call-ups remain visible. IL and Minors arms with no in-window pitches are omitted; those badges appear only when the arm actually worked in the window. When `roster-pitchers.json` is present, each pitcher may also carry `on_depth_chart`, `depth_role`, `depth_order`, `availability`, and `status_description`. Legacy snapshots without roster data still export appearance-only rows with null roster fields. Rows sort depth-chart arms by `depth_order`, then appearance-only arms by total pitches.
 
 Complete games are listed at **game** grain, not calendar day: a doubleheader can hide a CG inside a day total that still has RP pitches from the other game. Each `complete_games` row is a `(game_pk, team_id)` with zero official RP pitches and a single pitcher. Player-level series can follow the same sibling-export pattern later; appearance rows are already pitcher-dated.
 

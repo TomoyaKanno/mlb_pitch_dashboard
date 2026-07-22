@@ -82,21 +82,24 @@
           "pitcher_name": "Yoshinobu Yamamoto",
           "pitches": 96,
           "official_started": true,
-          "appearance_order": 0
+          "appearance_order": 0,
+          "jersey_number": "18"
         },
         {
           "pitcher_id": 605483,
           "pitcher_name": "Alex Vesia",
           "pitches": 14,
           "official_started": false,
-          "appearance_order": 1
+          "appearance_order": 1,
+          "jersey_number": "51"
         },
         {
           "pitcher_id": 571882,
           "pitcher_name": "Tanner Scott",
           "pitches": 16,
           "official_started": false,
-          "appearance_order": 2
+          "appearance_order": 2,
+          "jersey_number": "66"
         }
       ]
     },
@@ -112,14 +115,16 @@
           "pitcher_name": "David Peterson",
           "pitches": 91,
           "official_started": true,
-          "appearance_order": 0
+          "appearance_order": 0,
+          "jersey_number": null
         },
         {
           "pitcher_id": 657656,
-          "pitcher_name": "Edwin Díaz",
+          "pitcher_name": "Edwin D\u00edaz",
           "pitches": 17,
           "official_started": false,
-          "appearance_order": 1
+          "appearance_order": 1,
+          "jersey_number": null
         }
       ]
     },
@@ -135,14 +140,16 @@
           "pitcher_name": "Gerrit Cole",
           "pitches": 98,
           "official_started": true,
-          "appearance_order": 0
+          "appearance_order": 0,
+          "jersey_number": "45"
         },
         {
           "pitcher_id": 656794,
           "pitcher_name": "Luke Weaver",
           "pitches": 15,
           "official_started": false,
-          "appearance_order": 1
+          "appearance_order": 1,
+          "jersey_number": null
         }
       ]
     },
@@ -158,14 +165,16 @@
           "pitcher_name": "Logan Gilbert",
           "pitches": 102,
           "official_started": true,
-          "appearance_order": 0
+          "appearance_order": 0,
+          "jersey_number": "36"
         },
         {
           "pitcher_id": 623143,
-          "pitcher_name": "Andrés Muñoz",
+          "pitcher_name": "Andr\u00e9s Mu\u00f1oz",
           "pitches": 13,
           "official_started": false,
-          "appearance_order": 1
+          "appearance_order": 1,
+          "jersey_number": null
         }
       ]
     }
@@ -181,7 +190,29 @@
       "opponent_name": "Philadelphia Phillies",
       "is_home": false,
       "probable_pitcher_id": 641778,
-      "probable_pitcher_name": "Eric Lauer"
+      "probable_pitcher_name": "Eric Lauer",
+      "probable_recent_starts": [
+        {
+          "date": "2026-07-15",
+          "game_pk": 777010,
+          "pitches": 91,
+          "opponent_name": "San Francisco Giants"
+        },
+        {
+          "date": "2026-07-09",
+          "game_pk": 777011,
+          "pitches": 84,
+          "opponent_name": "Houston Astros"
+        },
+        {
+          "date": "2026-07-03",
+          "game_pk": 777012,
+          "pitches": 97,
+          "opponent_name": "Colorado Rockies"
+        }
+      ],
+      "probable_days_rest": 5,
+      "probable_jersey_number": "33"
     },
     {
       "team_id": 121,
@@ -193,7 +224,10 @@
       "opponent_name": "Atlanta Braves",
       "is_home": true,
       "probable_pitcher_id": null,
-      "probable_pitcher_name": null
+      "probable_pitcher_name": null,
+      "probable_recent_starts": [],
+      "probable_days_rest": null,
+      "probable_jersey_number": null
     },
     {
       "team_id": 147,
@@ -205,7 +239,29 @@
       "opponent_name": "Boston Red Sox",
       "is_home": false,
       "probable_pitcher_id": 543135,
-      "probable_pitcher_name": "Gerrit Cole"
+      "probable_pitcher_name": "Gerrit Cole",
+      "probable_recent_starts": [
+        {
+          "date": "2026-07-16",
+          "game_pk": 777020,
+          "pitches": 102,
+          "opponent_name": "Tampa Bay Rays"
+        },
+        {
+          "date": "2026-07-10",
+          "game_pk": 777021,
+          "pitches": 98,
+          "opponent_name": "Toronto Blue Jays"
+        },
+        {
+          "date": "2026-07-04",
+          "game_pk": 777022,
+          "pitches": 105,
+          "opponent_name": "Baltimore Orioles"
+        }
+      ],
+      "probable_days_rest": 4,
+      "probable_jersey_number": "45"
     },
     {
       "team_id": 136,
@@ -217,7 +273,29 @@
       "opponent_name": "Houston Astros",
       "is_home": true,
       "probable_pitcher_id": 669203,
-      "probable_pitcher_name": "Logan Gilbert"
+      "probable_pitcher_name": "Logan Gilbert",
+      "probable_recent_starts": [
+        {
+          "date": "2026-07-15",
+          "game_pk": 777030,
+          "pitches": 99,
+          "opponent_name": "Texas Rangers"
+        },
+        {
+          "date": "2026-07-09",
+          "game_pk": 777031,
+          "pitches": 94,
+          "opponent_name": "Athletics"
+        },
+        {
+          "date": "2026-07-03",
+          "game_pk": 777032,
+          "pitches": 108,
+          "opponent_name": "Minnesota Twins"
+        }
+      ],
+      "probable_days_rest": 5,
+      "probable_jersey_number": "36"
     }
   ],
   "bullpen_usage": [
@@ -243,26 +321,6 @@
       ],
       "pitchers": [
         {
-          "pitcher_id": 605483,
-          "pitcher_name": "Alex Vesia",
-          "pitches": [
-            5,
-            0,
-            0,
-            0,
-            0,
-            5,
-            0,
-            0,
-            0,
-            0,
-            5,
-            0,
-            0,
-            14
-          ]
-        },
-        {
           "pitcher_id": 571882,
           "pitcher_name": "Tanner Scott",
           "pitches": [
@@ -280,7 +338,62 @@
             0,
             0,
             16
-          ]
+          ],
+          "depth_role": "RP",
+          "depth_order": 0,
+          "on_depth_chart": true,
+          "availability": null,
+          "status_description": "Active"
+        },
+        {
+          "pitcher_id": 605483,
+          "pitcher_name": "Alex Vesia",
+          "pitches": [
+            5,
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0,
+            14
+          ],
+          "depth_role": "RP",
+          "depth_order": 1,
+          "on_depth_chart": true,
+          "availability": null,
+          "status_description": "Active"
+        },
+        {
+          "pitcher_id": 623465,
+          "pitcher_name": "Evan Phillips",
+          "pitches": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "depth_role": "RP",
+          "depth_order": 2,
+          "on_depth_chart": true,
+          "availability": null,
+          "status_description": "Active"
         }
       ]
     },
@@ -307,7 +420,7 @@
       "pitchers": [
         {
           "pitcher_id": 657656,
-          "pitcher_name": "Edwin Díaz",
+          "pitcher_name": "Edwin D\u00edaz",
           "pitches": [
             0,
             0,
@@ -323,7 +436,12 @@
             0,
             0,
             17
-          ]
+          ],
+          "depth_role": null,
+          "depth_order": null,
+          "on_depth_chart": false,
+          "availability": null,
+          "status_description": null
         }
       ]
     },
@@ -366,7 +484,12 @@
             0,
             0,
             15
-          ]
+          ],
+          "depth_role": null,
+          "depth_order": null,
+          "on_depth_chart": false,
+          "availability": null,
+          "status_description": null
         }
       ]
     },
@@ -393,7 +516,7 @@
       "pitchers": [
         {
           "pitcher_id": 623143,
-          "pitcher_name": "Andrés Muñoz",
+          "pitcher_name": "Andr\u00e9s Mu\u00f1oz",
           "pitches": [
             0,
             0,
@@ -409,7 +532,12 @@
             0,
             4,
             13
-          ]
+          ],
+          "depth_role": null,
+          "depth_order": null,
+          "on_depth_chart": false,
+          "availability": null,
+          "status_description": null
         }
       ]
     }

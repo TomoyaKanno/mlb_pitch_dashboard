@@ -24,6 +24,20 @@ def validate_snapshot(snapshot: Snapshot) -> None:
         if bool(next_game.probable_pitcher_id is None) != bool(next_game.probable_pitcher_name is None):
             errors.append(f"next game {next_game.game_pk} has incomplete probable-pitcher data")
 
+    for key, row in snapshot.roster_pitchers.items():
+        if key != row.key:
+            errors.append(f"roster pitcher dictionary key mismatch for {key}")
+        if not row.pitcher_name or not row.team_name:
+            errors.append(f"roster pitcher {row.pitcher_id} is missing a name")
+        if not row.status_code or not row.status_description:
+            errors.append(f"roster pitcher {row.pitcher_id} is missing status")
+        if row.depth_role is not None and row.depth_role not in {"SP", "RP", "CP"}:
+            errors.append(f"roster pitcher {row.pitcher_id} has invalid depth role")
+        if (row.depth_role is None) != (row.depth_order is None):
+            errors.append(f"roster pitcher {row.pitcher_id} has incomplete depth fields")
+        if row.depth_order is not None and row.depth_order < 0:
+            errors.append(f"roster pitcher {row.pitcher_id} has invalid depth order")
+
     for game_pk, game in snapshot.games.items():
         if game_pk != game.game_pk:
             errors.append(f"game dictionary key mismatch for {game_pk}")
@@ -78,6 +92,6 @@ def validate_snapshot(snapshot: Snapshot) -> None:
     if errors:
         preview = "; ".join(errors[:10])
         remainder = len(errors) - 10
-        if remainder:
+        if remainder > 0:
             preview += f"; and {remainder} more"
         raise SnapshotValidationError(preview)

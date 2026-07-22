@@ -210,6 +210,11 @@ def aggregate_recent_games(snapshot: Snapshot) -> list[dict[str, Any]]:
                         "pitches": row.pitches,
                         "official_started": row.official_started,
                         "appearance_order": row.appearance_order,
+                        "jersey_number": (
+                            snapshot.roster_pitchers[(team_id, row.pitcher_id)].jersey_number
+                            if (team_id, row.pitcher_id) in snapshot.roster_pitchers
+                            else None
+                        ),
                     }
                     for row in ordered
                 ],
@@ -218,14 +223,32 @@ def aggregate_recent_games(snapshot: Snapshot) -> list[dict[str, Any]]:
     return sorted(result, key=lambda row: row["team_name"])
 
 
+def _roster_availability(status_code: str) -> str | None:
+    """Map MLB roster status codes to compact dashboard badges."""
+    if status_code == "A":
+        return None
+    if status_code in {"D7", "D10", "D15", "D60"}:
+        return "IL"
+    if status_code == "RM":
+        return "Minors"
+    return status_code
+
+
 def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
     """Fourteen calendar days of reliever pitch counts for each team.
 
     The window ends with the team's latest completed game. Doubleheaders add
     both games into the same calendar-day cell, which reflects total workload.
+    Depth-chart bullpen arms (``RP`` / ``CP``) are included even with zero
+    pitches so unused call-ups remain visible. IL and Minors arms are kept only
+    when they recorded pitches in the window. Roster availability badges come
+    from the persisted depth-chart / 40-man snapshot when present.
     """
     by_game_team = _appearances_by_game_team(snapshot)
     latest = _latest_team_games(snapshot, by_game_team)
+    roster_by_team: dict[int, list[Any]] = defaultdict(list)
+    for row in snapshot.roster_pitchers.values():
+        roster_by_team[row.team_id].append(row)
 
     result: list[dict[str, Any]] = []
     for team_id, (latest_game, latest_rows) in latest.items():
@@ -249,17 +272,53 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
                 pitch_counts[(row.pitcher_id, date_indexes[game.game_date])] += row.pitches
                 pitcher_names[row.pitcher_id] = row.pitcher_name
 
-        pitchers = [
-            {
-                "pitcher_id": pitcher_id,
-                "pitcher_name": pitcher_names[pitcher_id],
-                "pitches": [
-                    pitch_counts[(pitcher_id, offset)] for offset in range(14)
-                ],
-            }
-            for pitcher_id in pitcher_names
-        ]
-        pitchers.sort(key=lambda row: (-sum(row["pitches"]), row["pitcher_name"]))
+        roster_rows = {
+            row.pitcher_id: row
+            for row in roster_by_team.get(team_id, [])
+        }
+        pitcher_ids = set(pitcher_names)
+        for row in roster_rows.values():
+            if row.depth_role in {"RP", "CP"}:
+                pitcher_ids.add(row.pitcher_id)
+                pitcher_names.setdefault(row.pitcher_id, row.pitcher_name)
+
+        pitchers: list[dict[str, Any]] = []
+        for pitcher_id in pitcher_ids:
+            roster = roster_rows.get(pitcher_id)
+            pitches = [pitch_counts[(pitcher_id, offset)] for offset in range(14)]
+            on_depth_chart = roster is not None and roster.depth_role in {"RP", "CP"}
+            availability = (
+                _roster_availability(roster.status_code) if roster is not None else None
+            )
+            # Unavailable arms only stay visible when they actually worked in-window:
+            # that preserves "what happened to that guy" without listing idle IL/minors.
+            if availability in {"IL", "Minors"} and sum(pitches) == 0:
+                continue
+            pitchers.append(
+                {
+                    "pitcher_id": pitcher_id,
+                    "pitcher_name": (
+                        roster.pitcher_name if roster is not None else pitcher_names[pitcher_id]
+                    ),
+                    "pitches": pitches,
+                    "depth_role": roster.depth_role if on_depth_chart else None,
+                    "depth_order": roster.depth_order if on_depth_chart else None,
+                    "on_depth_chart": on_depth_chart,
+                    "availability": availability,
+                    "status_description": (
+                        roster.status_description if roster is not None else None
+                    ),
+                }
+            )
+
+        pitchers.sort(
+            key=lambda row: (
+                0 if row["on_depth_chart"] else 1,
+                row["depth_order"] if row["depth_order"] is not None else 10**9,
+                -sum(row["pitches"]),
+                row["pitcher_name"],
+            )
+        )
         result.append(
             {
                 "team_id": team_id,
@@ -273,23 +332,87 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
     return sorted(result, key=lambda row: row["team_name"])
 
 
-def aggregate_next_games(snapshot: Snapshot) -> list[dict[str, Any]]:
-    """Upcoming opponent and optional MLB probable starter for each team."""
-    return [
+def _probable_recent_starts(
+    snapshot: Snapshot,
+    pitcher_id: int,
+    next_game_date: str,
+    *,
+    limit: int = 3,
+) -> tuple[list[dict[str, Any]], int | None]:
+    """Most recent official starts for a probable pitcher, plus days of rest.
+
+    Days of rest use the baseball convention: calendar days between the most
+    recent official start and the upcoming game, minus one. Role-adjusted
+    classification is ignored — only MLB ``gamesStarted`` appearances count.
+    """
+    starts: list[tuple[str, int, int, str | None]] = []
+    for row in snapshot.appearances.values():
+        if row.pitcher_id != pitcher_id or not row.official_started:
+            continue
+        game = snapshot.games.get(row.game_pk)
+        opponent_name = None
+        if game is not None:
+            if game.away_team_id == row.team_id:
+                opponent_name = game.home_team_name
+            elif game.home_team_id == row.team_id:
+                opponent_name = game.away_team_name
+        starts.append((row.game_date, row.game_pk, row.pitches, opponent_name))
+
+    starts.sort(key=lambda item: (item[0], item[1]), reverse=True)
+    recent = [
         {
-            "team_id": row.team_id,
-            "team_name": row.team_name,
-            "game_pk": row.game_pk,
-            "date": row.game_date,
-            "game_datetime": row.game_datetime,
-            "opponent_id": row.opponent_id,
-            "opponent_name": row.opponent_name,
-            "is_home": row.is_home,
-            "probable_pitcher_id": row.probable_pitcher_id,
-            "probable_pitcher_name": row.probable_pitcher_name,
+            "date": game_date,
+            "game_pk": game_pk,
+            "pitches": pitches,
+            "opponent_name": opponent_name,
         }
-        for row in sorted(snapshot.next_games.values(), key=lambda item: item.team_name)
+        for game_date, game_pk, pitches, opponent_name in starts[:limit]
     ]
+    if not recent:
+        return [], None
+
+    last_date = date.fromisoformat(recent[0]["date"])
+    next_date = date.fromisoformat(next_game_date)
+    days_rest = max(0, (next_date - last_date).days - 1)
+    return recent, days_rest
+
+
+def aggregate_next_games(snapshot: Snapshot) -> list[dict[str, Any]]:
+    """Upcoming opponent and optional MLB probable starter for each team.
+
+    When MLB lists a probable starter, include that pitcher's most recent
+    official starts (up to three) and days of rest before the upcoming game.
+    """
+    result: list[dict[str, Any]] = []
+    for row in sorted(snapshot.next_games.values(), key=lambda item: item.team_name):
+        recent_starts: list[dict[str, Any]] = []
+        days_rest: int | None = None
+        if row.probable_pitcher_id is not None:
+            recent_starts, days_rest = _probable_recent_starts(
+                snapshot, row.probable_pitcher_id, row.game_date,
+            )
+            roster = snapshot.roster_pitchers.get((row.team_id, row.probable_pitcher_id))
+            probable_jersey = roster.jersey_number if roster is not None else None
+        else:
+            probable_jersey = None
+        result.append(
+            {
+                "team_id": row.team_id,
+                "team_name": row.team_name,
+                "game_pk": row.game_pk,
+                "date": row.game_date,
+                "game_datetime": row.game_datetime,
+                "opponent_id": row.opponent_id,
+                "opponent_name": row.opponent_name,
+                "is_home": row.is_home,
+                "probable_pitcher_id": row.probable_pitcher_id,
+                "probable_pitcher_name": row.probable_pitcher_name,
+                "probable_jersey_number": probable_jersey,
+                "probable_recent_starts": recent_starts,
+                "probable_days_rest": days_rest,
+            }
+        )
+    return result
 
 
 def reconcile_team_timeseries(

@@ -6,6 +6,7 @@ export interface RecentPitcher {
   pitches: number;
   official_started: boolean;
   appearance_order: number;
+  jersey_number?: string | null;
 }
 
 export interface RecentTeamGame {
@@ -21,6 +22,13 @@ export interface RecentTeamGame {
   pitchers: RecentPitcher[];
 }
 
+export interface ProbableRecentStart {
+  date: string;
+  game_pk: number;
+  pitches: number;
+  opponent_name: string | null;
+}
+
 export interface NextTeamGame {
   team_id: number;
   team_name: string;
@@ -32,12 +40,20 @@ export interface NextTeamGame {
   is_home: boolean;
   probable_pitcher_id: number | null;
   probable_pitcher_name: string | null;
+  probable_jersey_number?: string | null;
+  probable_recent_starts: ProbableRecentStart[];
+  probable_days_rest: number | null;
 }
 
 export interface BullpenUsagePitcher {
   pitcher_id: number;
   pitcher_name: string;
   pitches: number[];
+  depth_role?: "RP" | "CP" | null;
+  depth_order?: number | null;
+  on_depth_chart?: boolean;
+  availability?: string | null;
+  status_description?: string | null;
 }
 
 export interface BullpenUsage {
@@ -95,7 +111,9 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
           <p className="eyebrow">Recent relief usage</p>
           <h2 id="bullpen-usage-title">Bullpen, last 14 days</h2>
           <p className="secondary">
-            Each cell is a pitch count; blank cells are days without a relief appearance.
+            Official reliever pitch counts by day, plus available depth-chart arms who have not
+            appeared yet. IL and Minors badges mark arms who worked in this window but are no
+            longer active.
           </p>
         </div>
         {usage ? (
@@ -118,27 +136,45 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
               </tr>
             </thead>
             <tbody>
-              {usage.pitchers.map((pitcher) => (
-                <tr key={pitcher.pitcher_id}>
-                  <th scope="row">{pitcher.pitcher_name}</th>
-                  {usage.dates.map((day, index) => {
-                    const pitches = pitcher.pitches[index] ?? 0;
-                    const description = pitches ? `${pitches} pitches` : "no pitches";
-                    const label = `${pitcher.pitcher_name}: ${description} on ${formatFullDate(day)}`;
-                    return (
-                      <td
-                        key={day}
-                        className={`heat-cell${pitches ? " used" : ""}`}
-                        style={heatCellStyle(pitches)}
-                        title={label}
-                        aria-label={label}
-                      >
-                        {pitches || ""}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
+              {usage.pitchers.map((pitcher) => {
+                const unused = pitcher.on_depth_chart && pitcher.pitches.every((value) => value === 0);
+                return (
+                  <tr key={pitcher.pitcher_id} className={unused ? "bullpen-unused" : undefined}>
+                    <th scope="row">
+                      <span className="bullpen-pitcher-label">
+                        <span>{pitcher.pitcher_name}</span>
+                        {pitcher.depth_role === "CP" ? (
+                          <span className="roster-badge role" title="Depth-chart closer">CL</span>
+                        ) : null}
+                        {pitcher.availability ? (
+                          <span
+                            className={`roster-badge ${pitcher.availability === "IL" ? "il" : "minors"}`}
+                            title={pitcher.status_description ?? pitcher.availability}
+                          >
+                            {pitcher.availability}
+                          </span>
+                        ) : null}
+                      </span>
+                    </th>
+                    {usage.dates.map((day, index) => {
+                      const pitches = pitcher.pitches[index] ?? 0;
+                      const description = pitches ? `${pitches} pitches` : "no pitches";
+                      const label = `${pitcher.pitcher_name}: ${description} on ${formatFullDate(day)}`;
+                      return (
+                        <td
+                          key={day}
+                          className={`heat-cell${pitches ? " used" : ""}`}
+                          style={heatCellStyle(pitches)}
+                          title={label}
+                          aria-label={label}
+                        >
+                          {pitches || ""}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -159,6 +195,132 @@ function TeamLogo({teamId, size = 54}: {teamId: number; size?: number}) {
       height={size}
       onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
     />
+  );
+}
+
+/** MLB public CDN photo headshot; Cloudinary default covers missing photos. */
+function PitcherPortrait({
+  pitcherId,
+  width = 32,
+  height = 42,
+}: {
+  pitcherId: number;
+  width?: number;
+  height?: number;
+}) {
+  return (
+    <img
+      className="pitcher-portrait"
+      src={`https://img.mlbstatic.com/mlb-photos/image/upload/w_${Math.max(width, height) * 2},d_people:generic:headshot:67:current.png,q_auto:best,f_auto/v1/people/${pitcherId}/headshot/67/current`}
+      alt=""
+      width={width}
+      height={height}
+      loading="lazy"
+      onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+    />
+  );
+}
+
+function splitPitcherName(fullName: string): {first: string; last: string} {
+  const trimmed = fullName.trim();
+  const index = trimmed.lastIndexOf(" ");
+  if (index <= 0) return {first: "", last: trimmed};
+  return {first: trimmed.slice(0, index), last: trimmed.slice(index + 1)};
+}
+
+function PitcherNameStack({
+  name,
+  meta,
+}: {
+  name: string;
+  meta?: string;
+}) {
+  const {first, last} = splitPitcherName(name);
+  return (
+    <div className="pitcher-name-stack">
+      <div className="pitcher-name-lines">
+        {first ? <span className="pitcher-first">{first}</span> : null}
+        <strong className="pitcher-last">{last}</strong>
+        {meta ? <span className="pitcher-meta">{meta}</span> : null}
+      </div>
+    </div>
+  );
+}
+
+function PitcherAppearanceList({
+  teamName,
+  pitchers,
+}: {
+  teamName: string;
+  pitchers: RecentPitcher[];
+}) {
+  return (
+    <ul className="pitcher-appearance-list" aria-label={`${teamName} pitcher workloads from its last completed game`}>
+      {pitchers.map((pitcher) => (
+        <li key={pitcher.pitcher_id} className="pitcher-appearance-row">
+          <PitcherPortrait pitcherId={pitcher.pitcher_id} />
+          <PitcherNameStack
+            name={pitcher.pitcher_name}
+            meta={pitcher.official_started ? "SP" : "RP"}
+          />
+          <span className="pitcher-appearance-pitches">{integer.format(pitcher.pitches)}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function daysRestLabel(daysRest: number | null): string {
+  if (daysRest == null) return "No prior starts this season";
+  if (daysRest === 1) return "1 day rest";
+  return `${daysRest} days rest`;
+}
+
+function ProbableStarterPanel({game}: {game: NextTeamGame}) {
+  const recentStarts = game.probable_recent_starts ?? [];
+  const daysRest = game.probable_days_rest ?? null;
+  if (game.probable_pitcher_id == null || !game.probable_pitcher_name) {
+    return (
+      <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
+        <strong>{formatFullDate(game.date)}</strong>
+        <span>game {game.game_pk}</span>
+        <span className="probable-starter">{game.team_name} probable starter: Not announced</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="probable-starter-panel">
+      <div className="probable-starter-identity">
+        <PitcherPortrait pitcherId={game.probable_pitcher_id} width={72} height={96} />
+        <div className="probable-starter-copy">
+          <p className="recent-card-label">Probable starter</p>
+          <PitcherNameStack
+            name={game.probable_pitcher_name}
+            meta={daysRestLabel(daysRest)}
+          />
+          <span className="probable-starter-meta">{formatFullDate(game.date)} · game {game.game_pk}</span>
+        </div>
+      </div>
+      {recentStarts.length > 0 ? (
+        <ul
+          className="probable-start-history"
+          aria-label={`${game.probable_pitcher_name} last ${recentStarts.length} official starts`}
+        >
+          {recentStarts.map((start) => (
+            <li key={start.game_pk} className="probable-start-row">
+              <div className="probable-start-copy">
+                <strong>{formatShortDate(start.date)}</strong>
+                <span>{start.opponent_name ? `vs ${start.opponent_name}` : "Official start"}</span>
+              </div>
+              <span className="pitcher-appearance-pitches">{integer.format(start.pitches)}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="secondary probable-start-empty">No official starts in this season snapshot yet.</p>
+      )}
+    </div>
   );
 }
 
@@ -294,40 +456,17 @@ export function RecentStrain({
             <strong>{integer.format(totalPitches)} pitches · {selected.pitchers.length} pitchers used</strong>
             <span>{formatFullDate(selected.date)} · game {selected.game_pk}</span>
           </div>
-          <div className="recent-card-table">
-            <table>
-              <caption>{selected.team_name} pitcher workloads from its last completed game</caption>
-              <thead>
-                <tr>
-                  <th>Pitcher</th>
-                  <th className="recent-role">Role</th>
-                  <th className="recent-pitches">Pitches</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selected.pitchers.map((pitcher) => (
-                  <tr key={pitcher.pitcher_id}>
-                    <td>{pitcher.pitcher_name}</td>
-                    <td className="recent-role">{pitcher.official_started ? "SP" : "RP"}</td>
-                    <td className="recent-pitches">{integer.format(pitcher.pitches)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <PitcherAppearanceList
+            teamName={selected.team_name}
+            pitchers={selected.pitchers}
+          />
         </section>
-        <section className="recent-game-card" style={{alignSelf: "start"}} aria-label="Next game">
+        <section className="recent-game-card" aria-label="Next game">
           <p className="recent-card-label">Next game</p>
           {nextGame ? (
             <>
               <Matchup {...nextMatchup(nextGame)} />
-              <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
-                <strong>{formatFullDate(nextGame.date)}</strong>
-                <span>game {nextGame.game_pk}</span>
-                <span className="probable-starter">
-                  {selected.team_name} probable starter: {nextGame.probable_pitcher_name ?? "Not announced"}
-                </span>
-              </div>
+              <ProbableStarterPanel game={nextGame} />
             </>
           ) : (
             <div className="recent-game-copy">

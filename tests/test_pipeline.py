@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, Snapshot
+from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, RosterPitcherRecord, Snapshot
 from pipeline.storage import load_snapshot
 from pipeline.update import games_to_refresh, update_season
 from pipeline.validation import SnapshotValidationError, validate_snapshot
@@ -54,11 +54,12 @@ def boxscore(game_pk: int) -> list[dict]:
 
 
 class FakeClient:
-    def __init__(self, schedule, boxes, failures=None, next_games=None):
+    def __init__(self, schedule, boxes, failures=None, next_games=None, rosters=None):
         self.schedule = schedule
         self.boxes = boxes
         self.failures = failures or set()
         self.next_games = next_games or []
+        self.rosters = rosters or []
         self.api_calls = 0
 
     async def __aenter__(self):
@@ -75,6 +76,10 @@ class FakeClient:
         self.api_calls += 1
         return self.next_games
 
+    async def pitching_rosters(self, season):
+        self.api_calls += 1
+        return self.rosters
+
     async def boxscore_appearances(self, value):
         self.api_calls += 1
         if value["game_pk"] in self.failures:
@@ -82,8 +87,8 @@ class FakeClient:
         return self.boxes[value["game_pk"]]
 
 
-def factory(schedule, boxes, failures=None, next_games=None):
-    return lambda: FakeClient(schedule, boxes, failures, next_games)
+def factory(schedule, boxes, failures=None, next_games=None, rosters=None):
+    return lambda: FakeClient(schedule, boxes, failures, next_games, rosters)
 
 
 def test_bootstrap_then_incremental_run_only_loads_schedule(tmp_path):
@@ -96,9 +101,9 @@ def test_bootstrap_then_incremental_run_only_loads_schedule(tmp_path):
         update_season(2026, tmp_path, reconcile_days=0, now=NOW, client_factory=factory(schedule, boxes))
     )
 
-    assert first.api_calls == 4
+    assert first.api_calls == 5
     assert first.games_requested == 2
-    assert second.api_calls == 2
+    assert second.api_calls == 3
     assert second.games_requested == 0
     snapshot = load_snapshot(tmp_path, 2026)
     assert len(snapshot.games) == 2
@@ -153,6 +158,26 @@ def test_validation_rejects_success_without_two_official_starters():
     )
 
     with pytest.raises(SnapshotValidationError):
+        validate_snapshot(snapshot)
+
+
+def test_validation_rejects_roster_pitcher_with_depth_role_but_no_order():
+    snapshot = Snapshot(season=2026)
+    snapshot.roster_pitchers[(17, 1)] = RosterPitcherRecord(
+        17, "Test Team", 1, "Broken Reliever", "RP", None, "A", "Active",
+    )
+
+    with pytest.raises(SnapshotValidationError, match="incomplete depth fields"):
+        validate_snapshot(snapshot)
+
+
+def test_validation_rejects_roster_pitcher_with_invalid_depth_role():
+    snapshot = Snapshot(season=2026)
+    snapshot.roster_pitchers[(17, 1)] = RosterPitcherRecord(
+        17, "Test Team", 1, "Utility Arm", "UTIL", 0, "A", "Active",
+    )
+
+    with pytest.raises(SnapshotValidationError, match="invalid depth role"):
         validate_snapshot(snapshot)
 
 
@@ -224,3 +249,44 @@ def test_refresh_persists_next_game_with_optional_probable_starter(tmp_path):
     )
     assert snapshot.next_games[200].probable_pitcher_name is None
     assert (tmp_path / "seasons/2026/next-games.json").exists()
+
+
+def test_refresh_persists_pitching_roster_depth_and_status(tmp_path):
+    schedule = [game(1, "2026-07-20")]
+    boxes = {1: boxscore(1)}
+    rosters = [
+        {
+            "team_id": 100,
+            "team_name": "Away",
+            "pitcher_id": 21,
+            "pitcher_name": "Away Reliever",
+            "depth_role": "RP",
+            "depth_order": 0,
+            "status_code": "A",
+            "status_description": "Active",
+        },
+        {
+            "team_id": 100,
+            "team_name": "Away",
+            "pitcher_id": 22,
+            "pitcher_name": "Away IL",
+            "depth_role": "RP",
+            "depth_order": 1,
+            "status_code": "D15",
+            "status_description": "Injured 15-Day",
+        },
+    ]
+    asyncio.run(
+        update_season(
+            2026,
+            tmp_path,
+            reconcile_days=0,
+            now=NOW,
+            client_factory=factory(schedule, boxes, rosters=rosters),
+        )
+    )
+
+    snapshot = load_snapshot(tmp_path, 2026)
+    assert snapshot.roster_pitchers[(100, 21)].depth_role == "RP"
+    assert snapshot.roster_pitchers[(100, 22)].status_code == "D15"
+    assert (tmp_path / "seasons/2026/roster-pitchers.json").exists()

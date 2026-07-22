@@ -15,7 +15,7 @@ The workflow runs daily at 5:17 a.m. in `America/New_York` from March through No
 5. Leave **Force rebuild** off for the normal incremental path.
 6. Leave the reconciliation window at seven days unless investigating a correction.
 
-The first run has no prior snapshot, so it requests every completed regular-season game. Later runs load `dashboard-data` and request only missing, failed, and recently completed games.
+The first run has no prior snapshot, so it requests every completed regular-season game. Later runs load `dashboard-data` and request only missing, failed, and recently completed games. Each refresh for the current calendar season also rewrites `next-games.json` and `roster-pitchers.json` from MLB's schedule and depth/40-man roster endpoints.
 
 ## Permissions and safety
 

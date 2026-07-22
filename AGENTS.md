@@ -1,6 +1,6 @@
 # Agent operating guide
 
-This repository is a refreshable MLB pitch-workload dashboard. The supported product is a static Observable Framework site backed by validated snapshots on the `dashboard-data` branch. There is no runtime backend, SQLite database, Vite frontend, or Docker application. The browser fetches no pitch data at runtime — every aggregate is precomputed at build time — but it may load static display assets, such as team logos, directly from MLB's public CDN.
+This repository is a refreshable MLB pitch-workload dashboard. The supported product is a static Observable Framework site backed by validated snapshots on the `dashboard-data` branch. There is no runtime backend, SQLite database, Vite frontend, or Docker application. The browser fetches no pitch data at runtime — every aggregate is precomputed at build time — but it may load static display assets such as team logos and pitcher headshots directly from MLB's public CDN.
 
 Read `README.md`, `docs/data-contract.md`, and `docs/deployment.md` before changing architecture, refresh behavior, storage, or deployment.
 
@@ -20,18 +20,18 @@ Do not reintroduce an application server or client-side refresh path as an assum
 
 ## Repository map
 
-- `pipeline/mlb.py` — MLB Stats API access, request pacing, retries, and boxscore parsing.
+- `pipeline/mlb.py` — MLB Stats API access, request pacing, retries, boxscore parsing, upcoming games, and pitching depth/40-man roster fetch.
 - `pipeline/classify.py` — pure role-classification domain logic.
-- `pipeline/schema.py` — normalized game, appearance, next-game, fetch-state, and snapshot types.
+- `pipeline/schema.py` — normalized game, appearance, next-game, roster-pitcher, fetch-state, and snapshot types.
 - `pipeline/storage.py` — versioned JSONL/JSON persistence and manifest hashes.
 - `pipeline/update.py` — incremental refresh orchestration and failure-state transitions.
 - `pipeline/validation.py` — in-memory structural and arithmetic invariants.
 - `pipeline/check.py` — persisted snapshot reload and integrity verification.
-- `pipeline/export.py` — validated browser-ready season aggregation, latest-game and upcoming-game schedule read models, 14-day bullpen usage, and sibling team timeseries.
+- `pipeline/export.py` — validated browser-ready season aggregation, latest-game and upcoming-game schedule read models (including probable-starter recent starts), roster-aware 14-day bullpen usage, and sibling team timeseries.
 - `observable/src/data/dashboard.json.py` — build-time bridge from the snapshot to the season table payload.
 - `observable/src/data/team-timeseries.json.py` — build-time bridge for daily team-increment series.
 - `observable/src/components/Dashboard.tsx` — season-leader shell, controls, table, and timeline panel.
-- `observable/src/components/RecentStrain.tsx` — latest-game workloads and 14-day bullpen heatmap.
+- `observable/src/components/RecentStrain.tsx` — Recent strain screen: last-game stacked rows, probable-starter panel, and bullpen heatmap.
 - `observable/src/components/metrics.ts` — pure presentation, sorting, ranking, and team-series calculations.
 - `config/dashboard.json` — intentionally selected published season.
 - `config/role_overrides.json` — reviewed `gamePk:playerId` SP/RP exceptions.
@@ -50,7 +50,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 7. Status must distinguish current, stale, and missing games. Never report a complete snapshot while any scheduled game is stale or missing.
 8. Reject a schedule that loses a previously persisted completed game.
 9. Validate both in memory and after serialization. Manifest hashes and coverage counts are required data-contract fields.
-10. The production browser fetches no pitch data and makes no MLB Stats API calls; every team aggregate is precomputed at build time. Loading static display assets, such as team logos, from MLB's public CDN is permitted.
+10. The production browser fetches no pitch data and makes no MLB Stats API calls; every team aggregate is precomputed at build time. Loading static display assets such as team logos and pitcher portraits from MLB's public CDN is permitted.
 
 ## Source, data, and deployment invariants
 
@@ -65,7 +65,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 9. Changes anywhere under `pipeline/**` must trigger the real-data Pages build.
 10. Keep permissions least-privilege: CI read-only, refresh contents-write, and Pages/id-token permissions only on the deployment job.
 
-Do not introduce a new deployment target, secret, credential-bearing workflow, automatic merge path, external write integration, runtime backend, or client-side MLB data-fetch path without explicit user approval. Loading static display assets from a public CDN is permitted and does not require a backend. Maintenance of the approved GitHub Pages and data-refresh workflows is allowed when part of the requested change.
+Do not introduce a new deployment target, secret, credential-bearing workflow, automatic merge path, external write integration, runtime backend, or client-side MLB data-fetch path without explicit user approval. Loading static display assets (team logos, pitcher portraits) from a public CDN is permitted and does not require a backend. Maintenance of the approved GitHub Pages and data-refresh workflows is allowed when part of the requested change.
 
 ## Observable and React rule
 
@@ -89,20 +89,25 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 - Total bars show dual-tone adjusted SP/RP fills and an MLB-average notch;
 - clicking any table row opens the side timeline (Cumulative / Timecourse) with a short slide; Role adjustment disables row clicks and closes any open panel;
 - the panel chart uses the shared season date axis, hover tooltip, and game-grain complete-game list with pitcher names;
-- the Season leaders / Recent strain selector works; Recent strain defaults to LAD, the team picker shows pitcher names, SP/RP designation, and pitch counts from the selected team’s latest completed game, a next-game opponent with MLB’s optional probable starter (or an explicit unannounced state), and a heatmap of 14 ordered calendar days of official-reliever pitch counts;
+- the Season leaders / Recent strain selector works;
+- Recent strain defaults to LAD and uses the team picker;
+- last completed game shows stacked appearance rows (portrait tile, split first/last name, official SP/RP, pitches) in appearance order;
+- next game shows the matchup; when a probable starter is announced, the panel shows a larger portrait, days of rest, and up to three prior official starts (or an explicit unannounced state when MLB omits the probable);
+- the bullpen heatmap shows 14 ordered calendar days of official-reliever pitch counts, includes unused active depth-chart bullpen arms, and shows IL/Minors badges only for arms who pitched in the window;
+- pitcher portraits load from MLB's public CDN as 3:4 rounded tiles (not circles);
 - the panel shows the team badge and context moved out of the table column;
 - snapshot diagnostics (status, coverage, generation time, API calls) appear in the footer strip below the content;
 - the browser console has no application errors.
 
 ## Data lifecycle
 
-1. `pipeline.update` loads the previous snapshot, completed-game schedule, and upcoming-game schedule records.
+1. `pipeline.update` loads the previous snapshot, completed-game schedule, upcoming-game schedule records, and (for the current calendar season) pitching depth-chart plus 40-man roster status.
 2. It refreshes missing, failed, and recent games through `pipeline.mlb`.
-3. It classifies appearances, validates the snapshot, and writes monthly JSONL partitions, fetch state, and a hashed manifest.
+3. It classifies appearances, validates the snapshot, and writes monthly JSONL partitions, fetch state, next-games, roster-pitchers, and a hashed manifest.
 4. `pipeline.check` reloads those files and repeats structural and coverage validation.
 5. The refresh workflow commits changed files to `dashboard-data`.
 6. A successful `workflow_run` handoff builds from current `main` plus the validated data branch.
-7. `pipeline.export` produces the season team payload (including one latest completed-game pitcher list, one upcoming game with an optional probable starter, and one 14-day bullpen-usage window per team) and the sibling team timeseries (daily points plus `complete_games`); Observable renders the season leaders table, timeline panel, and Recent strain screen.
+7. `pipeline.export` produces the season team payload (latest completed-game pitcher list, upcoming game with optional probable starter and recent-start context, roster-aware 14-day bullpen window per team) and the sibling team timeseries (daily points plus `complete_games`); Observable renders the season leaders table, timeline panel, and Recent strain screen.
 8. GitHub Pages receives the compiled artifact; no compiled files are committed.
 
 Never commit a snapshot before the persisted reload check succeeds.
@@ -128,7 +133,7 @@ npm test
 OBSERVABLE_TELEMETRY_DISABLE=true npm run build
 ```
 
-Use the fixture for fast checks. For changes to the loader, exporter, schema, validation, or deployment path, also build against `dashboard-data` and verify the 30-team season payload, one recent game, one upcoming game with consistent optional probable-starter fields, and one valid 14-day bullpen window per team, reconciled `team-timeseries` points, and `complete_games` list (matching season and data revision). For UI/runtime changes, add the browser smoke test above.
+Use the fixture for fast checks. For changes to the loader, exporter, schema, validation, or deployment path, also build against `dashboard-data` and verify the 30-team season payload, one recent game, one upcoming game with consistent optional probable-starter fields (including `probable_recent_starts` / `probable_days_rest` when announced), one valid 14-day bullpen window per team with roster-aware pitcher rows when `roster-pitchers.json` is present, reconciled `team-timeseries` points, and `complete_games` list (matching season and data revision). For UI/runtime changes, add the browser smoke test above.
 
 ### Workflow changes
 
