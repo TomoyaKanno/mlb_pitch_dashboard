@@ -113,6 +113,27 @@ jobs:
               raise SystemExit("recent-game teams do not match season teams")
           if any(not row.get("pitchers") for row in recent_games):
               raise SystemExit("recent game has no pitcher workloads")
+          bullpen_usage = payload.get("bullpen_usage")
+          if not isinstance(bullpen_usage, list) or len(bullpen_usage) != len(payload["teams"]):
+              raise SystemExit("dashboard missing one bullpen-usage window per team")
+          team_ids = {row["team_id"] for row in payload["teams"]}
+          if {row["team_id"] for row in bullpen_usage} != team_ids:
+              raise SystemExit("bullpen-usage teams do not match season teams")
+          for usage in bullpen_usage:
+              dates = usage.get("dates")
+              if not isinstance(dates, list) or len(dates) != 14 or dates != sorted(set(dates)):
+                  raise SystemExit("bullpen-usage window must contain 14 unique ordered dates")
+              if usage.get("end_date") != dates[-1]:
+                  raise SystemExit("bullpen-usage end date does not match its final date")
+              pitchers = usage.get("pitchers")
+              if not isinstance(pitchers, list):
+                  raise SystemExit("bullpen-usage pitchers must be a list")
+              if any(
+                  len(pitcher.get("pitches", [])) != len(dates)
+                  or any(not isinstance(value, int) or value < 0 for value in pitcher["pitches"])
+                  for pitcher in pitchers
+              ):
+                  raise SystemExit("bullpen-usage pitch arrays do not match the date window")
           if payload["status"]["result"] == "failed":
               raise SystemExit("refusing to deploy a failed data snapshot")
           if payload["data_commit"] != os.environ["DASHBOARD_DATA_SHA"]:
@@ -127,8 +148,9 @@ jobs:
               raise SystemExit("built dashboard contains a second React runtime")
           print(
               f"Validated {len(payload['teams'])} teams, {len(series['points'])} "
-              f"team-day points, {len(series['complete_games'])} complete games, and "
-              f"{len(recent_games)} recent team games from {payload['status']['current_games']} current games"
+              f"team-day points, {len(series['complete_games'])} complete games, "
+              f"{len(recent_games)} recent team games, {len(bullpen_usage)} bullpen windows, "
+              f"and {payload['status']['current_games']} current games"
           )
           PY
 
