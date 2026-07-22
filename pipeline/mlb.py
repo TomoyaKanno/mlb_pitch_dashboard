@@ -4,7 +4,7 @@ import asyncio
 import os
 import random
 import time
-from datetime import date
+from datetime import date, timedelta
 from typing import Any, Awaitable, Callable
 
 import httpx
@@ -146,6 +146,75 @@ class MLBClient:
             games.values(),
             key=lambda item: (item["game_date"], item.get("game_datetime") or "", item["game_pk"]),
         )
+
+    async def upcoming_games(self, season: int) -> list[dict[str, Any]]:
+        """Return each team's earliest upcoming regular-season game.
+
+        Probable starters are an MLB schedule hint, not a confirmed assignment,
+        so missing values remain explicit instead of being inferred.
+        """
+        today = date.today()
+        if season != today.year:
+            return []
+        end_date = (today + timedelta(days=14)).isoformat()
+        payload = await self.get_json(
+            "/schedule",
+            params={
+                "sportId": 1,
+                "gameType": "R",
+                "startDate": today.isoformat(),
+                "endDate": end_date,
+                "hydrate": "probablePitcher",
+            },
+        )
+        games_by_team: dict[int, dict[str, Any]] = {}
+        for day in payload.get("dates", []):
+            for game in day.get("games", []):
+                status = game.get("status", {})
+                if status.get("abstractGameState") == "Final":
+                    continue
+                if status.get("detailedState") in {"Postponed", "Cancelled", "Suspended"}:
+                    continue
+                game_pk = int(game["gamePk"])
+                game_date = game.get("officialDate") or day["date"]
+                game_datetime = game.get("gameDate")
+                teams = game.get("teams", {})
+                for side, opponent_side in (("away", "home"), ("home", "away")):
+                    team_payload = teams.get(side, {})
+                    opponent_payload = teams.get(opponent_side, {})
+                    team = team_payload.get("team", {})
+                    opponent = opponent_payload.get("team", {})
+                    if not team.get("id") or not opponent.get("id"):
+                        continue
+                    probable = team_payload.get("probablePitcher") or {}
+                    candidate = {
+                        "team_id": int(team["id"]),
+                        "team_name": str(team.get("name", "Unknown team")),
+                        "game_pk": game_pk,
+                        "game_date": game_date,
+                        "game_datetime": game_datetime,
+                        "opponent_id": int(opponent["id"]),
+                        "opponent_name": str(opponent.get("name", "Unknown opponent")),
+                        "is_home": side == "home",
+                        "probable_pitcher_id": (
+                            int(probable["id"]) if probable.get("id") is not None else None
+                        ),
+                        "probable_pitcher_name": (
+                            str(probable["fullName"]) if probable.get("fullName") else None
+                        ),
+                    }
+                    previous = games_by_team.get(candidate["team_id"])
+                    if previous is None or (
+                        candidate["game_date"],
+                        candidate["game_datetime"] or "",
+                        candidate["game_pk"],
+                    ) < (
+                        previous["game_date"],
+                        previous["game_datetime"] or "",
+                        previous["game_pk"],
+                    ):
+                        games_by_team[candidate["team_id"]] = candidate
+        return sorted(games_by_team.values(), key=lambda item: item["team_name"])
 
     async def boxscore_appearances(self, game: dict[str, Any]) -> list[dict[str, Any]]:
         payload = await self.get_json(f"/game/{game['game_pk']}/boxscore")

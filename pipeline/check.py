@@ -35,6 +35,9 @@ def check_persisted_snapshot(data_dir: Path, season: int) -> dict[str, Any]:
     state_path = root / "fetch-state.json"
     if state_path.exists():
         actual_files.add("fetch-state.json")
+    next_games_path = root / "next-games.json"
+    if next_games_path.exists():
+        actual_files.add("next-games.json")
 
     declared_files = manifest.get("files")
     if not isinstance(declared_files, dict):

@@ -9,6 +9,7 @@ import pytest
 from pipeline.export import (
     aggregate_complete_games,
     aggregate_bullpen_usage,
+    aggregate_next_games,
     aggregate_recent_games,
     aggregate_team_timeseries,
     aggregate_teams,
@@ -16,7 +17,7 @@ from pipeline.export import (
     export_team_timeseries,
     reconcile_team_timeseries,
 )
-from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, Snapshot
+from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, Snapshot
 from pipeline.storage import write_snapshot
 
 
@@ -107,6 +108,10 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
     ]
     for row in rows:
         snapshot.appearances[row.key] = row
+    snapshot.next_games[100] = NextGameRecord(
+        100, "Away", 2, "2026-07-20", "2026-07-20T23:10:00Z",
+        200, "Home", False, 11, "Away Probable",
+    )
     refresh = {
         "result": "complete",
         "generated_at": NOW,
@@ -133,6 +138,19 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
     assert away["opener_to_rp"] == 30
     assert payload["status"]["current_games"] == 1
     assert payload["bullpen_usage"] == aggregate_bullpen_usage(snapshot)
+    assert payload["next_games"] == aggregate_next_games(snapshot)
+    assert payload["next_games"] == [{
+        "team_id": 100,
+        "team_name": "Away",
+        "game_pk": 2,
+        "date": "2026-07-20",
+        "game_datetime": "2026-07-20T23:10:00Z",
+        "opponent_id": 200,
+        "opponent_name": "Home",
+        "is_home": False,
+        "probable_pitcher_id": 11,
+        "probable_pitcher_name": "Away Probable",
+    }]
 
 
 def test_team_timeseries_daily_increments_reconcile_to_season_totals(tmp_path):
@@ -367,3 +385,21 @@ def test_fixture_bullpen_usage_matches_recent_team_contract() -> None:
             and all(isinstance(value, int) and value >= 0 for value in pitcher["pitches"])
             for pitcher in usage["pitchers"]
         )
+
+
+
+def test_fixture_next_games_match_recent_team_contract() -> None:
+    root = Path(__file__).resolve().parents[1]
+    payload = json.loads(
+        (root / "observable" / "fixtures" / "dashboard.json").read_text()
+    )
+    next_games = payload["next_games"]
+
+    assert {row["team_id"] for row in next_games} == {
+        row["team_id"] for row in payload["recent_games"]
+    }
+    assert all(
+        row["team_id"] != row["opponent_id"]
+        and bool(row["probable_pitcher_id"] is None) == bool(row["probable_pitcher_name"] is None)
+        for row in next_games
+    )

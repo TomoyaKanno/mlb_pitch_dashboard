@@ -258,6 +258,25 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
     return sorted(result, key=lambda row: row["team_name"])
 
 
+def aggregate_next_games(snapshot: Snapshot) -> list[dict[str, Any]]:
+    """Upcoming opponent and optional MLB probable starter for each team."""
+    return [
+        {
+            "team_id": row.team_id,
+            "team_name": row.team_name,
+            "game_pk": row.game_pk,
+            "date": row.game_date,
+            "game_datetime": row.game_datetime,
+            "opponent_id": row.opponent_id,
+            "opponent_name": row.opponent_name,
+            "is_home": row.is_home,
+            "probable_pitcher_id": row.probable_pitcher_id,
+            "probable_pitcher_name": row.probable_pitcher_name,
+        }
+        for row in sorted(snapshot.next_games.values(), key=lambda item: item.team_name)
+    ]
+
+
 def reconcile_team_timeseries(
     teams: list[dict[str, Any]],
     points: list[dict[str, Any]],
@@ -332,6 +351,7 @@ def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
         **meta,
         "teams": teams,
         "recent_games": aggregate_recent_games(snapshot),
+        "next_games": aggregate_next_games(snapshot),
         "bullpen_usage": aggregate_bullpen_usage(snapshot),
     }
 

@@ -7,7 +7,9 @@ import {
   type Basis, type CompleteGame, type CumulativePoint, type DateDomain, type LeagueTotals,
   type SeriesMode, type SortColumn, type SortDirection, type Team, type TeamDayPoint, type View,
 } from "./metrics.js";
-import {RecentStrain, type BullpenUsage, type RecentTeamGame} from "./RecentStrain.js";
+import {
+  RecentStrain, type BullpenUsage, type NextTeamGame, type RecentTeamGame,
+} from "./RecentStrain.js";
 
 interface Status {
   result: "complete" | "partial" | "failed";
@@ -30,6 +32,7 @@ interface DashboardData {
   status: Status;
   teams: Team[];
   recent_games: RecentTeamGame[];
+  next_games: NextTeamGame[];
   bullpen_usage: BullpenUsage[];
 }
 
@@ -639,7 +642,13 @@ export function Dashboard({
           </div>
         </>
       ) : (
-        <RecentStrain games={data.recent_games} bullpenUsage={data.bullpen_usage} selectedTeamId={recentTeamId} onSelectTeam={setRecentTeamId} />
+        <RecentStrain
+          games={data.recent_games}
+          nextGames={data.next_games}
+          bullpenUsage={data.bullpen_usage}
+          selectedTeamId={recentTeamId}
+          onSelectTeam={setRecentTeamId}
+        />
       )}
       <footer>
         Official appearance uses MLB’s per-game starter flag. Role-adjusted classifications preserve true starters behind openers while flagging ambiguous long outings for review.

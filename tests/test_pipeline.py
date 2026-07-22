@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, Snapshot
+from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, Snapshot
 from pipeline.storage import load_snapshot
 from pipeline.update import games_to_refresh, update_season
 from pipeline.validation import SnapshotValidationError, validate_snapshot
@@ -54,10 +54,11 @@ def boxscore(game_pk: int) -> list[dict]:
 
 
 class FakeClient:
-    def __init__(self, schedule, boxes, failures=None):
+    def __init__(self, schedule, boxes, failures=None, next_games=None):
         self.schedule = schedule
         self.boxes = boxes
         self.failures = failures or set()
+        self.next_games = next_games or []
         self.api_calls = 0
 
     async def __aenter__(self):
@@ -70,6 +71,10 @@ class FakeClient:
         self.api_calls += 1
         return self.schedule
 
+    async def upcoming_games(self, season):
+        self.api_calls += 1
+        return self.next_games
+
     async def boxscore_appearances(self, value):
         self.api_calls += 1
         if value["game_pk"] in self.failures:
@@ -77,8 +82,8 @@ class FakeClient:
         return self.boxes[value["game_pk"]]
 
 
-def factory(schedule, boxes, failures=None):
-    return lambda: FakeClient(schedule, boxes, failures)
+def factory(schedule, boxes, failures=None, next_games=None):
+    return lambda: FakeClient(schedule, boxes, failures, next_games)
 
 
 def test_bootstrap_then_incremental_run_only_loads_schedule(tmp_path):
@@ -91,9 +96,9 @@ def test_bootstrap_then_incremental_run_only_loads_schedule(tmp_path):
         update_season(2026, tmp_path, reconcile_days=0, now=NOW, client_factory=factory(schedule, boxes))
     )
 
-    assert first.api_calls == 3
+    assert first.api_calls == 4
     assert first.games_requested == 2
-    assert second.api_calls == 1
+    assert second.api_calls == 2
     assert second.games_requested == 0
     snapshot = load_snapshot(tmp_path, 2026)
     assert len(snapshot.games) == 2
@@ -162,3 +167,60 @@ def test_schedule_regression_is_rejected_before_writing(tmp_path):
         asyncio.run(
             update_season(2026, tmp_path, reconcile_days=0, now=NOW, client_factory=factory([], {}))
         )
+
+
+
+def test_refresh_persists_next_game_with_optional_probable_starter(tmp_path):
+    schedule = [game(1, "2026-07-20")]
+    boxes = {1: boxscore(1)}
+    next_games = [
+        {
+            "team_id": 100,
+            "team_name": "Away",
+            "game_pk": 3,
+            "game_date": "2026-07-21",
+            "game_datetime": "2026-07-21T23:10:00Z",
+            "opponent_id": 200,
+            "opponent_name": "Home",
+            "is_home": False,
+            "probable_pitcher_id": 11,
+            "probable_pitcher_name": "Away Probable",
+        },
+        {
+            "team_id": 200,
+            "team_name": "Home",
+            "game_pk": 3,
+            "game_date": "2026-07-21",
+            "game_datetime": "2026-07-21T23:10:00Z",
+            "opponent_id": 100,
+            "opponent_name": "Away",
+            "is_home": True,
+            "probable_pitcher_id": None,
+            "probable_pitcher_name": None,
+        },
+    ]
+    asyncio.run(
+        update_season(
+            2026,
+            tmp_path,
+            reconcile_days=0,
+            now=NOW,
+            client_factory=factory(schedule, boxes, next_games=next_games),
+        )
+    )
+
+    snapshot = load_snapshot(tmp_path, 2026)
+    assert snapshot.next_games[100] == NextGameRecord(
+        team_id=100,
+        team_name="Away",
+        game_pk=3,
+        game_date="2026-07-21",
+        game_datetime="2026-07-21T23:10:00Z",
+        opponent_id=200,
+        opponent_name="Home",
+        is_home=False,
+        probable_pitcher_id=11,
+        probable_pitcher_name="Away Probable",
+    )
+    assert snapshot.next_games[200].probable_pitcher_name is None
+    assert (tmp_path / "seasons/2026/next-games.json").exists()
