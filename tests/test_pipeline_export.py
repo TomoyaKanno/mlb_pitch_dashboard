@@ -10,6 +10,7 @@ from pipeline.export import (
     aggregate_complete_games,
     aggregate_bullpen_usage,
     aggregate_next_games,
+    aggregate_pitchers,
     aggregate_recent_games,
     aggregate_team_timeseries,
     aggregate_teams,
@@ -543,3 +544,40 @@ def test_probable_starter_exports_last_three_official_starts():
     assert away["probable_days_rest"] == 4
     assert rows[200]["probable_recent_starts"] == []
     assert rows[200]["probable_days_rest"] is None
+
+
+def test_player_totals_sum_all_appearances_and_label_the_current_roster_team():
+    snapshot = Snapshot(season=2026)
+    snapshot.appearances[(1, 100, 11)] = AppearanceRecord(
+        1, "2026-07-10", 2026, 100, "Original Club", 11, "Pitcher One", 50,
+        True, 0, "SP", "official starter",
+    )
+    snapshot.appearances[(2, 200, 11)] = AppearanceRecord(
+        2, "2026-07-20", 2026, 200, "Second Club", 11, "Pitcher One", 40,
+        True, 0, "SP", "official starter",
+    )
+    snapshot.appearances[(2, 200, 12)] = AppearanceRecord(
+        2, "2026-07-20", 2026, 200, "Second Club", 12, "Pitcher Two", 85,
+        True, 0, "SP", "official starter",
+    )
+    snapshot.roster_pitchers[(300, 11)] = RosterPitcherRecord(
+        300, "Current Club", 11, "Pitcher One", "SP", 0, "A", "Active",
+    )
+
+    assert aggregate_pitchers(snapshot) == [
+        {
+            "pitcher_id": 11,
+            "pitcher_name": "Pitcher One",
+            "team_id": 300,
+            "team_name": "Current Club",
+            "total": 90,
+        },
+        {
+            "pitcher_id": 12,
+            "pitcher_name": "Pitcher Two",
+            "team_id": 200,
+            "team_name": "Second Club",
+            "total": 85,
+        },
+    ]
+    assert aggregate_pitchers(snapshot, limit=1)[0]["pitcher_id"] == 11
