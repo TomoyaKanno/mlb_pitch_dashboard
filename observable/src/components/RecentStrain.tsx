@@ -203,6 +203,7 @@ export function RecentStrain({
             <div className="recent-game-copy">
               <strong>{integer.format(totalPitches)} pitches</strong>
               <span>{selected.pitchers.length} pitchers used · {formatFullDate(selected.date)}</span>
+              <span>Pitcher breakdown below</span>
             </div>
           </div>
         </section>
