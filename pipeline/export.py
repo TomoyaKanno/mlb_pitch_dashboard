@@ -108,15 +108,40 @@ def aggregate_team_timeseries(snapshot: Snapshot) -> list[dict[str, Any]]:
     return sorted(result, key=lambda point: (point["date"], point["team_id"]))
 
 
+def _appearances_by_game_team(snapshot: Snapshot) -> dict[tuple[int, int], list[Any]]:
+    grouped: dict[tuple[int, int], list[Any]] = defaultdict(list)
+    for row in snapshot.appearances.values():
+        grouped[(row.game_pk, row.team_id)].append(row)
+    return grouped
+
+
+def _latest_team_games(
+    snapshot: Snapshot,
+    by_game_team: dict[tuple[int, int], list[Any]],
+) -> dict[int, tuple[Any, list[Any]]]:
+    latest: dict[int, tuple[Any, list[Any]]] = {}
+    for (game_pk, team_id), rows in by_game_team.items():
+        game = snapshot.games.get(game_pk)
+        if game is None:
+            continue
+        previous = latest.get(team_id)
+        if previous is None or (
+            game.game_date, game.game_datetime or "", game.game_pk,
+        ) > (
+            previous[0].game_date,
+            previous[0].game_datetime or "",
+            previous[0].game_pk,
+        ):
+            latest[team_id] = (game, rows)
+    return latest
+
 def aggregate_complete_games(snapshot: Snapshot) -> list[dict[str, Any]]:
     """Team-games with zero official RP pitches (true complete games).
 
     Must be game-grain, not calendar-day: a doubleheader can pair a CG with a
     bullpen game, so the day total still has official_rp > 0.
     """
-    by_game_team: dict[tuple[int, int], list[Any]] = defaultdict(list)
-    for row in snapshot.appearances.values():
-        by_game_team[(row.game_pk, row.team_id)].append(row)
+    by_game_team = _appearances_by_game_team(snapshot)
 
     result: list[dict[str, Any]] = []
     for (game_pk, team_id), rows in by_game_team.items():
@@ -150,22 +175,8 @@ def aggregate_recent_games(snapshot: Snapshot) -> list[dict[str, Any]]:
     snapshots without that optional timestamp fall back to game_pk until their
     next normal refresh rewrites the game records.
     """
-    by_game_team: dict[tuple[int, int], list[Any]] = defaultdict(list)
-    for row in snapshot.appearances.values():
-        by_game_team[(row.game_pk, row.team_id)].append(row)
-
-    latest: dict[int, tuple[Any, list[Any]]] = {}
-    for (game_pk, team_id), rows in by_game_team.items():
-        game = snapshot.games.get(game_pk)
-        if game is None:
-            continue
-        previous = latest.get(team_id)
-        if previous is None or (
-            game.game_date, game.game_datetime or "", game.game_pk,
-        ) > (
-            previous[0].game_date, previous[0].game_datetime or "", previous[0].game_pk,
-        ):
-            latest[team_id] = (game, rows)
+    by_game_team = _appearances_by_game_team(snapshot)
+    latest = _latest_team_games(snapshot, by_game_team)
 
     result: list[dict[str, Any]] = []
     for team_id, (game, rows) in latest.items():
@@ -198,27 +209,16 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
     The window ends with the team's latest completed game. Doubleheaders add
     both games into the same calendar-day cell, which reflects total workload.
     """
-    by_game_team: dict[tuple[int, int], list[Any]] = defaultdict(list)
-    for row in snapshot.appearances.values():
-        by_game_team[(row.game_pk, row.team_id)].append(row)
-
-    latest: dict[int, tuple[Any, list[Any]]] = {}
-    for (game_pk, team_id), rows in by_game_team.items():
-        game = snapshot.games.get(game_pk)
-        if game is None:
-            continue
-        previous = latest.get(team_id)
-        if previous is None or (
-            game.game_date, game.game_datetime or "", game.game_pk,
-        ) > (
-            previous[0].game_date, previous[0].game_datetime or "", previous[0].game_pk,
-        ):
-            latest[team_id] = (game, rows)
+    by_game_team = _appearances_by_game_team(snapshot)
+    latest = _latest_team_games(snapshot, by_game_team)
 
     result: list[dict[str, Any]] = []
     for team_id, (latest_game, latest_rows) in latest.items():
         end_date = date.fromisoformat(latest_game.game_date)
-        dates = [(end_date - timedelta(days=13 - offset)).isoformat() for offset in range(14)]
+        dates = [
+            (end_date - timedelta(days=13 - offset)).isoformat()
+            for offset in range(14)
+        ]
         date_indexes = {day: index for index, day in enumerate(dates)}
         pitch_counts: dict[tuple[int, int], int] = defaultdict(int)
         pitcher_names: dict[int, str] = {}
@@ -235,15 +235,28 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
                 pitcher_names[row.pitcher_id] = row.pitcher_name
 
         pitchers = [
-            {"pitcher_id": pitcher_id, "pitcher_name": pitcher_names[pitcher_id],
-             "pitches": [pitch_counts[(pitcher_id, offset)] for offset in range(14)]}
+            {
+                "pitcher_id": pitcher_id,
+                "pitcher_name": pitcher_names[pitcher_id],
+                "pitches": [
+                    pitch_counts[(pitcher_id, offset)] for offset in range(14)
+                ],
+            }
             for pitcher_id in pitcher_names
         ]
         pitchers.sort(key=lambda row: (-sum(row["pitches"]), row["pitcher_name"]))
-        result.append({"team_id": team_id, "team_name": latest_rows[0].team_name,
-                       "end_date": latest_game.game_date, "dates": dates, "pitchers": pitchers})
+        result.append(
+            {
+                "team_id": team_id,
+                "team_name": latest_rows[0].team_name,
+                "end_date": latest_game.game_date,
+                "dates": dates,
+                "pitchers": pitchers,
+            }
+        )
 
     return sorted(result, key=lambda row: row["team_name"])
+
 
 def reconcile_team_timeseries(
     teams: list[dict[str, Any]],
@@ -315,7 +328,12 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
 def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
     snapshot, _verified, meta = _export_common(data_dir, season)
     teams = aggregate_teams(snapshot)
-    return {**meta, "teams": teams, "recent_games": aggregate_recent_games(snapshot), "bullpen_usage": aggregate_bullpen_usage(snapshot)}
+    return {
+        **meta,
+        "teams": teams,
+        "recent_games": aggregate_recent_games(snapshot),
+        "bullpen_usage": aggregate_bullpen_usage(snapshot),
+    }
 
 
 def export_team_timeseries(data_dir: Path, season: int) -> dict[str, Any]:
