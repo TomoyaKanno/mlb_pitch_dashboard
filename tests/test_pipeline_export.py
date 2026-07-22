@@ -11,6 +11,7 @@ from pipeline.export import (
     aggregate_bullpen_usage,
     aggregate_next_games,
     aggregate_pitchers,
+    aggregate_team_pitcher_usage,
     aggregate_recent_games,
     aggregate_team_timeseries,
     aggregate_teams,
@@ -581,3 +582,44 @@ def test_player_totals_sum_all_appearances_and_label_the_current_roster_team():
         },
     ]
     assert aggregate_pitchers(snapshot, limit=1)[0]["pitcher_id"] == 11
+
+
+def test_team_pitcher_usage_keeps_swingman_pitches_in_each_appearance_role():
+    snapshot = Snapshot(season=2026)
+    rows = [
+        AppearanceRecord(
+            1, "2026-07-19", 2026, 100, "Test Team", 1, "Swingman", 80,
+            True, 0, "SP", "official starter",
+        ),
+        AppearanceRecord(
+            2, "2026-07-20", 2026, 100, "Test Team", 1, "Swingman", 20,
+            False, 1, "SP", "starter-identity bulk appearance",
+        ),
+        AppearanceRecord(
+            2, "2026-07-20", 2026, 100, "Test Team", 2, "Reliever", 70,
+            False, 2, "RP", "official reliever",
+        ),
+        AppearanceRecord(
+            2, "2026-07-20", 2026, 100, "Test Team", 3, "Opener", 40,
+            True, 0, "RP", "relief-dominant opener",
+        ),
+    ]
+    for row in rows:
+        snapshot.appearances[row.key] = row
+
+    usage = aggregate_team_pitcher_usage(snapshot)[0]
+    assert [row["pitcher_name"] for row in usage["total"]] == [
+        "Swingman", "Reliever", "Opener",
+    ]
+    assert [(row["pitcher_name"], row["official_sp"]) for row in usage["official_sp"]] == [
+        ("Swingman", 80), ("Opener", 40),
+    ]
+    assert [(row["pitcher_name"], row["official_rp"]) for row in usage["official_rp"]] == [
+        ("Reliever", 70), ("Swingman", 20),
+    ]
+    assert [(row["pitcher_name"], row["adjusted_sp"]) for row in usage["adjusted_sp"]] == [
+        ("Swingman", 100),
+    ]
+    assert [(row["pitcher_name"], row["adjusted_rp"]) for row in usage["adjusted_rp"]] == [
+        ("Reliever", 70), ("Opener", 40),
+    ]
