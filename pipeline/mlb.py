@@ -135,12 +135,27 @@ class MLBClient:
                 if status.get("detailedState") in {"Postponed", "Cancelled", "Suspended"}:
                     continue
                 game_pk = int(game["gamePk"])
+                teams = game.get("teams", {})
+                away_team = teams.get("away", {}).get("team", {})
+                home_team = teams.get("home", {}).get("team", {})
                 games[game_pk] = {
                     "game_pk": game_pk,
                     "game_date": official_date,
                     "season": season,
                     "status": status.get("detailedState", "Final"),
                     "game_datetime": game.get("gameDate"),
+                    "away_team_id": (
+                        int(away_team["id"]) if away_team.get("id") is not None else None
+                    ),
+                    "away_team_name": (
+                        str(away_team["name"]) if away_team.get("name") else None
+                    ),
+                    "home_team_id": (
+                        int(home_team["id"]) if home_team.get("id") is not None else None
+                    ),
+                    "home_team_name": (
+                        str(home_team["name"]) if home_team.get("name") else None
+                    ),
                 }
         return sorted(
             games.values(),
@@ -283,4 +298,3 @@ async def fetch_game_batch(
             if not task.done():
                 task.cancel()
     return failures
-
