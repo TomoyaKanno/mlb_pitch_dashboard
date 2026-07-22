@@ -126,6 +126,36 @@ jobs:
               key=lambda row: (-row["total"], row["pitcher_name"], row["pitcher_id"]),
           ):
               raise SystemExit("player totals are not ranked by total pitches")
+          team_pitcher_usage = payload.get("team_pitcher_usage")
+          if not isinstance(team_pitcher_usage, list) or len(team_pitcher_usage) != len(payload["teams"]):
+              raise SystemExit("dashboard missing one team pitcher-usage record per team")
+          team_ids = {row["team_id"] for row in payload["teams"]}
+          if {row.get("team_id") for row in team_pitcher_usage} != team_ids:
+              raise SystemExit("pitcher-usage teams do not match season teams")
+          usage_keys = ("total", "official_sp", "official_rp", "adjusted_sp", "adjusted_rp")
+          metric_keys = ("total", "official_sp", "official_rp", "adjusted_sp", "adjusted_rp")
+          for usage in team_pitcher_usage:
+              if not isinstance(usage.get("team_name"), str):
+                  raise SystemExit("pitcher usage has an invalid team name")
+              for key in usage_keys:
+                  pitchers = usage.get(key)
+                  if not isinstance(pitchers, list) or len(pitchers) > 5:
+                      raise SystemExit("pitcher usage list must contain at most five pitchers")
+                  if len({pitcher.get("pitcher_id") for pitcher in pitchers}) != len(pitchers):
+                      raise SystemExit("pitcher usage list contains duplicate pitchers")
+                  if any(
+                      not isinstance(pitcher.get("pitcher_id"), int)
+                      or not isinstance(pitcher.get("pitcher_name"), str)
+                      or any(not isinstance(pitcher.get(metric), int) or pitcher[metric] < 0 for metric in metric_keys)
+                      or pitcher[key] <= 0
+                      for pitcher in pitchers
+                  ):
+                      raise SystemExit("pitcher usage contains an invalid row")
+                  if pitchers != sorted(
+                      pitchers,
+                      key=lambda pitcher: (-pitcher[key], pitcher["pitcher_name"], pitcher["pitcher_id"]),
+                  ):
+                      raise SystemExit("pitcher usage list is not ranked by its workload")
           recent_games = payload.get("recent_games")
           if not isinstance(recent_games, list) or len(recent_games) != len(payload["teams"]):
               raise SystemExit("dashboard missing one latest completed game per team")
@@ -204,7 +234,8 @@ jobs:
           print(
               f"Validated {len(payload['teams'])} teams, {len(series['points'])} "
               f"team-day points, {len(series['complete_games'])} complete games, "
-              f"{len(player_totals)} player totals, {len(recent_games)} recent team games, "
+              f"{len(player_totals)} player totals, {len(team_pitcher_usage)} team usage windows, "
+              f"{len(recent_games)} recent team games, "
               f"{len(next_games)} next team games, {len(bullpen_usage)} bullpen windows, "
               f"and {payload['status']['current_games']} current games"
           )
