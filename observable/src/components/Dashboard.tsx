@@ -32,6 +32,7 @@ interface DashboardData {
   status: Status;
   teams: Team[];
   player_totals: PlayerTotal[];
+  team_pitcher_usage: TeamPitcherUsage[];
   recent_games: RecentTeamGame[];
   next_games: NextTeamGame[];
   bullpen_usage: BullpenUsage[];
@@ -43,6 +44,26 @@ interface PlayerTotal {
   team_id: number;
   team_name: string;
   total: number;
+}
+
+interface PitcherUsage {
+  pitcher_id: number;
+  pitcher_name: string;
+  total: number;
+  official_sp: number;
+  official_rp: number;
+  adjusted_sp: number;
+  adjusted_rp: number;
+}
+
+interface TeamPitcherUsage {
+  team_id: number;
+  team_name: string;
+  total: PitcherUsage[];
+  official_sp: PitcherUsage[];
+  official_rp: PitcherUsage[];
+  adjusted_sp: PitcherUsage[];
+  adjusted_rp: PitcherUsage[];
 }
 
 interface TeamTimeseriesData {
@@ -186,13 +207,72 @@ function formatAxisValue(value: number, view: View): string {
   return integer.format(Math.round(value));
 }
 
+type PitcherUsageKey = "total" | "official_sp" | "official_rp" | "adjusted_sp" | "adjusted_rp";
+
+function pitcherUsageKey(view: View, basis: Basis): PitcherUsageKey | null {
+  if (view === "total") return "total";
+  if (view === "sp") return basis === "official" ? "official_sp" : "adjusted_sp";
+  if (view === "rp") return basis === "official" ? "official_rp" : "adjusted_rp";
+  return null;
+}
+
+function pitcherUsageMeta(view: View, basis: Basis, pitcher: PitcherUsage): string {
+  if (view === "total") {
+    return `${integer.format(pitcher.adjusted_sp)} adjusted SP · ${integer.format(pitcher.adjusted_rp)} adjusted RP`;
+  }
+  return basis === "official" ? "Official appearance designation" : "Role-adjusted classification";
+}
+
+function TeamPitcherUsageList({
+  usage, view, basis,
+}: {
+  usage: TeamPitcherUsage | null;
+  view: View;
+  basis: Basis;
+}) {
+  const key = pitcherUsageKey(view, basis);
+  if (usage == null || key == null) return null;
+
+  const pitchers = usage[key];
+  const title = view === "total"
+    ? "Top 5 pitcher usage"
+    : `Top 5 ${basis === "official" ? "official" : "role-adjusted"} ${view.toUpperCase()} workloads`;
+  return (
+    <section className="team-pitcher-usage" aria-label={title}>
+      <div className="team-pitcher-usage-header">
+        <h3>{title}</h3>
+        <span>{view === "total" ? "All pitches" : "Season to date"}</span>
+      </div>
+      {pitchers.length ? (
+        <ol className="team-pitcher-usage-list">
+          {pitchers.map((pitcher) => (
+            <li className="team-pitcher-usage-row" key={pitcher.pitcher_id}>
+              <PitcherHeadshot
+                pitcherId={pitcher.pitcher_id}
+                name={pitcher.pitcher_name}
+                size="small"
+              />
+              <div className="team-pitcher-usage-copy">
+                <strong>{pitcher.pitcher_name}</strong>
+                <span>{pitcherUsageMeta(view, basis, pitcher)}</span>
+              </div>
+              <strong className="team-pitcher-usage-value">{integer.format(pitcher[key])}</strong>
+            </li>
+          ))}
+        </ol>
+      ) : <p className="secondary">No qualifying pitcher workloads.</p>}
+    </section>
+  );
+}
+
 function TeamSeriesPanel({
-  team, series, dateDomain, completeGames, view, basis, mode, contextText, open, onModeChange, onClose,
+  team, series, dateDomain, completeGames, pitcherUsage, view, basis, mode, contextText, open, onModeChange, onClose,
 }: {
   team: Team;
   series: CumulativePoint[];
   dateDomain: DateDomain;
   completeGames: CompleteGame[];
+  pitcherUsage: TeamPitcherUsage | null;
   view: View;
   basis: Basis;
   mode: SeriesMode;
@@ -391,6 +471,7 @@ function TeamSeriesPanel({
             {mode === "daily" ? " (latest day)" : ""} · {series.length} days
           </p>
           <p className="secondary team-series-cgs">{completeGameSummary(completeGames)}</p>
+          <TeamPitcherUsageList usage={pitcherUsage} view={view} basis={basis} />
         </>
       )}
     </aside>
@@ -594,6 +675,9 @@ export function Dashboard({
   const dateDomain = useMemo(() => seriesDateDomain(timeseries.points), [timeseries.points]);
   const roleView = view === "sp" || view === "rp" || view === "share";
   const selectedTeam = data.teams.find((team) => team.team_id === selectedTeamId) ?? null;
+  const selectedPitcherUsage = data.team_pitcher_usage.find(
+    (usage) => usage.team_id === selectedTeamId,
+  ) ?? null;
   const selectedSeries = useMemo(
     () => (selectedTeamId == null || view === "players"
       ? []
@@ -709,6 +793,7 @@ export function Dashboard({
                 series={selectedSeries}
                 dateDomain={dateDomain}
                 completeGames={completeGames}
+                pitcherUsage={selectedPitcherUsage}
                 view={view}
                 basis={basis}
                 mode={seriesMode}
