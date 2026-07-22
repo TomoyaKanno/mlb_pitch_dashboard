@@ -170,6 +170,56 @@
       ]
     }
   ],
+  "next_games": [
+    {
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers",
+      "game_pk": 777101,
+      "date": "2026-07-21",
+      "game_datetime": "2026-07-21T23:10:00Z",
+      "opponent_id": 143,
+      "opponent_name": "Philadelphia Phillies",
+      "is_home": false,
+      "probable_pitcher_id": 641778,
+      "probable_pitcher_name": "Eric Lauer"
+    },
+    {
+      "team_id": 121,
+      "team_name": "New York Mets",
+      "game_pk": 777102,
+      "date": "2026-07-21",
+      "game_datetime": "2026-07-21T23:10:00Z",
+      "opponent_id": 144,
+      "opponent_name": "Atlanta Braves",
+      "is_home": true,
+      "probable_pitcher_id": null,
+      "probable_pitcher_name": null
+    },
+    {
+      "team_id": 147,
+      "team_name": "New York Yankees",
+      "game_pk": 777103,
+      "date": "2026-07-21",
+      "game_datetime": "2026-07-21T23:10:00Z",
+      "opponent_id": 111,
+      "opponent_name": "Boston Red Sox",
+      "is_home": false,
+      "probable_pitcher_id": 543135,
+      "probable_pitcher_name": "Gerrit Cole"
+    },
+    {
+      "team_id": 136,
+      "team_name": "Seattle Mariners",
+      "game_pk": 777104,
+      "date": "2026-07-21",
+      "game_datetime": "2026-07-21T23:10:00Z",
+      "opponent_id": 117,
+      "opponent_name": "Houston Astros",
+      "is_home": true,
+      "probable_pitcher_id": 669203,
+      "probable_pitcher_name": "Logan Gilbert"
+    }
+  ],
   "bullpen_usage": [
     {
       "team_id": 119,
