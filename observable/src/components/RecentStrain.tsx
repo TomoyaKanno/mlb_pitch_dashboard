@@ -17,6 +17,19 @@ export interface RecentTeamGame {
   pitchers: RecentPitcher[];
 }
 
+export interface NextTeamGame {
+  team_id: number;
+  team_name: string;
+  game_pk: number;
+  date: string;
+  game_datetime: string | null;
+  opponent_id: number;
+  opponent_name: string;
+  is_home: boolean;
+  probable_pitcher_id: number | null;
+  probable_pitcher_name: string | null;
+}
+
 export interface BullpenUsagePitcher {
   pitcher_id: number;
   pitcher_name: string;
@@ -126,10 +139,24 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
   );
 }
 
+function TeamLogo({teamId}: {teamId: number}) {
+  return (
+    <img
+      className="recent-team-logo"
+      src={`https://www.mlbstatic.com/team-logos/${teamId}.svg`}
+      alt=""
+      width={54}
+      height={54}
+      onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+    />
+  );
+}
+
 export function RecentStrain({
-  games, bullpenUsage, selectedTeamId, onSelectTeam,
+  games, nextGames, bullpenUsage, selectedTeamId, onSelectTeam,
 }: {
   games: RecentTeamGame[];
+  nextGames: NextTeamGame[];
   bullpenUsage: BullpenUsage[];
   selectedTeamId: number;
   onSelectTeam: (teamId: number) => void;
@@ -142,6 +169,7 @@ export function RecentStrain({
       </p>
     );
   }
+  const nextGame = nextGames.find((game) => game.team_id === selected.team_id) ?? null;
   const usage = bullpenUsage.find((item) => item.team_id === selected.team_id) ?? null;
   const totalPitches = selected.pitchers.reduce((total, pitcher) => total + pitcher.pitches, 0);
 
@@ -149,11 +177,10 @@ export function RecentStrain({
     <section className="recent-strain" aria-label="Recent strain">
       <div className="recent-strain-header">
         <div>
-          <p className="eyebrow">Last completed game</p>
+          <p className="eyebrow">Staff workload context</p>
           <h2>{selected.team_name}</h2>
           <p className="secondary">
-            Pitcher workloads from {formatFullDate(selected.date)}. 
-            This is workload context, not a fatigue assessment.
+            Last completed-game workloads and the next scheduled opponent. Probable starters are MLB schedule designations.
           </p>
         </div>
         <label>
@@ -168,19 +195,37 @@ export function RecentStrain({
           </select>
         </label>
       </div>
-      <div className="recent-game-card">
-        <img
-          className="recent-team-logo"
-          src={`https://www.mlbstatic.com/team-logos/${selected.team_id}.svg`}
-          alt=""
-          width={54}
-          height={54}
-          onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
-        />
-        <div className="recent-game-copy">
-          <strong>{integer.format(totalPitches)} pitches</strong>
-          <span>{selected.pitchers.length} pitchers used · game {selected.game_pk}</span>
-        </div>
+      <div className="recent-game-grid">
+        <section className="recent-game-card" aria-label="Last completed game">
+          <p className="recent-card-label">Last completed game</p>
+          <div className="recent-game-body">
+            <TeamLogo teamId={selected.team_id} />
+            <div className="recent-game-copy">
+              <strong>{integer.format(totalPitches)} pitches</strong>
+              <span>{selected.pitchers.length} pitchers used · {formatFullDate(selected.date)}</span>
+            </div>
+          </div>
+        </section>
+        <section className="recent-game-card" aria-label="Next game">
+          <p className="recent-card-label">Next game</p>
+          {nextGame ? (
+            <div className="recent-game-body">
+              <TeamLogo teamId={nextGame.opponent_id} />
+              <div className="recent-game-copy">
+                <strong>{nextGame.is_home ? `vs. ${nextGame.opponent_name}` : `at ${nextGame.opponent_name}`}</strong>
+                <span>{formatFullDate(nextGame.date)} · game {nextGame.game_pk}</span>
+                <span className="probable-starter">
+                  Probable starter: {nextGame.probable_pitcher_name ?? "Not announced"}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="recent-game-copy">
+              <strong>No upcoming game</strong>
+              <span>Next-game schedule data will appear after a refresh.</span>
+            </div>
+          )}
+        </section>
       </div>
       <div className="table-shell recent-table">
         <table>
