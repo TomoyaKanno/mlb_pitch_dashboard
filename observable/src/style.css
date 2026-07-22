@@ -67,11 +67,15 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
 .recent-strain-header h2 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.5rem); letter-spacing: -.035em; }
 .recent-strain-header .secondary { max-width: 620px; margin: 8px 0 0; line-height: 1.5; }
 .recent-strain-header label { flex: 0 1 270px; }
-.recent-game-card { display: flex; align-items: center; gap: 14px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.recent-game-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.recent-game-card { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.recent-card-label { margin: 0; color: var(--muted); font-size: .72rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
+.recent-game-body { display: flex; align-items: center; gap: 14px; }
 .recent-team-logo { flex: none; object-fit: contain; }
-.recent-game-copy { display: grid; gap: 3px; }
-.recent-game-copy strong { font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.recent-game-copy { display: grid; gap: 3px; min-width: 0; }
+.recent-game-copy strong { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 .recent-game-copy span { color: var(--muted); font-size: .82rem; }
+.probable-starter { color: var(--text) !important; }
 .recent-pitches { width: 110px; text-align: right; font-variant-numeric: tabular-nums; }
 .recent-role { width: 100px; }
 .recent-empty { margin-top: 20px; }
@@ -343,6 +347,7 @@ tbody tr.selected td { background: var(--accent-soft); }
   .league-grid { grid-template-columns: repeat(2, 1fr); }
   .recent-strain-header { display: grid; align-items: start; }
   .recent-strain-header label { width: 100%; max-width: 360px; }
+  .recent-game-grid { grid-template-columns: 1fr; }
   .context { display: none; }
   .rank { width: 48px; }
   .table-with-panel { grid-template-columns: 1fr; }
