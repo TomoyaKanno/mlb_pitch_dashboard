@@ -135,6 +135,7 @@ def _latest_team_games(
             latest[team_id] = (game, rows)
     return latest
 
+
 def aggregate_complete_games(snapshot: Snapshot) -> list[dict[str, Any]]:
     """Team-games with zero official RP pitches (true complete games).
 
@@ -181,6 +182,19 @@ def aggregate_recent_games(snapshot: Snapshot) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     for team_id, (game, rows) in latest.items():
         ordered = sorted(rows, key=lambda row: (row.appearance_order, row.pitcher_id))
+        matchup = {}
+        if (
+            game.away_team_id is not None
+            and game.away_team_name
+            and game.home_team_id is not None
+            and game.home_team_name
+        ):
+            matchup = {
+                "away_team_id": game.away_team_id,
+                "away_team_name": game.away_team_name,
+                "home_team_id": game.home_team_id,
+                "home_team_name": game.home_team_name,
+            }
         result.append(
             {
                 "team_id": team_id,
@@ -188,6 +202,7 @@ def aggregate_recent_games(snapshot: Snapshot) -> list[dict[str, Any]]:
                 "game_pk": game.game_pk,
                 "date": game.game_date,
                 "game_datetime": game.game_datetime,
+                **matchup,
                 "pitchers": [
                     {
                         "pitcher_id": row.pitcher_id,
