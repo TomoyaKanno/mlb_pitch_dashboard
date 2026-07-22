@@ -247,10 +247,14 @@ function TeamPitcherUsageList({
         <ol className="team-pitcher-usage-list">
           {pitchers.map((pitcher) => (
             <li className="team-pitcher-usage-row" key={pitcher.pitcher_id}>
-              <PitcherHeadshot
-                pitcherId={pitcher.pitcher_id}
-                name={pitcher.pitcher_name}
-                size="small"
+              <img
+                className="pitcher-portrait"
+                src={`https://img.mlbstatic.com/mlb-photos/image/upload/w_64,d_people:generic:headshot:67:current.png,q_auto:best,f_auto/v1/people/${pitcher.pitcher_id}/headshot/67/current`}
+                alt=""
+                width={24}
+                height={32}
+                loading="lazy"
+                onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
               />
               <div className="team-pitcher-usage-copy">
                 <strong>{pitcher.pitcher_name}</strong>
