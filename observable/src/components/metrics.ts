@@ -1,4 +1,4 @@
-export type View = "total" | "sp" | "rp" | "share" | "adjustment";
+export type View = "total" | "sp" | "rp" | "share" | "adjustment" | "players";
 export type Basis = "adjusted" | "official";
 export type SortColumn = "metric" | "team";
 export type SortDirection = "asc" | "desc";
@@ -78,6 +78,7 @@ export function rawMetric(team: Team, view: View, basis: Basis): number {
   if (view === "total") return team.total;
   if (view === "sp" || view === "rp") return team[roleKey(basis, view)] as number;
   if (view === "share") return (team[roleKey(basis, "rp")] as number) / team.total;
+  if (view === "players") return team.total;
   return team.adjusted_sp - team.official_sp;
 }
 
@@ -105,7 +106,7 @@ export type SeriesMode = "cumulative" | "daily";
 
 // Role adjustment has no series chart yet.
 export function seriesSupported(view: View): boolean {
-  return view !== "adjustment";
+  return view !== "adjustment" && view !== "players";
 }
 
 function teamDayRows(points: TeamDayPoint[], teamId: number): TeamDayPoint[] {
@@ -121,6 +122,7 @@ function dayMetric(point: TeamDayPoint, view: View, basis: Basis): number {
     const rp = point[roleKey(basis, "rp")] as number;
     return point.total > 0 ? rp / point.total : 0;
   }
+  if (view === "players") return point.total;
   return point.adjusted_sp - point.official_sp;
 }
 
@@ -169,12 +171,14 @@ export function seriesTitle(view: View, basis: Basis, mode: SeriesMode = "cumula
     if (view === "sp") return `Daily ${role} SP pitches`;
     if (view === "rp") return `Daily ${role} RP pitches`;
     if (view === "share") return `Daily ${role} SP / RP split`;
+    if (view === "players") return "Daily player pitches";
     return "Daily net SP reclassification";
   }
   if (view === "total") return "Cumulative pitches";
   if (view === "sp") return `Cumulative ${role} SP pitches`;
   if (view === "rp") return `Cumulative ${role} RP pitches`;
   if (view === "share") return `Season-to-date ${role} SP / RP split`;
+  if (view === "players") return "Cumulative player pitches";
   return "Cumulative net SP reclassification";
 }
 
@@ -421,6 +425,7 @@ export function label(view: View, perGame: boolean): string {
   if (view === "sp") return `SP pitches${suffix}`;
   if (view === "rp") return `RP pitches${suffix}`;
   if (view === "share") return "Bullpen share";
+  if (view === "players") return "Player total pitches";
   return `Net SP reclassification${suffix}`;
 }
 

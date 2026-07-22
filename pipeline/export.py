@@ -73,6 +73,55 @@ def aggregate_teams(snapshot: Snapshot) -> list[dict[str, Any]]:
     return sorted(result, key=lambda team: (-team["total"], team["team_name"]))
 
 
+def aggregate_pitchers(snapshot: Snapshot, *, limit: int = 30) -> list[dict[str, Any]]:
+    """Top individual season pitch totals, labeled with the current roster team.
+
+    Every persisted appearance contributes to one MLB pitcher id, including
+    appearances before a trade. The current-season roster snapshot supplies the
+    displayed team and name when available; otherwise the latest appearance is
+    the stable fallback for historical snapshots and departed players.
+    """
+    totals: dict[int, int] = defaultdict(int)
+    latest: dict[int, tuple[str, int, int, str, str]] = {}
+
+    for row in snapshot.appearances.values():
+        totals[row.pitcher_id] += row.pitches
+        candidate = (
+            row.game_date,
+            row.game_pk,
+            row.team_id,
+            row.team_name,
+            row.pitcher_name,
+        )
+        if row.pitcher_id not in latest or candidate[:2] >= latest[row.pitcher_id][:2]:
+            latest[row.pitcher_id] = candidate
+
+    current_roster = {row.pitcher_id: row for row in snapshot.roster_pitchers.values()}
+    result: list[dict[str, Any]] = []
+    for pitcher_id, total in totals.items():
+        roster = current_roster.get(pitcher_id)
+        if roster is not None:
+            team_id = roster.team_id
+            team_name = roster.team_name
+            pitcher_name = roster.pitcher_name
+        else:
+            _game_date, _game_pk, team_id, team_name, pitcher_name = latest[pitcher_id]
+        result.append(
+            {
+                "pitcher_id": pitcher_id,
+                "pitcher_name": pitcher_name,
+                "team_id": team_id,
+                "team_name": team_name,
+                "total": total,
+            }
+        )
+
+    return sorted(
+        result,
+        key=lambda row: (-row["total"], row["pitcher_name"], row["pitcher_id"]),
+    )[:limit]
+
+
 def aggregate_team_timeseries(snapshot: Snapshot) -> list[dict[str, Any]]:
     """Daily team increments: one point per (game_date, team_id) with activity.
 
@@ -488,6 +537,7 @@ def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
     return {
         **meta,
         "teams": teams,
+        "player_totals": aggregate_pitchers(snapshot),
         "recent_games": aggregate_recent_games(snapshot),
         "next_games": aggregate_next_games(snapshot),
         "bullpen_usage": aggregate_bullpen_usage(snapshot),

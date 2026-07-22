@@ -27,7 +27,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 - `pipeline/update.py` — incremental refresh orchestration and failure-state transitions.
 - `pipeline/validation.py` — in-memory structural and arithmetic invariants.
 - `pipeline/check.py` — persisted snapshot reload and integrity verification.
-- `pipeline/export.py` — validated browser-ready season aggregation, latest-game and upcoming-game schedule read models (including probable-starter recent starts), roster-aware 14-day bullpen usage, and sibling team timeseries.
+- `pipeline/export.py` — validated browser-ready team and top-30 player aggregation, latest-game and upcoming-game schedule read models (including probable-starter recent starts), roster-aware 14-day bullpen usage, and sibling team timeseries.
 - `observable/src/data/dashboard.json.py` — build-time bridge from the snapshot to the season table payload.
 - `observable/src/data/team-timeseries.json.py` — build-time bridge for daily team-increment series.
 - `observable/src/components/Dashboard.tsx` — season-leader shell, controls, table, and timeline panel.
@@ -50,7 +50,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 7. Status must distinguish current, stale, and missing games. Never report a complete snapshot while any scheduled game is stale or missing.
 8. Reject a schedule that loses a previously persisted completed game.
 9. Validate both in memory and after serialization. Manifest hashes and coverage counts are required data-contract fields.
-10. The production browser fetches no pitch data and makes no MLB Stats API calls; every team aggregate is precomputed at build time. Loading static display assets such as team logos and pitcher portraits from MLB's public CDN is permitted.
+10. The production browser fetches no pitch data and makes no MLB Stats API calls; every team and player aggregate is precomputed at build time. Loading static display assets such as team logos and pitcher portraits from MLB's public CDN is permitted.
 
 ## Source, data, and deployment invariants
 
@@ -83,7 +83,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 
 - the title and dashboard heading render;
 - the table renders 30 teams with production data;
-- framing, role-basis, and per-game controls respond;
+- framing, role-basis, and per-game controls respond, including **Team total** and the top-30 **Player total** table;
 - Team and metric column headers sort ascending/descending (there is no Order dropdown);
 - ranks follow the displayed metric even when rows are reordered by header sort;
 - Total bars show dual-tone adjusted SP/RP fills and an MLB-average notch;
@@ -107,7 +107,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 4. `pipeline.check` reloads those files and repeats structural and coverage validation.
 5. The refresh workflow commits changed files to `dashboard-data`.
 6. A successful `workflow_run` handoff builds from current `main` plus the validated data branch.
-7. `pipeline.export` produces the season team payload (latest completed-game pitcher list, upcoming game with optional probable starter and recent-start context, roster-aware 14-day bullpen window per team) and the sibling team timeseries (daily points plus `complete_games`); Observable renders the season leaders table, timeline panel, and Recent strain screen.
+7. `pipeline.export` produces the season team/player payload (top-30 individual totals plus latest completed-game pitcher list, upcoming game with optional probable starter and recent-start context, roster-aware 14-day bullpen window per team) and the sibling team timeseries (daily points plus `complete_games`); Observable renders the season leaders table, timeline panel, and Recent strain screen.
 8. GitHub Pages receives the compiled artifact; no compiled files are committed.
 
 Never commit a snapshot before the persisted reload check succeeds.

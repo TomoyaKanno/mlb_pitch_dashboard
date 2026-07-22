@@ -69,6 +69,71 @@
       "review_count": 2
     }
   ],
+  "player_totals": [
+    {
+      "pitcher_id": 669203,
+      "pitcher_name": "Logan Gilbert",
+      "team_id": 136,
+      "team_name": "Seattle Mariners",
+      "total": 102
+    },
+    {
+      "pitcher_id": 543135,
+      "pitcher_name": "Gerrit Cole",
+      "team_id": 147,
+      "team_name": "New York Yankees",
+      "total": 98
+    },
+    {
+      "pitcher_id": 656941,
+      "pitcher_name": "Yoshinobu Yamamoto",
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers",
+      "total": 96
+    },
+    {
+      "pitcher_id": 621121,
+      "pitcher_name": "David Peterson",
+      "team_id": 121,
+      "team_name": "New York Mets",
+      "total": 91
+    },
+    {
+      "pitcher_id": 657656,
+      "pitcher_name": "Edwin Díaz",
+      "team_id": 121,
+      "team_name": "New York Mets",
+      "total": 17
+    },
+    {
+      "pitcher_id": 571882,
+      "pitcher_name": "Tanner Scott",
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers",
+      "total": 16
+    },
+    {
+      "pitcher_id": 656794,
+      "pitcher_name": "Luke Weaver",
+      "team_id": 147,
+      "team_name": "New York Yankees",
+      "total": 15
+    },
+    {
+      "pitcher_id": 605483,
+      "pitcher_name": "Alex Vesia",
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers",
+      "total": 14
+    },
+    {
+      "pitcher_id": 623143,
+      "pitcher_name": "Andrés Muñoz",
+      "team_id": 136,
+      "team_name": "Seattle Mariners",
+      "total": 13
+    }
+  ],
   "recent_games": [
     {
       "team_id": 119,
