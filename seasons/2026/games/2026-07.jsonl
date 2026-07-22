@@ -224,6 +224,7 @@
 {"away_team_id":133,"away_team_name":"Athletics","game_date":"2026-07-20","game_datetime":"2026-07-21T01:40:00Z","game_pk":825058,"home_team_id":109,"home_team_name":"Arizona Diamondbacks","season":2026,"status":"Final"}
 {"away_team_id":139,"away_team_name":"Tampa Bay Rays","game_date":"2026-07-21","game_datetime":"2026-07-21T23:07:00Z","game_pk":822787,"home_team_id":141,"home_team_name":"Toronto Blue Jays","season":2026,"status":"Final"}
 {"away_team_id":145,"away_team_name":"Chicago White Sox","game_date":"2026-07-21","game_datetime":"2026-07-22T00:05:00Z","game_pk":822871,"home_team_id":140,"home_team_name":"Texas Rangers","season":2026,"status":"Final"}
+{"away_team_id":113,"away_team_name":"Cincinnati Reds","game_date":"2026-07-21","game_datetime":"2026-07-22T01:40:00Z","game_pk":823114,"home_team_id":136,"home_team_name":"Seattle Mariners","season":2026,"status":"Final"}
 {"away_team_id":119,"away_team_name":"Los Angeles Dodgers","game_date":"2026-07-21","game_datetime":"2026-07-21T22:40:00Z","game_pk":823437,"home_team_id":143,"home_team_name":"Philadelphia Phillies","season":2026,"status":"Final"}
 {"away_team_id":121,"away_team_name":"New York Mets","game_date":"2026-07-21","game_datetime":"2026-07-21T23:40:00Z","game_pk":823760,"home_team_id":158,"home_team_name":"Milwaukee Brewers","season":2026,"status":"Final"}
 {"away_team_id":138,"away_team_name":"St. Louis Cardinals","game_date":"2026-07-21","game_datetime":"2026-07-22T01:38:00Z","game_pk":824005,"home_team_id":108,"home_team_name":"Los Angeles Angels","season":2026,"status":"Final"}
@@ -233,3 +234,4 @@
 {"away_team_id":142,"away_team_name":"Minnesota Twins","game_date":"2026-07-21","game_datetime":"2026-07-21T22:40:00Z","game_pk":824409,"home_team_id":114,"home_team_name":"Cleveland Guardians","season":2026,"status":"Final"}
 {"away_team_id":116,"away_team_name":"Detroit Tigers","game_date":"2026-07-21","game_datetime":"2026-07-22T00:05:00Z","game_pk":824652,"home_team_id":112,"home_team_name":"Chicago Cubs","season":2026,"status":"Final"}
 {"away_team_id":135,"away_team_name":"San Diego Padres","game_date":"2026-07-21","game_datetime":"2026-07-21T23:15:00Z","game_pk":824895,"home_team_id":144,"home_team_name":"Atlanta Braves","season":2026,"status":"Final"}
+{"away_team_id":133,"away_team_name":"Athletics","game_date":"2026-07-21","game_datetime":"2026-07-22T01:40:00Z","game_pk":825056,"home_team_id":109,"home_team_name":"Arizona Diamondbacks","season":2026,"status":"Final"}

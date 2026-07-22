@@ -420,6 +420,17 @@
     },
     {
       "depth_order": 9,
+      "depth_role": "RP",
+      "jersey_number": "58",
+      "pitcher_id": 696522,
+      "pitcher_name": "Hayden Juenger",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 133,
+      "team_name": "Athletics"
+    },
+    {
+      "depth_order": 10,
       "depth_role": "SP",
       "jersey_number": "40",
       "pitcher_id": 622663,
@@ -430,7 +441,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 10,
+      "depth_order": 11,
       "depth_role": "SP",
       "jersey_number": "59",
       "pitcher_id": 605488,
@@ -441,7 +452,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 11,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "61",
       "pitcher_id": 695611,
@@ -452,7 +463,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "35",
       "pitcher_id": 669372,
@@ -463,7 +474,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "57",
       "pitcher_id": 682052,
@@ -474,7 +485,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 14,
+      "depth_order": 15,
       "depth_role": "SP",
       "jersey_number": "50",
       "pitcher_id": 678022,
@@ -525,17 +536,6 @@
       "pitcher_name": "Gunnar Hoglund",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
-      "team_id": 133,
-      "team_name": "Athletics"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "58",
-      "pitcher_id": 696522,
-      "pitcher_name": "Hayden Juenger",
-      "status_code": "A",
-      "status_description": "Active",
       "team_id": 133,
       "team_name": "Athletics"
     },
@@ -4263,17 +4263,6 @@
       "jersey_number": null,
       "pitcher_id": 678020,
       "pitcher_name": "Seth Halvorsen",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 119,
-      "team_name": "Los Angeles Dodgers"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": null,
-      "pitcher_id": 823005,
-      "pitcher_name": "Wyatt Halvorson",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 119,
