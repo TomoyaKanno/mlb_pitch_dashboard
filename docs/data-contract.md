@@ -46,10 +46,12 @@ Legacy snapshots without `roster-pitchers.json` remain valid; export then falls 
 
 | Artifact | Loader | Contents |
 | --- | --- | --- |
-| Season dashboard | `observable/src/data/dashboard.json.py` | One season-total row per team, the top 30 individual pitcher totals, one latest completed game, one upcoming-game record (optional probable starter with recent-start context), and one 14-day roster-aware bullpen-usage window per team |
+| Season dashboard | `observable/src/data/dashboard.json.py` | One season-total row per team, the top 30 individual pitcher totals, per-team top-five pitcher usage lists for each role framing, one latest completed game, one upcoming-game record (optional probable starter with recent-start context), and one 14-day roster-aware bullpen-usage window per team |
 | Team timeseries | `observable/src/data/team-timeseries.json.py` | Daily team increments for the timeline, plus game-grain `complete_games` (0 official RP, with pitcher) |
 
 Each `player_totals` row sums every persisted appearance for one `pitcher_id`, including appearances before a trade. When the current roster snapshot has that pitcher, it provides the displayed team/name; otherwise export falls back to the latest appearance. Rows are sorted by total pitches descending, then name and id, and capped at 30.
+
+Each `team_pitcher_usage` row belongs to one team and contains a top-five list for `total`, `official_sp`, `official_rp`, `adjusted_sp`, and `adjusted_rp`. Each list sums only appearances for that team, ranks by its named metric (then pitcher name/id), and may contain fewer than five pitchers. Official and adjusted SP/RP are appearance-level classifications, so a swingman can appear in both SP and RP lists; the dashboard selects the list matching its current role basis.
 
 Daily team points must reconcile to season team totals: summing each metric (and game counts) across dates for a team equals that team's dashboard row. The dashboard derives cumulative series with a prefix sum (`metricSeries`); daily/timecourse mode plots each day's increment (share uses that day's SP/RP split). Role adjustment has no timeline yet.
 
