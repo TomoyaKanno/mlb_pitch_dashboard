@@ -113,6 +113,21 @@ jobs:
               raise SystemExit("recent-game teams do not match season teams")
           if any(not row.get("pitchers") for row in recent_games):
               raise SystemExit("recent game has no pitcher workloads")
+          next_games = payload.get("next_games")
+          if not isinstance(next_games, list):
+              raise SystemExit("next_games must be a list")
+          if next_games:
+              if len(next_games) != len(payload["teams"]):
+                  raise SystemExit("dashboard missing one next game per team")
+              if {row["team_id"] for row in next_games} != {row["team_id"] for row in payload["teams"]}:
+                  raise SystemExit("next-game teams do not match season teams")
+              for game in next_games:
+                  if game["team_id"] == game["opponent_id"]:
+                      raise SystemExit("next game has the same team and opponent")
+                  pitcher_id = game.get("probable_pitcher_id")
+                  pitcher_name = game.get("probable_pitcher_name")
+                  if (pitcher_id is None) != (pitcher_name is None):
+                      raise SystemExit("next game has incomplete probable-pitcher data")
           bullpen_usage = payload.get("bullpen_usage")
           if not isinstance(bullpen_usage, list) or len(bullpen_usage) != len(payload["teams"]):
               raise SystemExit("dashboard missing one bullpen-usage window per team")
@@ -149,7 +164,8 @@ jobs:
           print(
               f"Validated {len(payload['teams'])} teams, {len(series['points'])} "
               f"team-day points, {len(series['complete_games'])} complete games, "
-              f"{len(recent_games)} recent team games, {len(bullpen_usage)} bullpen windows, "
+              f"{len(recent_games)} recent team games, {len(next_games)} next team games, "
+              f"{len(bullpen_usage)} bullpen windows, "
               f"and {payload['status']['current_games']} current games"
           )
           PY
