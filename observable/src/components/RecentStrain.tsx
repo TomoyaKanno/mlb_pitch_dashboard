@@ -14,6 +14,10 @@ export interface RecentTeamGame {
   game_pk: number;
   date: string;
   game_datetime: string | null;
+  away_team_id?: number | null;
+  away_team_name?: string | null;
+  home_team_id?: number | null;
+  home_team_name?: string | null;
   pitchers: RecentPitcher[];
 }
 
@@ -42,6 +46,12 @@ export interface BullpenUsage {
   end_date: string;
   dates: string[];
   pitchers: BullpenUsagePitcher[];
+}
+
+interface MatchupTeam {
+  teamId: number;
+  teamName: string;
+  isFocus: boolean;
 }
 
 const integer = new Intl.NumberFormat("en-US");
@@ -139,17 +149,87 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
   );
 }
 
-function TeamLogo({teamId}: {teamId: number}) {
+function TeamLogo({teamId, size = 54}: {teamId: number; size?: number}) {
   return (
     <img
       className="recent-team-logo"
       src={`https://www.mlbstatic.com/team-logos/${teamId}.svg`}
       alt=""
-      width={54}
-      height={54}
+      width={size}
+      height={size}
       onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
     />
   );
+}
+
+function Matchup({away, home}: {away: MatchupTeam; home: MatchupTeam}) {
+  const team = (item: MatchupTeam) => (
+    <div
+      style={{display: "grid", justifyItems: "center", gap: "5px", minWidth: 0}}
+      title={item.isFocus ? `${item.teamName}, selected team` : item.teamName}
+    >
+      <TeamLogo teamId={item.teamId} size={50} />
+      <strong
+        style={{
+          color: item.isFocus ? "var(--accent)" : "var(--text)",
+          fontSize: ".85rem",
+          lineHeight: 1.2,
+          textAlign: "center",
+        }}
+      >
+        {item.teamName}
+      </strong>
+    </div>
+  );
+
+  return (
+    <div
+      aria-label={`${away.teamName} at ${home.teamName}`}
+      style={{
+        display: "grid",
+        gridTemplateColumns: "minmax(0, 1fr) auto minmax(0, 1fr)",
+        alignItems: "center",
+        gap: "12px",
+        padding: "4px 0",
+      }}
+    >
+      {team(away)}
+      <span
+        aria-hidden="true"
+        style={{color: "var(--muted)", fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase"}}
+      >
+        at
+      </span>
+      {team(home)}
+    </div>
+  );
+}
+
+function recentMatchup(game: RecentTeamGame): {away: MatchupTeam; home: MatchupTeam} | null {
+  if (
+    game.away_team_id == null
+    || !game.away_team_name
+    || game.home_team_id == null
+    || !game.home_team_name
+  ) return null;
+  return {
+    away: {
+      teamId: game.away_team_id,
+      teamName: game.away_team_name,
+      isFocus: game.away_team_id === game.team_id,
+    },
+    home: {
+      teamId: game.home_team_id,
+      teamName: game.home_team_name,
+      isFocus: game.home_team_id === game.team_id,
+    },
+  };
+}
+
+function nextMatchup(game: NextTeamGame): {away: MatchupTeam; home: MatchupTeam} {
+  const focus = {teamId: game.team_id, teamName: game.team_name, isFocus: true};
+  const opponent = {teamId: game.opponent_id, teamName: game.opponent_name, isFocus: false};
+  return game.is_home ? {away: opponent, home: focus} : {away: focus, home: opponent};
 }
 
 export function RecentStrain({
@@ -172,6 +252,7 @@ export function RecentStrain({
   const nextGame = nextGames.find((game) => game.team_id === selected.team_id) ?? null;
   const usage = bullpenUsage.find((item) => item.team_id === selected.team_id) ?? null;
   const totalPitches = selected.pitchers.reduce((total, pitcher) => total + pitcher.pitches, 0);
+  const lastMatchup = recentMatchup(selected);
 
   return (
     <section className="recent-strain" aria-label="Recent strain">
@@ -198,12 +279,20 @@ export function RecentStrain({
       <div className="recent-game-grid">
         <section className="recent-game-card" aria-label="Last completed game">
           <p className="recent-card-label">Last completed game</p>
-          <div className="recent-game-body">
-            <TeamLogo teamId={selected.team_id} />
-            <div className="recent-game-copy">
-              <strong>{integer.format(totalPitches)} pitches</strong>
-              <span>{selected.pitchers.length} pitchers used · {formatFullDate(selected.date)}</span>
+          {lastMatchup ? (
+            <Matchup away={lastMatchup.away} home={lastMatchup.home} />
+          ) : (
+            <div className="recent-game-body">
+              <TeamLogo teamId={selected.team_id} />
+              <div className="recent-game-copy">
+                <strong>{selected.team_name}</strong>
+                <span>Full matchup will appear after the next data refresh.</span>
+              </div>
             </div>
+          )}
+          <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
+            <strong>{integer.format(totalPitches)} pitches · {selected.pitchers.length} pitchers used</strong>
+            <span>{formatFullDate(selected.date)} · game {selected.game_pk}</span>
           </div>
           <div className="recent-card-table">
             <table>
@@ -230,16 +319,16 @@ export function RecentStrain({
         <section className="recent-game-card" style={{alignSelf: "start"}} aria-label="Next game">
           <p className="recent-card-label">Next game</p>
           {nextGame ? (
-            <div className="recent-game-body">
-              <TeamLogo teamId={nextGame.opponent_id} />
-              <div className="recent-game-copy">
-                <strong>{nextGame.is_home ? `vs. ${nextGame.opponent_name}` : `at ${nextGame.opponent_name}`}</strong>
-                <span>{formatFullDate(nextGame.date)} · game {nextGame.game_pk}</span>
+            <>
+              <Matchup {...nextMatchup(nextGame)} />
+              <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
+                <strong>{formatFullDate(nextGame.date)}</strong>
+                <span>game {nextGame.game_pk}</span>
                 <span className="probable-starter">
-                  Probable starter: {nextGame.probable_pitcher_name ?? "Not announced"}
+                  {selected.team_name} probable starter: {nextGame.probable_pitcher_name ?? "Not announced"}
                 </span>
               </div>
-            </div>
+            </>
           ) : (
             <div className="recent-game-copy">
               <strong>No upcoming game</strong>

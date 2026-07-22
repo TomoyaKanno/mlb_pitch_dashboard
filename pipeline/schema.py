@@ -14,6 +14,10 @@ class GameRecord:
     season: int
     status: str
     game_datetime: str | None = None
+    away_team_id: int | None = None
+    away_team_name: str | None = None
+    home_team_id: int | None = None
+    home_team_name: str | None = None
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "GameRecord":
@@ -23,6 +27,18 @@ class GameRecord:
             season=int(value["season"]),
             status=str(value["status"]),
             game_datetime=(str(value["game_datetime"]) if value.get("game_datetime") else None),
+            away_team_id=(
+                int(value["away_team_id"]) if value.get("away_team_id") is not None else None
+            ),
+            away_team_name=(
+                str(value["away_team_name"]) if value.get("away_team_name") else None
+            ),
+            home_team_id=(
+                int(value["home_team_id"]) if value.get("home_team_id") is not None else None
+            ),
+            home_team_name=(
+                str(value["home_team_name"]) if value.get("home_team_name") else None
+            ),
         )
 
     def to_dict(self) -> dict[str, Any]:
