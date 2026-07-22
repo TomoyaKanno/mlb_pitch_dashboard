@@ -2,7 +2,7 @@
 
 [Open the live dashboard](https://tomoyakanno.github.io/mlb_pitch_dashboard/)
 
-An interactive static dashboard that ranks all 30 MLB teams by pitches thrown and separates starter and reliever workload. It calculates its aggregates from the public MLB Stats API, preserves validated season snapshots in git, and publishes a browser-only site through GitHub Pages.
+An interactive static dashboard that ranks all 30 MLB teams by workload and the top 30 individual pitchers by pitches thrown, while separating starter and reliever workload. It calculates its aggregates from the public MLB Stats API, preserves validated season snapshots in git, and publishes a browser-only site through GitHub Pages.
 
 The Observable Framework application in `observable/` is the only supported user interface. Production has no application server or runtime database, and the browser makes no MLB Stats API calls — every pitch aggregate is precomputed at build time. The browser does load static display assets — team logos and pitcher portraits — directly from MLB's public CDN so those images never need to be committed to the repository or served from Pages. This keeps the deployment a pure static GitHub Pages site.
 
