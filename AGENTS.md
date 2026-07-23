@@ -28,6 +28,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 - `pipeline/validation.py` — in-memory structural and arithmetic invariants.
 - `pipeline/check.py` — persisted snapshot reload and integrity verification.
 - `pipeline/export.py` — validated browser-ready team and top-30 player aggregation, per-team top-five pitcher workloads for each role framing, latest-game and upcoming-game schedule read models (including probable-starter recent starts), roster-aware 14-day bullpen usage, and sibling team timeseries.
+- `pipeline/verify_build.py` — reusable compiled-payload and React-runtime validation invoked by the Pages workflow; keep deployment-domain checks here rather than embedding application logic in workflow YAML.
 - `observable/src/data/dashboard.json.py` — build-time bridge from the snapshot to the season table payload.
 - `observable/src/data/team-timeseries.json.py` — build-time bridge for daily team-increment series.
 - `observable/src/components/Dashboard.tsx` — season-leader shell, controls, table, and timeline panel.
