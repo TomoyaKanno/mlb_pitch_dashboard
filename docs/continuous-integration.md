@@ -32,7 +32,7 @@ The Python and Node jobs run independently, making the failing layer clear.
 
 ## Production-data build check
 
-Relevant pull requests also trigger the build job in `.github/workflows/deploy-pages.yml`. It checks out the real `dashboard-data` branch, validates the manifest, builds the proposed source against all 30 teams, verifies the season totals, top-30 player totals, one correctly ranked role-framed top-five pitcher usage record per team, latest games, populated next-game records (or the explicit legacy-empty state), probable-starter recent-start fields when announced, 14-day bullpen windows (including optional roster-aware pitcher fields), reconciled timeseries, and React runtime, and uploads a short-lived artifact. Its deployment job is skipped on pull requests.
+Every pull request triggers the build job in `.github/workflows/deploy-pages.yml`. This deliberate all-PR coverage keeps the required `Build validated Pages artifact` check from becoming permanently expected when a path-filtered workflow would not run. It checks out the real `dashboard-data` branch, validates the manifest, builds the proposed source against all 30 teams, verifies the season totals, top-30 player totals, one correctly ranked role-framed top-five pitcher usage record per team, latest games, populated next-game records (or the explicit legacy-empty state), probable-starter recent-start fields when announced, 14-day bullpen windows (including optional roster-aware pitcher fields), reconciled timeseries, and React runtime, and uploads a short-lived artifact. Its deployment job is skipped on pull requests.
 
 ## Security and scope
 
