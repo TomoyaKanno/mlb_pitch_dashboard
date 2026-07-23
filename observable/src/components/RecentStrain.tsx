@@ -115,8 +115,8 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
           <h2 id="bullpen-usage-title">Bullpen, last 14 days</h2>
           <p className="secondary">
             Official reliever pitch counts by day, plus available depth-chart arms who have not
-            appeared yet. IL and Minors badges mark arms who worked in this window but are no
-            longer active.
+            appeared yet. IL and Minors rows retain their recent usage but are muted because those
+            pitchers are no longer available.
           </p>
         </div>
         {usage ? (
@@ -155,8 +155,13 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
             <tbody>
               {usage.pitchers.map((pitcher) => {
                 const unused = pitcher.on_depth_chart && pitcher.pitches.every((value) => value === 0);
+                const unavailable = pitcher.availability === "IL" || pitcher.availability === "Minors";
+                const rowClass = [
+                  unused ? "bullpen-unused" : undefined,
+                  unavailable ? "bullpen-unavailable" : undefined,
+                ].filter(Boolean).join(" ") || undefined;
                 return (
-                  <tr key={pitcher.pitcher_id} className={unused ? "bullpen-unused" : undefined}>
+                  <tr key={pitcher.pitcher_id} className={rowClass}>
                     <th scope="row">
                       <span className="bullpen-pitcher-label">
                         <span>{pitcher.pitcher_name}</span>
