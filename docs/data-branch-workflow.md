@@ -4,7 +4,7 @@ The `Refresh dashboard data` GitHub Actions workflow is the only automated write
 
 ## Schedule
 
-The workflow runs daily at 5:17 a.m. in `America/New_York` from March through November. The default published season comes from `config/dashboard.json`, which is changed intentionally after a new regular season begins rather than inferred from the calendar in January.
+The workflow runs daily at 09:17 UTC from March through November. The 2026 regular season is entirely in EDT, so that is 5:17 a.m. Eastern throughout the regular season. The UTC cron is intentional: GitHub's newer timezone-aware trigger repeatedly dispatched this workflow about two hours late. Revisit the UTC conversion before a future season. The default published season comes from `config/dashboard.json`, which is changed intentionally after a new regular season begins rather than inferred from the calendar in January.
 
 ## Running it
 
