@@ -66,7 +66,7 @@ The deployed browser downloads small team- and player-level aggregates generated
 - **Last completed game** lists each pitcher who appeared, ordered by MLB appearance order, with a portrait tile, split first/last name, official SP/RP, and pitch count. Its date is paired with a button to the official MLB box score.
 - **Next game** shows the matchup and, when MLB lists a probable starter, a larger portrait, days of rest, and up to three prior official starts (date, opponent, pitches). Its date is paired with an official MLB Gameday button; missing probables stay explicitly unannounced.
 - **Rest day** appears above the two game cards only when the refreshed MLB schedule has no selected-team game on the snapshot date and that date is today in Eastern time. This avoids declaring a rest day from a stale snapshot or after a same-day completed game.
-- **Bullpen, last 14 days** is a daily heatmap of official reliever pitches with row-aligned 3-, 5-, and 14-calendar-day totals for each pitcher. Active depth-chart bullpen arms appear even before they throw; IL and Minors rows are muted but retain their pitch history, and those badges appear only for arms who recorded pitches in the window.
+- **Bullpen, last 14 days** is a daily heatmap of official reliever pitches with row-aligned 3-, 5-, and 14-calendar-day totals for each pitcher. It ranks active pitchers by latest-game relief usage first, then 3/5/14-day workload; unavailable IL/Minors arms remain at the bottom. Active depth-chart bullpen arms appear even before they throw; IL and Minors rows are muted but retain their pitch history, and those badges appear only for arms who recorded pitches in the window.
 
 ## Refresh and deployment lifecycle
 
