@@ -1,5 +1,5 @@
 import type {CSSProperties} from "npm:react";
-import {BULLPEN_TOTAL_WINDOWS, trailingPitchTotal} from "./metrics.ts";
+import {BULLPEN_TOTAL_WINDOWS, trailingPitchTotal} from "./metrics.js";
 
 export interface RecentPitcher {
   pitcher_id: number;
