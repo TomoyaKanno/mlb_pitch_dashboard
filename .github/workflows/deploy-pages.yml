@@ -1,12 +1,9 @@
 name: Build and deploy dashboard
 
 on:
+  # The build job is a required PR check. Do not path-filter this trigger:
+  # a filtered-out required workflow remains "Expected" and blocks merging.
   pull_request:
-    paths:
-      - ".github/workflows/deploy-pages.yml"
-      - "config/dashboard.json"
-      - "observable/**"
-      - "pipeline/**"
   push:
     branches:
       - main

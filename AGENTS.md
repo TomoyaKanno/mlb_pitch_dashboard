@@ -59,7 +59,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 3. Refresh incrementally by default: missing games, prior failures, and the reconciliation window. Avoid forced full-season fetches unless intentional.
 4. The production season comes from `config/dashboard.json`, never implicitly from the current calendar year.
 5. A failed refresh must not start deployment, and a failed build must not replace the last successful Pages artifact.
-6. Pull requests may build and upload a validation artifact but must never deploy.
+6. Every pull request builds and uploads a validation artifact but must never deploy. Do not path-filter that required build: GitHub leaves a filtered-out required workflow permanently expected, blocking merges.
 7. `workflow_run` deployment handoffs must remain restricted to refreshes from `main`.
 8. PR concurrency must remain separate from production deployment concurrency.
 9. Changes anywhere under `pipeline/**` must trigger the real-data Pages build.

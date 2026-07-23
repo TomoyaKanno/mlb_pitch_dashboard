@@ -10,7 +10,7 @@ No compiled files are committed to git, and the deployed browser makes no MLB AP
 
 ## Automation
 
-`Refresh dashboard data` runs every day at 5:17 a.m. in `America/New_York` from March through November. The off-hour minute avoids the busiest part of GitHub's scheduler, and the time allows late West Coast games to reach final status. It can also be run manually with an optional season, force-refresh flag, and reconciliation window.
+`Refresh dashboard data` runs every day at 09:17 UTC from March through November. During the regular season, which is entirely in EDT, that is 5:17 a.m. Eastern. Although `timezone: "America/New_York"` would express that intent more directly, the workflow deliberately uses GitHub's established UTC schedule path after the newer timezone-aware trigger repeatedly dispatched it about two hours late. Revisit the UTC conversion before a future season. The off-hour minute avoids the busiest part of GitHub's scheduler, and the time allows late West Coast games to reach final status. It can also be run manually with an optional season, force-refresh flag, and reconciliation window.
 
 The published season is defined once in `config/dashboard.json`. This intentional rollover guard prevents a January job from replacing the dashboard with an empty new-season snapshot. Update it after the new regular season has begun and an initial snapshot is ready.
 
@@ -19,7 +19,7 @@ The published season is defined once in `config/dashboard.json`. This intentiona
 - after a successful scheduled or manual data refresh;
 - after relevant source changes reach `main`;
 - when invoked manually;
-- on relevant pull requests, where it builds and validates the real data but does not deploy.
+- on every pull request, where it builds and validates the real data but does not deploy; this all-PR trigger keeps its required build check from remaining permanently expected on changes outside the prior path filter.
 
 The build reloads the data branch, verifies the manifest and hashes, exports browser-ready aggregates (season team totals, top-30 player totals, per-team top-five pitcher usage lists, latest-game workloads, upcoming-game records with optional probable starters and recent-start context, roster-aware 14-day bullpen windows, and the sibling team timeseries with daily points plus `complete_games`), requires exactly 30 teams, exactly 30 ranked uniquely identified player totals, and one per-team pitcher-usage record with five ranked role-framed lists of at most five pitchers, and checks that recent-game, populated next-game, and bullpen team IDs match the season teams; that optional probable-starter id/name pairs are consistent; that announced probables carry well-formed `probable_recent_starts` / `probable_days_rest` fields; that bullpen pitch arrays match their 14 dates and optional roster fields are well-typed when present; and that the timeseries season/`data_commit` match the dashboard payload and reconcile to season totals. Legacy snapshots without `next-games.json` or `roster-pitchers.json` are accepted with empty/appearance-only fallbacks until the next refresh rewrites them. A failed refresh does not start a production build. A failed build does not reach the deployment job, so GitHub Pages keeps serving the last successful artifact.
 
