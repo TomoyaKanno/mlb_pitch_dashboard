@@ -313,8 +313,6 @@ function ProbableStarterPanel({game}: {game: NextTeamGame}) {
   if (game.probable_pitcher_id == null || !game.probable_pitcher_name) {
     return (
       <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
-        <strong>{formatFullDate(game.date)}</strong>
-        <span>game {game.game_pk}</span>
         <span className="probable-starter">{game.team_name} probable starter: Not announced</span>
       </div>
     );
@@ -330,7 +328,7 @@ function ProbableStarterPanel({game}: {game: NextTeamGame}) {
             name={game.probable_pitcher_name}
             meta={daysRestLabel(daysRest)}
           />
-          <span className="probable-starter-meta">{formatFullDate(game.date)} · game {game.game_pk}</span>
+
         </div>
       </div>
       {recentStarts.length > 0 ? (
