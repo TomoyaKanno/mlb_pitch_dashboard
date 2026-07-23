@@ -10,7 +10,7 @@ No compiled files are committed to git, and the deployed browser makes no MLB AP
 
 ## Automation
 
-`Refresh dashboard data` runs every day at 5:17 a.m. in `America/New_York` from March through November. The off-hour minute avoids the busiest part of GitHub's scheduler, and the time allows late West Coast games to reach final status. It can also be run manually with an optional season, force-refresh flag, and reconciliation window.
+`Refresh dashboard data` runs every day at 09:17 UTC from March through November. During the regular season, which is entirely in EDT, that is 5:17 a.m. Eastern. Although `timezone: "America/New_York"` would express that intent more directly, the workflow deliberately uses GitHub's established UTC schedule path after the newer timezone-aware trigger repeatedly dispatched it about two hours late. Revisit the UTC conversion before a future season. The off-hour minute avoids the busiest part of GitHub's scheduler, and the time allows late West Coast games to reach final status. It can also be run manually with an optional season, force-refresh flag, and reconciliation window.
 
 The published season is defined once in `config/dashboard.json`. This intentional rollover guard prevents a January job from replacing the dashboard with an empty new-season snapshot. Update it after the new regular season has begun and an initial snapshot is ready.
 
