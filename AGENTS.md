@@ -90,7 +90,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 - clicking any table row opens the side timeline (Cumulative / Timecourse) with a short slide; Role adjustment disables row clicks and closes any open panel;
 - the panel chart uses the shared season date axis, hover tooltip, game-grain complete-game list with pitcher names, and the selected-basis top-five pitcher usage list (swingmen can appear in both SP and RP);
 - Recent strain is the default left-hand screen; the selector switches to Season leaders on the right, and Recent strain defaults to LAD with the team picker;
-- last completed game shows stacked appearance rows (portrait tile, split first/last name, official SP/RP, pitches) in appearance order;
+- last completed game shows stacked appearance rows (portrait tile, split first/last name, official SP/RP, pitches) in appearance order, and each game card shows its game-level date plus an official MLB Game Day link without exposing a raw gamePk;
 - last-game and next-game matchup headers align directly beneath their card labels; when a probable starter is announced, the next-game panel shows a larger portrait, days of rest, and up to three prior official starts (or an explicit unannounced state when MLB omits the probable);
 - the bullpen heatmap shows 14 ordered calendar days of official-reliever pitch counts plus row-aligned 3/5/14-calendar-day pitcher totals, includes unused active depth-chart bullpen arms, and shows IL/Minors badges only for arms who pitched in the window;
 - pitcher portraits load from MLB's public CDN as 3:4 rounded tiles (not circles);

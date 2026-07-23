@@ -313,8 +313,6 @@ function ProbableStarterPanel({game}: {game: NextTeamGame}) {
   if (game.probable_pitcher_id == null || !game.probable_pitcher_name) {
     return (
       <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
-        <strong>{formatFullDate(game.date)}</strong>
-        <span>game {game.game_pk}</span>
         <span className="probable-starter">{game.team_name} probable starter: Not announced</span>
       </div>
     );
@@ -330,7 +328,7 @@ function ProbableStarterPanel({game}: {game: NextTeamGame}) {
             name={game.probable_pitcher_name}
             meta={daysRestLabel(daysRest)}
           />
-          <span className="probable-starter-meta">{formatFullDate(game.date)} · game {game.game_pk}</span>
+
         </div>
       </div>
       {recentStarts.length > 0 ? (
@@ -351,6 +349,21 @@ function ProbableStarterPanel({game}: {game: NextTeamGame}) {
       ) : (
         <p className="secondary probable-start-empty">No official starts in this season snapshot yet.</p>
       )}
+    </div>
+  );
+}
+
+function gameDayHref(gamePk: number): string {
+  return "https://www.mlb.com/gameday/" + gamePk;
+}
+
+function GameContext({date, gamePk}: {date: string; gamePk: number}) {
+  return (
+    <div className="recent-game-context">
+      <span>{formatFullDate(date)}</span>
+      <a href={gameDayHref(gamePk)} target="_blank" rel="noopener noreferrer">
+        Open in MLB Gameday <span aria-hidden="true">↗</span>
+      </a>
     </div>
   );
 }
@@ -483,9 +496,9 @@ export function RecentStrain({
               </div>
             </div>
           )}
+          <GameContext date={selected.date} gamePk={selected.game_pk} />
           <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
             <strong>{integer.format(totalPitches)} pitches · {selected.pitchers.length} pitchers used</strong>
-            <span>{formatFullDate(selected.date)} · game {selected.game_pk}</span>
           </div>
           <PitcherAppearanceList
             teamName={selected.team_name}
@@ -497,6 +510,7 @@ export function RecentStrain({
           {nextGame ? (
             <>
               <Matchup {...nextMatchup(nextGame)} />
+              <GameContext date={nextGame.date} gamePk={nextGame.game_pk} />
               <ProbableStarterPanel game={nextGame} />
             </>
           ) : (

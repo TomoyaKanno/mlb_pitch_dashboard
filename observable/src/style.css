@@ -75,6 +75,9 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
 .recent-game-copy { display: grid; gap: 3px; min-width: 0; }
 .recent-game-copy strong { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 .recent-game-copy span { color: var(--muted); font-size: .82rem; }
+.recent-game-context { display: grid; justify-items: center; gap: 3px; min-width: 0; text-align: center; }
+.recent-game-context > span { color: var(--muted); font-size: .82rem; }
+.recent-game-context a { color: var(--accent); font-size: .78rem; font-weight: 700; }
 .probable-starter { color: var(--text) !important; }
 .pitcher-appearance-list {
   display: grid;
@@ -181,7 +184,6 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
   white-space: nowrap;
 }
 .probable-starter-copy span { color: var(--muted); font-size: .82rem; }
-.probable-starter-meta { font-variant-numeric: tabular-nums; }
 .probable-start-history {
   display: grid;
   gap: 0;
