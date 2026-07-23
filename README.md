@@ -175,6 +175,7 @@ See [continuous integration](docs/continuous-integration.md), [the data contract
 - `pipeline/mlb.py` — MLB API access, request pacing, retries, boxscore parsing, upcoming games, and pitching depth/40-man roster fetch.
 - `pipeline/classify.py` — pure role-classification domain logic.
 - `pipeline/` — snapshot schema, storage, refresh, validation, integrity checking, and export.
+- `pipeline/verify_build.py` — reusable validation for the compiled real-data Pages payload.
 - `observable/` — the static dashboard, fixture, data loader, React components, styles, and tests.
 - `config/dashboard.json` — intentionally selected production season.
 - `config/role_overrides.json` — reviewed per-appearance role overrides.
