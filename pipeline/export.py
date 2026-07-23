@@ -410,14 +410,28 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
                 }
             )
 
-        pitchers.sort(
-            key=lambda row: (
-                0 if row["on_depth_chart"] else 1,
-                row["depth_order"] if row["depth_order"] is not None else 10**9,
-                -sum(row["pitches"]),
+        def fatigue_sort_key(row: dict[str, Any]) -> tuple[Any, ...]:
+            pitches = row["pitches"]
+            unavailable = row["availability"] in {"IL", "Minors"}
+            latest_day = pitches[-1]
+            trailing_3 = sum(pitches[-3:])
+            trailing_5 = sum(pitches[-5:])
+            trailing_14 = sum(pitches)
+            # Immediate availability is the primary question: a relief appearance
+            # in the team's latest completed game outranks older cumulative usage.
+            # Unavailable arms remain a separate historical group at the bottom.
+            return (
+                unavailable,
+                latest_day == 0,
+                -latest_day,
+                -trailing_3,
+                -trailing_5,
+                -trailing_14,
                 row["pitcher_name"],
+                row["pitcher_id"],
             )
-        )
+
+        pitchers.sort(key=fatigue_sort_key)
         result.append(
             {
                 "team_id": team_id,
