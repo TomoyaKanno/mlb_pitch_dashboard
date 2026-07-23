@@ -509,6 +509,8 @@ def aggregate_next_games(snapshot: Snapshot) -> list[dict[str, Any]]:
                 "probable_jersey_number": probable_jersey,
                 "probable_recent_starts": recent_starts,
                 "probable_days_rest": days_rest,
+                "is_rest_day_today": row.is_rest_day_today,
+                "schedule_date": row.schedule_date,
             }
         )
     return result
