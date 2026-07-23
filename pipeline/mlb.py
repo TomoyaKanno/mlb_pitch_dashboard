@@ -163,37 +163,49 @@ class MLBClient:
         )
 
     async def upcoming_games(self, season: int) -> list[dict[str, Any]]:
-        """Return each team's earliest upcoming regular-season game.
+        """Return each team's earliest upcoming game plus today's schedule context.
 
-        Probable starters are an MLB schedule hint, not a confirmed assignment,
-        so missing values remain explicit instead of being inferred.
+        The rest-day flag is deliberately derived from the full schedule slate,
+        not only non-final games. A club that has already played, been
+        postponed, or otherwise remains on today's slate must not be labeled a
+        rest day in the static dashboard.
         """
         today = date.today()
         if season != today.year:
             return []
+        schedule_date = today.isoformat()
         end_date = (today + timedelta(days=14)).isoformat()
         payload = await self.get_json(
             "/schedule",
             params={
                 "sportId": 1,
                 "gameType": "R",
-                "startDate": today.isoformat(),
+                "startDate": schedule_date,
                 "endDate": end_date,
                 "hydrate": "probablePitcher",
             },
         )
         games_by_team: dict[int, dict[str, Any]] = {}
+        scheduled_today: set[int] = set()
         for day in payload.get("dates", []):
             for game in day.get("games", []):
+                game_date = game.get("officialDate") or day["date"]
+                teams = game.get("teams", {})
+                # Record the entire slate before excluding final or disrupted
+                # games from the "next game" candidate selection.
+                if game_date == schedule_date:
+                    for side in ("away", "home"):
+                        team = teams.get(side, {}).get("team", {})
+                        if team.get("id") is not None:
+                            scheduled_today.add(int(team["id"]))
+
                 status = game.get("status", {})
                 if status.get("abstractGameState") == "Final":
                     continue
                 if status.get("detailedState") in {"Postponed", "Cancelled", "Suspended"}:
                     continue
                 game_pk = int(game["gamePk"])
-                game_date = game.get("officialDate") or day["date"]
                 game_datetime = game.get("gameDate")
-                teams = game.get("teams", {})
                 for side, opponent_side in (("away", "home"), ("home", "away")):
                     team_payload = teams.get(side, {})
                     opponent_payload = teams.get(opponent_side, {})
@@ -229,6 +241,10 @@ class MLBClient:
                         previous["game_pk"],
                     ):
                         games_by_team[candidate["team_id"]] = candidate
+
+        for team_id, candidate in games_by_team.items():
+            candidate["is_rest_day_today"] = team_id not in scheduled_today
+            candidate["schedule_date"] = schedule_date
         return sorted(games_by_team.values(), key=lambda item: item["team_name"])
 
     async def pitching_rosters(self, season: int) -> list[dict[str, Any]]:
