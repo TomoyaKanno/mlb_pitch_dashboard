@@ -435,21 +435,77 @@ def test_bullpen_usage_includes_unused_depth_arms_and_roster_badges() -> None:
 
     usage = aggregate_bullpen_usage(snapshot)[0]
     assert [row["pitcher_name"] for row in usage["pitchers"]] == [
-        "Unused Callup",
-        "Injured Reliever",
         "Closer",
+        "Unused Callup",
         "Used Reliever",
+        "Injured Reliever",
     ]
-    assert usage["pitchers"][0]["pitches"] == [0] * 14
+    assert usage["pitchers"][0]["depth_role"] == "CP"
     assert usage["pitchers"][0]["on_depth_chart"] is True
-    assert usage["pitchers"][0]["availability"] is None
-    assert usage["pitchers"][1]["availability"] == "IL"
-    assert usage["pitchers"][1]["pitches"][-1] == 14
-    assert usage["pitchers"][2]["depth_role"] == "CP"
-    assert usage["pitchers"][2]["on_depth_chart"] is True
-    assert usage["pitchers"][3]["availability"] == "Minors"
+    assert usage["pitchers"][1]["pitches"] == [0] * 14
+    assert usage["pitchers"][1]["on_depth_chart"] is True
+    assert usage["pitchers"][1]["availability"] is None
+    assert usage["pitchers"][2]["availability"] == "Minors"
+    assert usage["pitchers"][2]["pitches"][-1] == 20
+    assert usage["pitchers"][3]["availability"] == "IL"
+    assert usage["pitchers"][3]["pitches"][-1] == 14
     assert all(row["pitcher_name"] != "Idle IL Reliever" for row in usage["pitchers"])
     assert all(row["pitcher_id"] != 99 for row in usage["pitchers"])
+
+
+def test_bullpen_usage_prioritizes_latest_game_then_rolling_workload() -> None:
+    snapshot = Snapshot(season=2026)
+    games = (
+        (1, "2026-07-20"),
+        (2, "2026-07-19"),
+        (3, "2026-07-18"),
+        (4, "2026-07-16"),
+        (5, "2026-07-12"),
+        (6, "2026-07-08"),
+    )
+    for game_pk, game_date in games:
+        snapshot.games[game_pk] = GameRecord(game_pk, game_date, 2026, "Final")
+
+    def add(
+        pitcher_id: int, pitcher_name: str, game_pk: int, game_date: str, pitches: int,
+    ) -> None:
+        snapshot.appearances[(game_pk, 17, pitcher_id)] = AppearanceRecord(
+            game_pk, game_date, 2026, 17, "Test Team", pitcher_id, pitcher_name, pitches,
+            False, 1, "RP", "official reliever",
+        )
+
+    add(1, "Yesterday 10", 1, "2026-07-20", 10)
+    add(2, "Yesterday 18", 1, "2026-07-20", 18)
+    add(3, "Three Day Tiebreak", 3, "2026-07-18", 50)
+    add(4, "Five Day Tiebreak", 3, "2026-07-18", 50)
+    add(4, "Five Day Tiebreak", 4, "2026-07-16", 15)
+    add(5, "Fourteen Day 40", 5, "2026-07-12", 40)
+    add(6, "Fourteen Day 50", 6, "2026-07-08", 50)
+    add(7, "Unavailable Yesterday", 1, "2026-07-20", 35)
+
+    for pitcher_id, pitcher_name, depth_order, status_code in (
+        (1, "Yesterday 10", 6, "A"),
+        (2, "Yesterday 18", 5, "A"),
+        (3, "Three Day Tiebreak", 4, "A"),
+        (4, "Five Day Tiebreak", 3, "A"),
+        (5, "Fourteen Day 40", 2, "A"),
+        (6, "Fourteen Day 50", 1, "A"),
+        (7, "Unavailable Yesterday", 0, "RM"),
+    ):
+        snapshot.roster_pitchers[(17, pitcher_id)] = RosterPitcherRecord(
+            17, "Test Team", pitcher_id, pitcher_name, "RP", depth_order, status_code, status_code,
+        )
+
+    usage = aggregate_bullpen_usage(snapshot)[0]
+    assert [row["pitcher_name"] for row in usage["pitchers"]] == [
+        "Yesterday 18",
+        "Yesterday 10",
+        "Five Day Tiebreak",
+        "Three Day Tiebreak",
+        "Fourteen Day 50",
+        "Fourteen Day 40",
+        "Unavailable Yesterday",
+    ]
 
 
 def test_fixture_bullpen_usage_matches_recent_team_contract() -> None:
