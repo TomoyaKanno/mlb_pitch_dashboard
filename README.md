@@ -62,7 +62,7 @@ The deployed browser downloads small team- and player-level aggregates generated
 ### Using Recent strain
 
 - **Recent strain** opens by default; pick a team (defaults to the Dodgers) or switch to **Season leaders** for the season-wide views.
-- **Last completed game** lists each pitcher who appeared, ordered by MLB appearance order, with a portrait tile, split first/last name, official SP/RP, and pitch count.
+- **Last completed game** lists each pitcher who appeared, ordered by MLB appearance order, with a portrait tile, split first/last name, official SP/RP, and pitch count. Each game card shows its date and a link to the official MLB Game Day page.
 - **Next game** shows the matchup and, when MLB lists a probable starter, a larger portrait, days of rest, and up to three prior official starts (date, opponent, pitches). Missing probables stay explicitly unannounced.
 - **Bullpen, last 14 days** is a daily heatmap of official reliever pitches with row-aligned 3-, 5-, and 14-calendar-day totals for each pitcher. Active depth-chart bullpen arms appear even before they throw; IL and Minors badges appear only for arms who recorded pitches in the window.
 
