@@ -34,7 +34,7 @@ The Python and Node jobs run independently, making the failing layer clear.
 
 Every pull request triggers the build job in `.github/workflows/deploy-pages.yml`. This deliberate all-PR coverage keeps the required `Build validated Pages artifact` check from becoming permanently expected when a path-filtered workflow would not run. It checks out the real `dashboard-data` branch, validates the manifest, builds the proposed source against all 30 teams, verifies the season totals, top-30 player totals, one correctly ranked role-framed top-five pitcher usage record per team, latest games, populated next-game records (or the explicit legacy-empty state), probable-starter recent-start fields when announced, 14-day bullpen windows (including optional roster-aware pitcher fields), reconciled timeseries, and React runtime, and uploads a short-lived artifact. Its deployment job is skipped on pull requests.
 
-The compiled-payload checks live in `pipeline.verify_build`, keeping the workflow itself limited to orchestration. After producing `observable/dist`, the same verifier can be run locally with `DASHBOARD_SEASON=2026 DASHBOARD_DATA_SHA=<checked-out-data-sha> python -m pipeline.verify_build --dist-dir observable/dist`.
+The compiled-payload checks live in `pipeline.verify_build`, keeping the workflow itself limited to orchestration. After producing `observable/dist`, the same verifier can be run locally with `DASHBOARD_SEASON=2026 DASHBOARD_DATA_SHA="$(git -C ../mlb-pitch-dashboard-data rev-parse HEAD)" python -m pipeline.verify_build --dist-dir observable/dist`.
 
 ## Security and scope
 
