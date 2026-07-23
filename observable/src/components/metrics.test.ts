@@ -5,6 +5,7 @@ import {
   nextSort, niceCeil, rankTeams, rawMetric, seriesDateDomain, seriesSupported, seriesTitle,
   seriesTooltipText, statusLabel, statusTone, valueAxisTicks, type CompleteGame, type CoverageStatus,
   type Team, type TeamDayPoint,
+  BULLPEN_TOTAL_WINDOWS, trailingPitchTotal,
 } from "./metrics";
 
 const team: Team = {
@@ -22,6 +23,17 @@ const team: Team = {
 };
 
 describe("static dashboard metrics", () => {
+  it("sums trailing calendar-day relief pitches for the heatmap totals", () => {
+    const pitches = [3, 0, 11, 5, 0, 22, 7, 4, 0, 16, 9, 0, 18, 6];
+
+    expect(BULLPEN_TOTAL_WINDOWS).toEqual([3, 5, 14]);
+    expect(trailingPitchTotal(pitches, 3)).toBe(24);
+    expect(trailingPitchTotal(pitches, 5)).toBe(49);
+    expect(trailingPitchTotal(pitches, 14)).toBe(101);
+    expect(trailingPitchTotal([8, 0], 5)).toBe(8);
+    expect(trailingPitchTotal(pitches, 0)).toBe(0);
+  });
+
   it("switches between official and adjusted role totals", () => {
     expect(rawMetric(team, "sp", "official")).toBe(8_400);
     expect(rawMetric(team, "sp", "adjusted")).toBe(8_900);

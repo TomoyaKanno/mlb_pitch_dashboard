@@ -1,4 +1,5 @@
 import type {CSSProperties} from "npm:react";
+import {BULLPEN_TOTAL_WINDOWS, trailingPitchTotal} from "./metrics.js";
 
 export interface RecentPitcher {
   pitcher_id: number;
@@ -127,10 +128,24 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
           <table className="bullpen-heatmap">
             <thead>
               <tr>
-                <th scope="col">Pitcher</th>
+                <th scope="col" rowSpan={2}>Pitcher</th>
                 {usage.dates.map((day) => (
-                  <th key={day} className="heat-date" scope="col" title={formatFullDate(day)}>
+                  <th key={day} className="heat-date" scope="col" rowSpan={2} title={formatFullDate(day)}>
                     {formatShortDate(day)}
+                  </th>
+                ))}
+                <th className="heat-total-group" scope="colgroup" colSpan={BULLPEN_TOTAL_WINDOWS.length}>
+                  Pitch totals
+                </th>
+              </tr>
+              <tr>
+                {BULLPEN_TOTAL_WINDOWS.map((days, index) => (
+                  <th
+                    key={days}
+                    className={"heat-total-heading" + (index === 0 ? " heat-total-start" : "")}
+                    scope="col"
+                  >
+                    {days}D
                   </th>
                 ))}
               </tr>
@@ -169,6 +184,22 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
                           aria-label={label}
                         >
                           {pitches || ""}
+                        </td>
+                      );
+                    })}
+                    {BULLPEN_TOTAL_WINDOWS.map((days, index) => {
+                      const pitches = trailingPitchTotal(pitcher.pitches, days);
+                      const label = pitcher.pitcher_name + ": " + pitches
+                        + " official relief pitches in the last " + days
+                        + " calendar days ending " + formatFullDate(usage.end_date);
+                      return (
+                        <td
+                          key={days}
+                          className={"heat-total-cell" + (index === 0 ? " heat-total-start" : "")}
+                          title={label}
+                          aria-label={label}
+                        >
+                          {pitches}
                         </td>
                       );
                     })}

@@ -601,4 +601,7 @@ tbody tr.selected td { background: var(--accent-soft); }
 .heat-date, .heat-cell { min-width: 48px; }
 .heat-cell { color: var(--muted); font-variant-numeric: tabular-nums; }
 .heat-cell.used { color: var(--text); font-weight: 700; }
+.heat-total-group, .heat-total-start { border-left: 1px solid var(--border); }
+.heat-total-heading, .heat-total-cell { min-width: 42px; font-variant-numeric: tabular-nums; }
+.heat-total-cell { color: var(--text); font-weight: 700; }
 @media (max-width: 640px) { .bullpen-usage-header { align-items: flex-start; flex-direction: column; } .usage-window { text-align: left; } }

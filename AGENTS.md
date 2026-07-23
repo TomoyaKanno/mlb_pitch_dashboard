@@ -93,7 +93,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 - Recent strain defaults to LAD and uses the team picker;
 - last completed game shows stacked appearance rows (portrait tile, split first/last name, official SP/RP, pitches) in appearance order;
 - next game shows the matchup; when a probable starter is announced, the panel shows a larger portrait, days of rest, and up to three prior official starts (or an explicit unannounced state when MLB omits the probable);
-- the bullpen heatmap shows 14 ordered calendar days of official-reliever pitch counts, includes unused active depth-chart bullpen arms, and shows IL/Minors badges only for arms who pitched in the window;
+- the bullpen heatmap shows 14 ordered calendar days of official-reliever pitch counts plus row-aligned 3/5/14-calendar-day pitcher totals, includes unused active depth-chart bullpen arms, and shows IL/Minors badges only for arms who pitched in the window;
 - pitcher portraits load from MLB's public CDN as 3:4 rounded tiles (not circles);
 - the panel shows the team badge and context moved out of the table column;
 - snapshot diagnostics (status, coverage, generation time, API calls) appear in the footer strip below the content;
