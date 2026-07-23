@@ -75,9 +75,16 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
 .recent-game-copy { display: grid; gap: 3px; min-width: 0; }
 .recent-game-copy strong { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 .recent-game-copy span { color: var(--muted); font-size: .82rem; }
-.recent-game-context { display: grid; justify-items: center; gap: 3px; min-width: 0; text-align: center; }
-.recent-game-context > span { color: var(--muted); font-size: .82rem; }
-.recent-game-context a { color: var(--accent); font-size: .78rem; font-weight: 700; }
+.recent-game-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  text-align: center;
+}
+.recent-game-context > span { color: var(--muted); font-size: .82rem; white-space: nowrap; }
 .probable-starter { color: var(--text) !important; }
 .pitcher-appearance-list {
   display: grid;
@@ -609,30 +616,30 @@ tbody tr.selected td { background: var(--accent-soft); }
 @media (max-width: 640px) { .bullpen-usage-header { align-items: flex-start; flex-direction: column; } .usage-window { text-align: left; } }
 
 
-.game-action-button {
+.recent-game-context .game-action-button {
   align-items: center;
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-  color: #fff;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--accent) 58%, var(--border));
+  border-radius: 6px;
+  color: var(--accent);
   display: inline-flex;
-  font-size: .78rem;
+  font-size: .74rem;
   font-weight: 700;
-  gap: .25rem;
+  gap: .22rem;
   line-height: 1;
-  padding: .5rem .72rem;
+  padding: .34rem .5rem;
   text-decoration: none;
   white-space: nowrap;
 }
 
-.game-action-button:hover {
-  background: color-mix(in srgb, var(--accent) 86%, #000);
-  border-color: color-mix(in srgb, var(--accent) 86%, #000);
-  color: #fff;
+.recent-game-context .game-action-button:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
   text-decoration: none;
 }
 
-.game-action-button:focus-visible {
+.recent-game-context .game-action-button:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent);
   outline-offset: 2px;
 }
