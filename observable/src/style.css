@@ -184,7 +184,6 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
   white-space: nowrap;
 }
 .probable-starter-copy span { color: var(--muted); font-size: .82rem; }
-.probable-starter-meta { font-variant-numeric: tabular-nums; }
 .probable-start-history {
   display: grid;
   gap: 0;
