@@ -44,6 +44,8 @@ export interface NextTeamGame {
   probable_jersey_number?: string | null;
   probable_recent_starts: ProbableRecentStart[];
   probable_days_rest: number | null;
+  is_rest_day_today?: boolean;
+  schedule_date?: string | null;
 }
 
 export interface BullpenUsagePitcher {
@@ -357,14 +359,67 @@ function gameDayHref(gamePk: number): string {
   return "https://www.mlb.com/gameday/" + gamePk;
 }
 
-function GameContext({date, gamePk}: {date: string; gamePk: number}) {
+function boxScoreHref(gamePk: number): string {
+  return gameDayHref(gamePk) + "/final/box";
+}
+
+function easternCalendarDate(): string {
+  const values = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+      .formatToParts(new Date())
+      .filter((part) => part.type !== "literal")
+      .map((part) => [part.type, part.value]),
+  ) as Record<string, string>;
+  return values.year + "-" + values.month + "-" + values.day;
+}
+
+function GameContext({
+  date,
+  gamePk,
+  destination,
+}: {
+  date: string;
+  gamePk: number;
+  destination: "box-score" | "gameday";
+}) {
+  const isBoxScore = destination === "box-score";
   return (
     <div className="recent-game-context">
       <span>{formatFullDate(date)}</span>
-      <a href={gameDayHref(gamePk)} target="_blank" rel="noopener noreferrer">
-        Open in MLB Gameday <span aria-hidden="true">↗</span>
+      <a
+        className="game-action-button"
+        href={isBoxScore ? boxScoreHref(gamePk) : gameDayHref(gamePk)}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {isBoxScore ? "Box score" : "MLB Gameday"} <span aria-hidden="true">↗</span>
       </a>
     </div>
+  );
+}
+
+function RestDayPanel({game}: {game: NextTeamGame | null}) {
+  if (
+    game == null
+    || !game.is_rest_day_today
+    || !game.schedule_date
+    || game.schedule_date !== easternCalendarDate()
+  ) return null;
+
+  const nextMatchup = game.is_home ? "vs " + game.opponent_name : "at " + game.opponent_name;
+  return (
+    <section className="rest-day-panel" role="status" aria-label="Rest day">
+      <div>
+        <p className="rest-day-label">Rest day</p>
+        <h3>No game scheduled for {game.team_name} today.</h3>
+      </div>
+      <p>Next game: <strong>{nextMatchup}</strong> · {formatShortDate(game.date)}</p>
+    </section>
   );
 }
 
@@ -482,6 +537,7 @@ export function RecentStrain({
           </select>
         </label>
       </div>
+      <RestDayPanel game={nextGame} />
       <div className="recent-game-grid">
         <section className="recent-game-card" aria-label="Last completed game">
           <p className="recent-card-label">Last completed game</p>
@@ -496,7 +552,7 @@ export function RecentStrain({
               </div>
             </div>
           )}
-          <GameContext date={selected.date} gamePk={selected.game_pk} />
+          <GameContext date={selected.date} gamePk={selected.game_pk} destination="box-score" />
           <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
             <strong>{integer.format(totalPitches)} pitches · {selected.pitchers.length} pitchers used</strong>
           </div>
@@ -510,7 +566,7 @@ export function RecentStrain({
           {nextGame ? (
             <>
               <Matchup {...nextMatchup(nextGame)} />
-              <GameContext date={nextGame.date} gamePk={nextGame.game_pk} />
+              <GameContext date={nextGame.date} gamePk={nextGame.game_pk} destination="gameday" />
               <ProbableStarterPanel game={nextGame} />
             </>
           ) : (

@@ -607,3 +607,75 @@ tbody tr.selected td { background: var(--accent-soft); }
 .heat-total-heading, .heat-total-cell { min-width: 42px; font-variant-numeric: tabular-nums; }
 .heat-total-cell { color: var(--text); font-weight: 700; }
 @media (max-width: 640px) { .bullpen-usage-header { align-items: flex-start; flex-direction: column; } .usage-window { text-align: left; } }
+
+
+.game-action-button {
+  align-items: center;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  font-size: .78rem;
+  font-weight: 700;
+  gap: .25rem;
+  line-height: 1;
+  padding: .5rem .72rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.game-action-button:hover {
+  background: color-mix(in srgb, var(--accent) 86%, #000);
+  border-color: color-mix(in srgb, var(--accent) 86%, #000);
+  color: #fff;
+  text-decoration: none;
+}
+
+.game-action-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  outline-offset: 2px;
+}
+
+.rest-day-panel {
+  align-items: center;
+  background: color-mix(in srgb, var(--accent-soft) 72%, var(--surface));
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  display: grid;
+  gap: .5rem 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin: 1rem 0;
+  padding: .9rem 1rem;
+}
+
+.rest-day-panel h3,
+.rest-day-panel p {
+  margin: 0;
+}
+
+.rest-day-label {
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  margin-bottom: .2rem !important;
+  text-transform: uppercase;
+}
+
+.rest-day-panel > p {
+  color: var(--muted);
+  font-size: .9rem;
+  text-align: right;
+}
+
+@media (max-width: 620px) {
+  .rest-day-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .rest-day-panel > p {
+    text-align: left;
+  }
+}

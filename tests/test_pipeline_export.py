@@ -170,6 +170,8 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
             "opponent_name": "Home",
         }],
         "probable_days_rest": 0,
+        "is_rest_day_today": False,
+        "schedule_date": None,
     }]
 
 
@@ -545,6 +547,42 @@ def test_probable_starter_exports_last_three_official_starts():
     assert away["probable_days_rest"] == 4
     assert rows[200]["probable_recent_starts"] == []
     assert rows[200]["probable_days_rest"] is None
+
+
+def test_next_game_exports_snapshot_rest_day_context() -> None:
+    snapshot = Snapshot(season=2026)
+    snapshot.next_games[100] = NextGameRecord(
+        100,
+        "Resting Club",
+        5,
+        "2026-07-24",
+        "2026-07-24T23:10:00Z",
+        200,
+        "Opponent",
+        True,
+        None,
+        None,
+        is_rest_day_today=True,
+        schedule_date="2026-07-23",
+    )
+
+    assert aggregate_next_games(snapshot) == [{
+        "team_id": 100,
+        "team_name": "Resting Club",
+        "game_pk": 5,
+        "date": "2026-07-24",
+        "game_datetime": "2026-07-24T23:10:00Z",
+        "opponent_id": 200,
+        "opponent_name": "Opponent",
+        "is_home": True,
+        "probable_pitcher_id": None,
+        "probable_pitcher_name": None,
+        "probable_jersey_number": None,
+        "probable_recent_starts": [],
+        "probable_days_rest": None,
+        "is_rest_day_today": True,
+        "schedule_date": "2026-07-23",
+    }]
 
 
 def test_player_totals_sum_all_appearances_and_label_the_current_roster_team():
