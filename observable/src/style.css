@@ -610,9 +610,34 @@ tbody tr.selected td { background: var(--accent-soft); }
 .heat-date, .heat-cell { min-width: 48px; }
 .heat-cell { color: var(--muted); font-variant-numeric: tabular-nums; }
 .heat-cell.used { color: var(--text); font-weight: 700; }
-.heat-total-group, .heat-total-start { border-left: 1px solid var(--border); }
-.heat-total-heading, .heat-total-cell { min-width: 42px; font-variant-numeric: tabular-nums; }
+/* The trailing rolling totals stay aligned to pitcher rows but read as their own panel. */
+.heat-total-group,
+.heat-total-start { border-left: 6px solid var(--surface); }
+.heat-total-group {
+  color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent-soft) 62%, var(--surface-2));
+  font-weight: 750 !important;
+}
+.heat-total-heading,
+.heat-total-cell {
+  min-width: 42px;
+  background: color-mix(in srgb, var(--surface-2) 78%, var(--surface));
+  font-variant-numeric: tabular-nums;
+}
+.heat-total-heading:last-child,
+.heat-total-cell:last-child { border-right: 1px solid var(--border); }
 .heat-total-cell { color: var(--text); font-weight: 700; }
+/* IL and Minors rows are historical context, not current relief options. */
+.bullpen-unavailable th,
+.bullpen-unavailable .heat-cell:not(.used),
+.bullpen-unavailable .heat-total-cell {
+  color: var(--muted);
+  background: color-mix(in srgb, var(--surface-2) 88%, var(--surface));
+}
+.bullpen-unavailable .heat-cell.used {
+  color: color-mix(in srgb, var(--text) 72%, var(--muted));
+  filter: grayscale(0.65);
+}
 @media (max-width: 640px) { .bullpen-usage-header { align-items: flex-start; flex-direction: column; } .usage-window { text-align: left; } }
 
 
