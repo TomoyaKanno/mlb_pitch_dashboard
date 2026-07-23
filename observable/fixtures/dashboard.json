@@ -277,7 +277,9 @@
         }
       ],
       "probable_days_rest": 5,
-      "probable_jersey_number": "33"
+      "probable_jersey_number": "33",
+      "is_rest_day_today": true,
+      "schedule_date": "2026-07-20"
     },
     {
       "team_id": 121,
@@ -292,7 +294,9 @@
       "probable_pitcher_name": null,
       "probable_recent_starts": [],
       "probable_days_rest": null,
-      "probable_jersey_number": null
+      "probable_jersey_number": null,
+      "is_rest_day_today": true,
+      "schedule_date": "2026-07-20"
     },
     {
       "team_id": 147,
@@ -326,7 +330,9 @@
         }
       ],
       "probable_days_rest": 4,
-      "probable_jersey_number": "45"
+      "probable_jersey_number": "45",
+      "is_rest_day_today": true,
+      "schedule_date": "2026-07-20"
     },
     {
       "team_id": 136,
@@ -360,7 +366,9 @@
         }
       ],
       "probable_days_rest": 5,
-      "probable_jersey_number": "36"
+      "probable_jersey_number": "36",
+      "is_rest_day_today": true,
+      "schedule_date": "2026-07-20"
     }
   ],
   "bullpen_usage": [
