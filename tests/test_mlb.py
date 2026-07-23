@@ -1,15 +1,9 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import date
+from datetime import date, datetime, timezone
 
 from pipeline import mlb
-
-
-class _FixedDate(date):
-    @classmethod
-    def today(cls) -> date:
-        return cls(2026, 7, 23)
 
 
 class _ScheduleClient:
@@ -47,6 +41,10 @@ def _game(
     }
 
 
+def test_eastern_today_uses_the_eastern_calendar_boundary() -> None:
+    assert mlb.eastern_today(datetime(2026, 7, 24, 2, tzinfo=timezone.utc)) == date(2026, 7, 23)
+
+
 def test_upcoming_games_marks_rest_only_when_team_absent_from_entire_todays_slate(
     monkeypatch,
 ) -> None:
@@ -71,7 +69,7 @@ def test_upcoming_games_marks_rest_only_when_team_absent_from_entire_todays_slat
             ],
         }],
     })
-    monkeypatch.setattr(mlb, "date", _FixedDate)
+    monkeypatch.setattr(mlb, "eastern_today", lambda: date(2026, 7, 23))
 
     rows = asyncio.run(mlb.MLBClient.upcoming_games(client, 2026))
     by_team = {row["team_id"]: row for row in rows}
