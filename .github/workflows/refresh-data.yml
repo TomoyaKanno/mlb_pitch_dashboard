@@ -2,8 +2,11 @@ name: Refresh dashboard data
 
 on:
   schedule:
-    - cron: "17 5 * 3-11 *"
-      timezone: "America/New_York"
+    # A named timezone would express this more directly, but GitHub's new
+    # timezone-aware schedule path repeatedly dispatched this workflow about two
+    # hours late. The 2026 regular season is entirely EDT, so 09:17 UTC is 05:17
+    # Eastern throughout the season. Revisit this before the next season.
+    - cron: "17 9 * 3-11 *"
   workflow_dispatch:
     inputs:
       season:
