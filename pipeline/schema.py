@@ -123,6 +123,9 @@ class NextGameRecord:
     is_home: bool
     probable_pitcher_id: int | None
     probable_pitcher_name: str | None
+    # Snapshot-time schedule context; legacy next-game records omit these safely.
+    is_rest_day_today: bool = False
+    schedule_date: str | None = None
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "NextGameRecord":
@@ -145,6 +148,8 @@ class NextGameRecord:
                 if value.get("probable_pitcher_name")
                 else None
             ),
+            is_rest_day_today=bool(value.get("is_rest_day_today", False)),
+            schedule_date=(str(value["schedule_date"]) if value.get("schedule_date") else None),
         )
 
     def to_dict(self) -> dict[str, Any]:
