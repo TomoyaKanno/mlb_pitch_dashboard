@@ -168,6 +168,34 @@ def test_verify_browser_payload_rejects_a_mismatched_data_revision(tmp_path: Pat
         )
 
 
+@pytest.mark.parametrize(
+    "status",
+    [
+        None,
+        {},
+        {"result": "complte"},
+        {"result": "failed"},
+    ],
+)
+def test_verify_browser_payload_rejects_an_invalid_snapshot_status(
+    tmp_path: Path,
+    status: object,
+):
+    dashboard, series = _valid_payloads()
+    dashboard["status"] = status
+    dist_dir = _write_dist(tmp_path, dashboard, series)
+
+    with pytest.raises(
+        BrowserPayloadValidationError,
+        match="failed or invalid data snapshot",
+    ):
+        verify_browser_payload(
+            dist_dir,
+            expected_season=2026,
+            expected_data_commit="data-sha",
+        )
+
+
 def test_verify_browser_payload_rejects_a_second_react_runtime(tmp_path: Path):
     dashboard, series = _valid_payloads()
     dist_dir = _write_dist(
