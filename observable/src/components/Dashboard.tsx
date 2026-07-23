@@ -664,7 +664,7 @@ export function Dashboard({
   data: DashboardData;
   timeseries: TeamTimeseriesData;
 }) {
-  const [screen, setScreen] = useState<"leaders" | "strain">("leaders");
+  const [screen, setScreen] = useState<"leaders" | "strain">("strain");
   const [recentTeamId, setRecentTeamId] = useState(119);
   const [view, setView] = useState<View>("total");
   const [basis, setBasis] = useState<Basis>("adjusted");
