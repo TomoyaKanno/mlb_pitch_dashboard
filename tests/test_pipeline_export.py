@@ -170,6 +170,8 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
             "opponent_name": "Home",
         }],
         "probable_days_rest": 0,
+        "is_rest_day_today": False,
+        "schedule_date": None,
     }]
 
 
