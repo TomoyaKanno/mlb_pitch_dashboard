@@ -259,7 +259,10 @@ def verify_browser_payload(
                 )
 
     status = payload.get("status")
-    if not isinstance(status, dict) or status.get("result") == "failed":
+    if not isinstance(status, dict) or status.get("result") not in {
+        "complete",
+        "partial",
+    }:
         raise BrowserPayloadValidationError(
             "refusing to deploy a failed or invalid data snapshot"
         )
