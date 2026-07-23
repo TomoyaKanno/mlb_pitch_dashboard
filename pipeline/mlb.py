@@ -4,8 +4,9 @@ import asyncio
 import os
 import random
 import time
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import Any, Awaitable, Callable
+from zoneinfo import ZoneInfo
 
 import httpx
 
@@ -20,6 +21,13 @@ DEFAULT_CONCURRENCY = int(os.getenv("MLB_CONCURRENCY", "8"))
 DEFAULT_RATE_LIMIT = float(os.getenv("MLB_RATE_LIMIT", "5"))
 MAX_ATTEMPTS = 4
 BACKOFF_BASE = 0.5
+SCHEDULE_TIME_ZONE = ZoneInfo("America/New_York")
+
+
+def eastern_today(now: datetime | None = None) -> date:
+    """Return the calendar date used by the dashboard's MLB schedule context."""
+    current = now or datetime.now(timezone.utc)
+    return current.astimezone(SCHEDULE_TIME_ZONE).date()
 
 
 class RateLimiter:
@@ -112,7 +120,7 @@ class MLBClient:
         return base + random.uniform(0, base * 0.25)
 
     async def completed_games(self, season: int) -> list[dict[str, Any]]:
-        today = date.today()
+        today = eastern_today()
         end_date = today.isoformat() if season == today.year else f"{season}-11-15"
         payload = await self.get_json(
             "/schedule",
@@ -170,7 +178,7 @@ class MLBClient:
         postponed, or otherwise remains on today's slate must not be labeled a
         rest day in the static dashboard.
         """
-        today = date.today()
+        today = eastern_today()
         if season != today.year:
             return []
         schedule_date = today.isoformat()
@@ -255,7 +263,7 @@ class MLBClient:
         for arms who appeared recently but are no longer on the depth chart.
         Historical seasons return an empty list, matching upcoming-game behavior.
         """
-        today = date.today()
+        today = eastern_today()
         if season != today.year:
             return []
 
