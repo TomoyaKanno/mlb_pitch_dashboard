@@ -70,6 +70,14 @@ const LEAGUE_KEYS = [
   "bulk_to_sp", "opener_to_rp", "review_count",
 ] as const satisfies readonly (keyof LeagueTotals)[];
 
+export const BULLPEN_TOTAL_WINDOWS = [3, 5, 14] as const;
+
+/** Sums a pitcher's trailing calendar-day relief pitches, inclusive of the heatmap end date. */
+export function trailingPitchTotal(pitches: readonly number[], days: number): number {
+  if (!Number.isInteger(days) || days <= 0) return 0;
+  return pitches.slice(-days).reduce((total, value) => total + value, 0);
+}
+
 function roleKey(basis: Basis, role: "sp" | "rp"): keyof Team {
   return `${basis}_${role}` as keyof Team;
 }
