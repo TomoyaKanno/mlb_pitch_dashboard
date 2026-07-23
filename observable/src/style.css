@@ -68,7 +68,7 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
 .recent-strain-header .secondary { max-width: 620px; margin: 8px 0 0; line-height: 1.5; }
 .recent-strain-header label { flex: 0 1 270px; }
 .recent-game-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.recent-game-card { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.recent-game-card { display: grid; align-content: start; gap: 12px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
 .recent-card-label { margin: 0; color: var(--muted); font-size: .72rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
 .recent-game-body { display: flex; align-items: center; gap: 14px; }
 .recent-team-logo { flex: none; object-fit: contain; }

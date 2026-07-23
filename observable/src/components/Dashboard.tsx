@@ -664,7 +664,7 @@ export function Dashboard({
   data: DashboardData;
   timeseries: TeamTimeseriesData;
 }) {
-  const [screen, setScreen] = useState<"leaders" | "strain">("leaders");
+  const [screen, setScreen] = useState<"leaders" | "strain">("strain");
   const [recentTeamId, setRecentTeamId] = useState(119);
   const [view, setView] = useState<View>("total");
   const [basis, setBasis] = useState<Basis>("adjusted");
@@ -760,8 +760,8 @@ export function Dashboard({
           : "Review the pitcher workloads from a team's most recently completed game."}</p>
       </header>
       <nav className="screen-selector" aria-label="Dashboard screen">
-        <button type="button" className={screen === "leaders" ? "active" : undefined} onClick={() => setScreen("leaders")}>Season leaders</button>
         <button type="button" className={screen === "strain" ? "active" : undefined} onClick={() => setScreen("strain")}>Recent strain</button>
+        <button type="button" className={screen === "leaders" ? "active" : undefined} onClick={() => setScreen("leaders")}>Season leaders</button>
       </nav>
       {screen === "leaders" ? (
         <>
