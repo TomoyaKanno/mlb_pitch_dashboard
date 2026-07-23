@@ -175,6 +175,14 @@ jobs:
                   pitcher_name = game.get("probable_pitcher_name")
                   if (pitcher_id is None) != (pitcher_name is None):
                       raise SystemExit("next game has incomplete probable-pitcher data")
+                  is_rest_day_today = game.get("is_rest_day_today", False)
+                  schedule_date = game.get("schedule_date")
+                  if not isinstance(is_rest_day_today, bool):
+                      raise SystemExit("is_rest_day_today must be a boolean")
+                  if schedule_date is not None and not isinstance(schedule_date, str):
+                      raise SystemExit("schedule_date must be a string or null")
+                  if is_rest_day_today and not schedule_date:
+                      raise SystemExit("rest-day next game is missing its schedule date")
                   starts = game.get("probable_recent_starts")
                   if not isinstance(starts, list) or len(starts) > 3:
                       raise SystemExit("probable_recent_starts must be a list of at most 3 starts")
