@@ -391,8 +391,8 @@
       "jersey_number": "70",
       "pitcher_id": 814305,
       "pitcher_name": "Yunior Tur",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 133,
       "team_name": "Athletics"
     },
@@ -4318,8 +4318,8 @@
       "jersey_number": "47",
       "pitcher_id": 667463,
       "pitcher_name": "John King",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 146,
       "team_name": "Miami Marlins"
     },
@@ -4417,8 +4417,8 @@
       "jersey_number": "62",
       "pitcher_id": 694350,
       "pitcher_name": "Zach Brzykcy",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 146,
       "team_name": "Miami Marlins"
     },
@@ -5943,11 +5943,11 @@
     {
       "depth_order": 1,
       "depth_role": "RP",
-      "jersey_number": "60",
+      "jersey_number": null,
       "pitcher_id": 642701,
       "pitcher_name": "Dennis Santana",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "DES",
+      "status_description": "Designated for Assignment",
       "team_id": 134,
       "team_name": "Pittsburgh Pirates"
     },
@@ -6168,6 +6168,17 @@
       "pitcher_name": "Noah Murdock",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
+      "team_id": 134,
+      "team_name": "Pittsburgh Pirates"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "jersey_number": "97",
+      "pitcher_id": 676760,
+      "pitcher_name": "Ron Marinaccio",
+      "status_code": "NYR",
+      "status_description": "Not Yet Reported",
       "team_id": 134,
       "team_name": "Pittsburgh Pirates"
     },
@@ -7277,8 +7288,8 @@
       "jersey_number": "65",
       "pitcher_id": 669947,
       "pitcher_name": "Jesse Scholtens",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 139,
       "team_name": "Tampa Bay Rays"
     },
@@ -7871,8 +7882,8 @@
       "jersey_number": "46",
       "pitcher_id": 571578,
       "pitcher_name": "Patrick Corbin",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 141,
       "team_name": "Toronto Blue Jays"
     },
@@ -8003,8 +8014,8 @@
       "jersey_number": "64",
       "pitcher_id": 671936,
       "pitcher_name": "Adam Macko",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 141,
       "team_name": "Toronto Blue Jays"
     },
