@@ -165,6 +165,7 @@ Observable Framework renders TSX with its self-hosted React runtime. Components 
 | `CI` | Python pipeline tests and fixture-based Observable checks | None |
 | `Refresh dashboard data` | Incrementally update and validate `dashboard-data` | Repository contents only |
 | `Build and deploy dashboard` | Validate real data, build the static site, and deploy after merge or refresh | Pages deployment only in the deploy job |
+| `Probe GitHub schedule latency` | Temporarily measure dispatch timing at 08:17 UTC for comparison with the production refresh | None |
 
 Pull requests build against the real data branch but do not deploy. Manual refreshes and manual Pages deploys are accepted only from `main`; a selected feature branch is skipped rather than changing `dashboard-data` or publishing. Production refresh handoffs are also accepted only from `main`, and PR validation has a separate concurrency group so it cannot cancel a production deployment.
 
@@ -185,4 +186,3 @@ See [continuous integration](docs/continuous-integration.md), [the data contract
 ## Data and usage note
 
 This is an unofficial personal project. MLB endpoints and response shapes can change without notice. The role-adjusted view is a transparent heuristic, not an MLB designation, and ambiguous appearances remain visible for review.
-
