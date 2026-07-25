@@ -299,9 +299,6 @@ function PlayerHistoryPanel({
   const lastYear = prior[prior.length - 1];
   const maxDay = Math.max(...history.seasons.map((season) => season.season_days), 1);
   const currentDay = current.season_days;
-  const historicAtCurrent = prior.map((season) => playerValueAt(season, currentDay));
-  const historicMin = Math.min(...historicAtCurrent);
-  const historicMax = Math.max(...historicAtCurrent);
   const priorMlbSeasons = prior.filter((season) => season.total > 0).length;
   const bandDays = Array.from(new Set([
     0,
@@ -357,10 +354,9 @@ function PlayerHistoryPanel({
         </div>
         <button type="button" className="team-series-close" onClick={onClose}>Close</button>
       </div>
-      <div className="player-history-stats" aria-label="Workload comparison at the current point in the season">
-        <div><span>Current</span><strong>{integer.format(pitcher.total)}</strong></div>
-        <div><span>{lastYear.season} at this point</span><strong>{integer.format(playerValueAt(lastYear, currentDay))}</strong></div>
-        <div><span>Prior 3-year range</span><strong>{integer.format(historicMin)}–{integer.format(historicMax)}</strong></div>
+      <div className="player-history-total" aria-label={`${current.season} current pitch total`}>
+        <span>{current.season} current pitches</span>
+        <strong>{integer.format(pitcher.total)}</strong>
       </div>
       <p className="player-history-availability">
         {priorMlbSeasons === 0
@@ -394,6 +390,11 @@ function PlayerHistoryPanel({
           <tr><th scope="col">Season</th><th scope="col">At this point</th><th scope="col">Full season</th></tr>
         </thead>
         <tbody>
+          <tr>
+            <th scope="row">{current.season}</th>
+            <td>{integer.format(pitcher.total)}</td>
+            <td aria-label="Season in progress" />
+          </tr>
           {prior.slice().reverse().map((season) => (
             <tr key={season.season}>
               <th scope="row">{season.season}</th>
