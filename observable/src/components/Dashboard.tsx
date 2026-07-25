@@ -618,7 +618,7 @@ function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
             return (
               <tr key={pitcher.pitcher_id}>
                 <td className="rank">{index + 1}</td>
-                <td className="team player-team-cell" aria-label={pitcher.team_name} title={pitcher.team_name}>
+                <td className="team">
                   <span className="team-name">
                     <img
                       className="pitcher-portrait"
@@ -632,7 +632,7 @@ function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
                     {pitcher.pitcher_name}
                   </span>
                 </td>
-                <td className="team">
+                <td className="team player-team-cell" aria-label={pitcher.team_name} title={pitcher.team_name}>
                   <span className="team-name">
                     <img
                       className="team-logo"
