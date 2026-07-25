@@ -393,7 +393,7 @@ function PlayerHistoryPanel({
           <tr>
             <th scope="row">{current.season}</th>
             <td>{integer.format(pitcher.total)}</td>
-            <td aria-label="Season in progress" />
+            <td aria-label="Full-season comparison is not shown for the selected season" />
           </tr>
           {prior.slice().reverse().map((season) => (
             <tr key={season.season}>
