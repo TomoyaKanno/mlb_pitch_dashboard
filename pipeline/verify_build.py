@@ -39,6 +39,7 @@ def verify_browser_payload(
     data_dir = dist_dir / "_file" / "data"
     payload = _load_single_json(data_dir, "dashboard.*.json", "dashboard")
     series = _load_single_json(data_dir, "team-timeseries.*.json", "team-timeseries")
+    player_history = _load_single_json(data_dir, "player-history.*.json", "player-history")
 
     if payload.get("schema_version") != SCHEMA_VERSION:
         raise BrowserPayloadValidationError("dashboard has an unsupported schema version")
@@ -46,11 +47,19 @@ def verify_browser_payload(
         raise BrowserPayloadValidationError(
             "team-timeseries has an unsupported schema version"
         )
+    if player_history.get("schema_version") != SCHEMA_VERSION:
+        raise BrowserPayloadValidationError(
+            "player-history has an unsupported schema version"
+        )
     if payload.get("season") != expected_season:
         raise BrowserPayloadValidationError("built the wrong season")
     if series.get("season") != payload["season"]:
         raise BrowserPayloadValidationError(
             "team-timeseries season does not match dashboard"
+        )
+    if player_history.get("season") != payload["season"]:
+        raise BrowserPayloadValidationError(
+            "player-history season does not match dashboard"
         )
 
     teams = payload.get("teams")
@@ -83,6 +92,71 @@ def verify_browser_payload(
         key=lambda row: (-row["total"], row["pitcher_name"], row["pitcher_id"]),
     ):
         raise BrowserPayloadValidationError("player totals are not ranked by total pitches")
+
+    historical_seasons = player_history.get("historical_seasons")
+    expected_historical_seasons = list(range(expected_season - 3, expected_season))
+    if historical_seasons != expected_historical_seasons:
+        raise BrowserPayloadValidationError(
+            "player-history must contain exactly the three completed prior seasons"
+        )
+    historical_players = player_history.get("players")
+    if not isinstance(historical_players, list) or len(historical_players) != len(player_totals):
+        raise BrowserPayloadValidationError(
+            "player-history must contain one record for every current player leader"
+        )
+    if [player.get("pitcher_id") for player in historical_players] != [
+        player["pitcher_id"] for player in player_totals
+    ]:
+        raise BrowserPayloadValidationError(
+            "player-history players do not match the ranked player leaders"
+        )
+    expected_history_seasons = [*expected_historical_seasons, expected_season]
+    for leader, history in zip(player_totals, historical_players, strict=True):
+        if history.get("pitcher_name") != leader["pitcher_name"]:
+            raise BrowserPayloadValidationError(
+                "player-history pitcher name does not match the player leader"
+            )
+        seasons = history.get("seasons")
+        if not isinstance(seasons, list) or [row.get("season") for row in seasons] != expected_history_seasons:
+            raise BrowserPayloadValidationError(
+                "player-history has an invalid season sequence"
+            )
+        for season_row in seasons:
+            season_days = season_row.get("season_days")
+            total = season_row.get("total")
+            appearances = season_row.get("appearances")
+            points = season_row.get("points")
+            if (
+                not isinstance(season_days, int)
+                or season_days < 0
+                or not isinstance(total, int)
+                or total < 0
+                or not isinstance(appearances, int)
+                or appearances < 0
+                or not isinstance(points, list)
+            ):
+                raise BrowserPayloadValidationError("player-history has invalid season metrics")
+            if any(
+                not isinstance(point.get("day"), int)
+                or point["day"] < 0
+                or point["day"] > season_days
+                or not isinstance(point.get("pitches"), int)
+                or point["pitches"] <= 0
+                for point in points
+            ):
+                raise BrowserPayloadValidationError("player-history has an invalid pitch point")
+            if points != sorted(points, key=lambda point: point["day"]) or len({point["day"] for point in points}) != len(points):
+                raise BrowserPayloadValidationError(
+                    "player-history pitch points must have unique ordered days"
+                )
+            if sum(point["pitches"] for point in points) != total or appearances < len(points):
+                raise BrowserPayloadValidationError(
+                    "player-history season totals do not reconcile to pitch points"
+                )
+        if seasons[-1]["total"] != leader["total"]:
+            raise BrowserPayloadValidationError(
+                "player-history current-season total does not match the player leader"
+            )
 
     team_pitcher_usage = payload.get("team_pitcher_usage")
     if not isinstance(team_pitcher_usage, list) or len(team_pitcher_usage) != len(teams):
@@ -274,6 +348,10 @@ def verify_browser_payload(
         raise BrowserPayloadValidationError(
             "team-timeseries data revision does not match dashboard"
         )
+    if player_history.get("data_commit") != payload["data_commit"]:
+        raise BrowserPayloadValidationError(
+            "player-history data revision does not match dashboard"
+        )
     points = series.get("points")
     if not isinstance(points, list):
         raise BrowserPayloadValidationError("team-timeseries points must be a list")
@@ -297,6 +375,7 @@ def verify_browser_payload(
         "team_day_points": len(points),
         "complete_games": len(complete_games),
         "player_totals": len(player_totals),
+        "player_history_players": len(historical_players),
         "team_usage_windows": len(team_pitcher_usage),
         "recent_games": len(recent_games),
         "next_games": len(next_games),
@@ -337,6 +416,7 @@ def main() -> None:
         f"Validated {result['teams']} teams, {result['team_day_points']} "
         f"team-day points, {result['complete_games']} complete games, "
         f"{result['player_totals']} player totals, "
+        f"{result['player_history_players']} player histories, "
         f"{result['team_usage_windows']} team usage windows, "
         f"{result['recent_games']} recent team games, "
         f"{result['next_games']} next team games, "

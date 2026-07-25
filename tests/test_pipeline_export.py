@@ -16,6 +16,7 @@ from pipeline.export import (
     aggregate_team_timeseries,
     aggregate_teams,
     export_dashboard,
+    export_player_history,
     export_team_timeseries,
     reconcile_team_timeseries,
 )
@@ -676,6 +677,51 @@ def test_player_totals_sum_all_appearances_and_label_the_current_roster_team():
         },
     ]
     assert aggregate_pitchers(snapshot, limit=1)[0]["pitcher_id"] == 11
+
+
+def test_player_history_exports_sparse_prior_season_points_and_zero_mlb_history(tmp_path):
+    def write_season(
+        season: int,
+        first_pitcher: tuple[int, str, int],
+        last_pitcher: tuple[int, str, int],
+    ) -> None:
+        snapshot = Snapshot(season=season)
+        game_rows = (
+            (season * 10 + 1, f"{season}-03-30", first_pitcher),
+            (season * 10 + 2, f"{season}-09-30", last_pitcher),
+        )
+        for game_pk, game_date, (pitcher_id, pitcher_name, pitches) in game_rows:
+            snapshot.games[game_pk] = GameRecord(game_pk, game_date, season, "Final")
+            snapshot.fetch_state[game_pk] = FetchStateRecord(
+                game_pk, "success", NOW, NOW, None, 1,
+            )
+            snapshot.appearances[(game_pk, 100, pitcher_id)] = AppearanceRecord(
+                game_pk, game_date, season, 100, "Club", pitcher_id, pitcher_name, pitches,
+                True, 0, "SP", "official starter",
+            )
+            snapshot.appearances[(game_pk, 200, 2000)] = AppearanceRecord(
+                game_pk, game_date, season, 200, "Opponent", 2000, "Opponent Starter", 10,
+                True, 0, "SP", "official starter",
+            )
+        write_snapshot(snapshot, {
+            "result": "complete", "generated_at": NOW, "api_calls": 2,
+            "scheduled_games": 2, "games_requested": 2, "games_fetched": 2,
+            "games_failed": 0, "current_games": 2, "stale_games": 0, "missing_games": 0,
+        }, tmp_path)
+
+    for season, pitches in ((2023, 80), (2024, 90), (2025, 100)):
+        write_season(season, (1000, "Opening Starter", 10), (11, "Veteran", pitches))
+    write_season(2026, (12, "Newcomer", 70), (11, "Veteran", 110))
+
+    payload = export_player_history(tmp_path, 2026)
+    veteran = payload["players"][0]
+    newcomer = payload["players"][1]
+    assert payload["historical_seasons"] == [2023, 2024, 2025]
+    assert veteran["pitcher_id"] == 11
+    assert [season["total"] for season in veteran["seasons"]] == [80, 90, 100, 110]
+    assert veteran["seasons"][0]["points"] == [{"day": 184, "pitches": 80}]
+    assert [season["total"] for season in newcomer["seasons"]] == [0, 0, 0, 70]
+    assert all(not season["points"] for season in newcomer["seasons"][:3])
 
 
 def test_team_pitcher_usage_keeps_swingman_pitches_in_each_appearance_role():

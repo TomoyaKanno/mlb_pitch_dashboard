@@ -48,8 +48,11 @@ Legacy snapshots without `roster-pitchers.json` remain valid; export then falls 
 | --- | --- | --- |
 | Season dashboard | `observable/src/data/dashboard.json.py` | One season-total row per team, the top 30 individual pitcher totals, per-team top-five pitcher usage lists for each role framing, one latest completed game, one upcoming-game record (optional probable starter with recent-start and rest-day context), and one 14-day roster-aware bullpen-usage window per team |
 | Team timeseries | `observable/src/data/team-timeseries.json.py` | Daily team increments for the timeline, plus game-grain `complete_games` (0 official RP, with pitcher) |
+| Player history | `observable/src/data/player-history.json.py` | Sparse date-normalized pitch increments and season totals for the current top 30 player leaders across the configured season and its three completed predecessors |
 
 Each `player_totals` row sums every persisted appearance for one `pitcher_id`, including appearances before a trade. When the current roster snapshot has that pitcher, it provides the displayed team/name; otherwise export falls back to the latest appearance. Rows are sorted by total pitches descending, then name and id, and capped at 30.
+
+The player-history export deliberately does not ship every historical appearance to the browser. It loads the validated snapshots for `season - 3` through the configured season, then exports only the current top 30 `pitcher_id`s. Each historical season supplies a sparse sequence of per-date pitch increments normalized to regular-season day zero, a total, and appearance count. Missing MLB history is an explicit zero-total season, allowing the UI to distinguish a pitcher without demonstrated prior major-league workload from one with an established comparison range. The current-season history total must exactly equal its `player_totals` row.
 
 Each `team_pitcher_usage` row belongs to one team and contains a top-five list for `total`, `official_sp`, `official_rp`, `adjusted_sp`, and `adjusted_rp`. Each list sums only appearances for that team, ranks by its named metric (then pitcher name/id), and may contain fewer than five pitchers. Official and adjusted SP/RP are appearance-level classifications, so a swingman can appear in both SP and RP lists; the dashboard selects the list matching its current role basis.
 

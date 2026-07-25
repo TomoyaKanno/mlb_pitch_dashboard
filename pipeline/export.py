@@ -122,6 +122,65 @@ def aggregate_pitchers(snapshot: Snapshot, *, limit: int = 30) -> list[dict[str,
     )[:limit]
 
 
+def _season_window(snapshot: Snapshot) -> tuple[date, date]:
+    """Regular-season date window represented by a validated snapshot."""
+    dates = [date.fromisoformat(game.game_date) for game in snapshot.games.values()]
+    if not dates:
+        raise ValueError(f"season {snapshot.season} has no completed games")
+    return min(dates), max(dates)
+
+
+def aggregate_player_history(
+    snapshots: dict[int, Snapshot],
+    leaders: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Sparse per-date pitch increments for current leaders across four seasons.
+
+    The browser receives only the current top-30 players, not the full
+    historical appearance corpus. Dates are normalized to the first completed
+    regular-season game in each season, so lines can compare the same point in
+    the league calendar without shipping zero-value dates.
+    """
+    seasons = sorted(snapshots)
+    windows = {season: _season_window(snapshot) for season, snapshot in snapshots.items()}
+    result: list[dict[str, Any]] = []
+    for leader in leaders:
+        pitcher_id = int(leader["pitcher_id"])
+        history: list[dict[str, Any]] = []
+        for season in seasons:
+            snapshot = snapshots[season]
+            start, end = windows[season]
+            pitches_by_date: dict[str, int] = defaultdict(int)
+            appearances = 0
+            for row in snapshot.appearances.values():
+                if row.pitcher_id != pitcher_id:
+                    continue
+                pitches_by_date[row.game_date] += row.pitches
+                appearances += 1
+            points = [
+                {
+                    "day": (date.fromisoformat(game_date) - start).days,
+                    "pitches": pitches,
+                }
+                for game_date, pitches in sorted(pitches_by_date.items())
+            ]
+            history.append(
+                {
+                    "season": season,
+                    "season_days": (end - start).days,
+                    "total": sum(pitches_by_date.values()),
+                    "appearances": appearances,
+                    "points": points,
+                }
+            )
+        result.append({
+            "pitcher_id": pitcher_id,
+            "pitcher_name": leader["pitcher_name"],
+            "seasons": history,
+        })
+    return result
+
+
 def aggregate_team_pitcher_usage(
     snapshot: Snapshot,
     *,
@@ -623,19 +682,54 @@ def export_team_timeseries(data_dir: Path, season: int) -> dict[str, Any]:
     }
 
 
+def export_player_history(
+    data_dir: Path,
+    season: int,
+    *,
+    completed_seasons: int = 3,
+) -> dict[str, Any]:
+    """Export the current player leaders against the prior completed seasons."""
+    if completed_seasons < 1:
+        raise ValueError("completed_seasons must be at least one")
+    snapshot, _verified, meta = _export_common(data_dir, season)
+    history_seasons = list(range(season - completed_seasons, season))
+    historical: dict[int, Snapshot] = {season: snapshot}
+    for historical_season in history_seasons:
+        season_dir = data_dir / "seasons" / str(historical_season)
+        if not season_dir.is_dir():
+            raise ValueError(
+                f"missing required completed-season snapshot {historical_season} "
+                f"for {season} player history"
+            )
+        check_persisted_snapshot(data_dir, historical_season)
+        historical[historical_season] = load_snapshot(data_dir, historical_season)
+
+    leaders = aggregate_pitchers(snapshot)
+    return {
+        **meta,
+        "historical_seasons": history_seasons,
+        "players": aggregate_player_history(historical, leaders),
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Export browser-ready MLB dashboard data")
     parser.add_argument("--season", required=True, type=int)
     parser.add_argument("--data-dir", required=True, type=Path)
     parser.add_argument(
         "--kind",
-        choices=("dashboard", "team-timeseries"),
+        choices=("dashboard", "team-timeseries", "player-history"),
         default="dashboard",
-        help="dashboard = season team totals; team-timeseries = daily increments + complete games",
+        help=(
+            "dashboard = season team totals; team-timeseries = daily increments + complete games; "
+            "player-history = current leaders with three completed prior seasons"
+        ),
     )
     args = parser.parse_args()
     if args.kind == "team-timeseries":
         payload = export_team_timeseries(args.data_dir, args.season)
+    elif args.kind == "player-history":
+        payload = export_player_history(args.data_dir, args.season)
     else:
         payload = export_dashboard(args.data_dir, args.season)
     json.dump(payload, fp=sys.stdout, separators=(",", ":"))
