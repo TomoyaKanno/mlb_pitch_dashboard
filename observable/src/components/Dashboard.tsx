@@ -308,9 +308,16 @@ function PlayerHistoryPanel({
     maxDay,
     ...prior.flatMap((season) => [season.season_days, ...season.points.map((point) => point.day)]),
   ])).sort((a, b) => a - b);
-  const band = bandDays.map((day) => {
-    const values = prior.map((season) => playerValueAt(season, day));
-    return {day, low: Math.min(...values), high: Math.max(...values)};
+  const band = bandDays.flatMap((day) => {
+    // Retain both sides of each game date so the envelope changes vertically,
+    // like the individual cumulative pitch curves, rather than ramping before
+    // a pitcher has actually thrown the pitches.
+    const before = prior.map((season) => playerValueAt(season, day - 1));
+    const after = prior.map((season) => playerValueAt(season, day));
+    return [
+      {day, low: Math.min(...before), high: Math.max(...before)},
+      {day, low: Math.min(...after), high: Math.max(...after)},
+    ];
   });
   const valueMax = niceCeil(Math.max(
     pitcher.total,
