@@ -280,6 +280,7 @@ td.rank, .metric strong { font-variant-numeric: tabular-nums; }
 .team { font-weight: 650; }
 .team-name { display: flex; align-items: center; gap: 9px; }
 .team-logo { flex: none; width: 22px; height: 22px; object-fit: contain; }
+.player-team-heading-short { display: none; }
 tbody tr.team-row { cursor: pointer; }
 tbody tr.team-row:hover td,
 tbody tr.team-row:focus-visible td { background: var(--accent-soft); }
@@ -579,6 +580,15 @@ tbody tr.selected td { background: var(--accent-soft); }
   .league-grid { grid-template-columns: 1fr; }
   th, td { padding: 9px 7px; }
   .metric { grid-template-columns: 1fr; gap: 5px; }
+  .player-total-table .rank { width: 40px; }
+  .player-total-table .player-team-heading { width: 48px; padding-inline: 5px; text-align: center; }
+  .player-total-table .player-total-heading { width: 96px; }
+  .player-team-heading-short { display: inline; }
+  .player-team-heading-long,
+  .player-team-name { display: none; }
+  .player-team-cell { padding-inline: 5px; text-align: center; }
+  .player-team-cell .team-name { justify-content: center; }
+  .player-team-cell .team-logo { width: 24px; height: 24px; }
 }
 
 

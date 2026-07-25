@@ -599,14 +599,17 @@ function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
   const maximum = Math.max(...pitchers.map((pitcher) => pitcher.total), 1);
   return (
     <section className="table-shell">
-      <table>
+      <table className="player-total-table">
         <caption>Top 30 MLB pitchers ranked by total pitches thrown</caption>
         <thead>
           <tr>
             <th className="rank">Rank</th>
             <th>Pitcher</th>
-            <th>Current team</th>
-            <th>Total pitches</th>
+            <th className="player-team-heading" aria-label="Current team">
+              <span aria-hidden="true" className="player-team-heading-long">Current team</span>
+              <span aria-hidden="true" className="player-team-heading-short">Team</span>
+            </th>
+            <th className="player-total-heading">Total pitches</th>
           </tr>
         </thead>
         <tbody>
@@ -615,7 +618,7 @@ function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
             return (
               <tr key={pitcher.pitcher_id}>
                 <td className="rank">{index + 1}</td>
-                <td className="team">
+                <td className="team player-team-cell" aria-label={pitcher.team_name} title={pitcher.team_name}>
                   <span className="team-name">
                     <img
                       className="pitcher-portrait"
@@ -640,7 +643,7 @@ function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
                       loading="lazy"
                       onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
                     />
-                    {pitcher.team_name}
+                    <span className="player-team-name">{pitcher.team_name}</span>
                   </span>
                 </td>
                 <td>
