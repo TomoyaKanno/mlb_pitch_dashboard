@@ -31,7 +31,7 @@ Do not reintroduce an application server or client-side refresh path as an assum
 - `pipeline/verify_build.py` — reusable compiled-payload and React-runtime validation invoked by the Pages workflow; keep deployment-domain checks here rather than embedding application logic in workflow YAML.
 - `observable/src/data/dashboard.json.py` — build-time bridge from the snapshot to the season table payload.
 - `observable/src/data/team-timeseries.json.py` — build-time bridge for daily team-increment series.
-- `observable/src/components/Dashboard.tsx` — season-leader shell, controls, table, and timeline panel.
+- `observable/src/components/Dashboard.tsx` — season-leader shell, controls, team timeline, and player workload-history panel.
 - `observable/src/components/RecentStrain.tsx` — Recent strain screen: last-game stacked rows, probable-starter panel, and bullpen heatmap.
 - `observable/src/components/metrics.ts` — pure presentation, sorting, ranking, and team-series calculations.
 - `config/dashboard.json` — intentionally selected published season.
@@ -88,8 +88,9 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 - Team and metric column headers sort ascending/descending (there is no Order dropdown);
 - ranks follow the displayed metric even when rows are reordered by header sort;
 - Total bars show dual-tone adjusted SP/RP fills and an MLB-average notch;
-- clicking any table row opens the side timeline (Cumulative / Timecourse) with a short slide; Role adjustment disables row clicks and closes any open panel;
-- the panel chart uses the shared season date axis, hover tooltip, game-grain complete-game list with pitcher names, and the selected-basis top-five pitcher usage list (swingmen can appear in both SP and RP);
+- clicking a Team total/SP/RP row opens the side timeline (Cumulative / Timecourse) with a short slide; clicking a Player total row opens the player workload-history panel instead; Role adjustment disables row clicks and closes any open panel;
+- the team timeline panel uses the shared season date axis, hover tooltip, game-grain complete-game list with pitcher names, and the selected-basis top-five pitcher usage list (swingmen can appear in both SP and RP);
+- the Player total panel shows one selected-season hero pitch total, a current/last-season/prior-three-season-range cumulative chart, and a semantic four-row table: selected season has its current total with no full-season comparison, while each of the three completed prior seasons has both at-this-point and full-season totals; zero-history rows remain visible;
 - Recent strain is the default left-hand screen; the selector switches to Season leaders on the right, and Recent strain defaults to LAD with the team picker;
 - last completed game shows stacked appearance rows (portrait tile, split first/last name, official SP/RP, pitches) in appearance order, and each game card shows its game-level date plus an official MLB Game Day link without exposing a raw gamePk;
 - last-game and next-game matchup headers align directly beneath their card labels; the completed-game action opens MLB's box score and the next-game action opens MLB Gameday; a full-width rest-day notice appears only for a current Eastern-date snapshot that marks the selected team idle; when a probable starter is announced, the next-game panel shows a larger portrait, days of rest, and up to three prior official starts (or an explicit unannounced state when MLB omits the probable);
@@ -107,7 +108,7 @@ A static build is not proof that the page runs. For UI or bundling changes, perf
 4. `pipeline.check` reloads those files and repeats structural and coverage validation.
 5. The refresh workflow commits changed files to `dashboard-data`.
 6. A successful `workflow_run` handoff builds from current `main` plus the validated data branch.
-7. `pipeline.export` produces the season team/player payload (top-30 individual totals plus per-team top-five pitcher workloads for Team total/official SP/RP/adjusted SP/RP, latest completed-game pitcher list, upcoming game with optional probable starter and recent-start context, roster-aware 14-day bullpen window per team) and the sibling team timeseries (daily points plus `complete_games`); Observable renders the season leaders table, timeline panel, and Recent strain screen.
+7. `pipeline.export` produces the season team/player payload (top-30 individual totals; compact current-plus-three-prior-season histories for those leaders; per-team top-five pitcher workloads for Team total/official SP/RP/adjusted SP/RP; latest completed-game pitcher list; upcoming game with optional probable starter and recent-start context; roster-aware 14-day bullpen window per team) and the sibling team timeseries (daily points plus `complete_games`); Observable renders the season leaders table, team timeline, player history panel, and Recent strain screen.
 8. GitHub Pages receives the compiled artifact; no compiled files are committed.
 
 Never commit a snapshot before the persisted reload check succeeds.
@@ -171,4 +172,3 @@ Use the fixture for fast checks. For changes to the loader, exporter, schema, va
 ## Pull-request handoff
 
 Every PR description should state what changed, why it changed, user/data/operational impact, checks run locally and in Actions, and any post-merge verification required. Do not declare a delivery fix complete solely because Actions is green; verify the public page after merge when production rendering or delivery changes.
-

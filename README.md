@@ -58,7 +58,7 @@ The deployed browser downloads small team- and player-level aggregates generated
 
 - **Team total** ranks all 30 clubs and keeps the existing team timeline available.
 - Team total, SP workload, and RP workload details include a season-to-date top-five pitcher list. SP/RP uses the selected official or role-adjusted basis per appearance, so swingmen can appear in both.
-- **Player total** ranks the top 30 individual pitchers by season pitch count. A traded pitcher’s total includes every season appearance and is labeled with his current roster team when available. Selecting a pitcher opens a desktop-first cumulative workload comparison: current season, the same point last season, and a min–max band from the three completed prior seasons. A zero-history pitcher remains explicit rather than being omitted.
+- **Player total** ranks the top 30 individual pitchers by season pitch count. A traded pitcher’s total includes every season appearance and is labeled with his current roster team when available. Selecting a pitcher opens a desktop-first cumulative workload comparison with one current-season hero total, a chart of the current curve, last season, and the three-prior-season min–max band, plus a compact table. The table shows the selected season’s current total (with no full-season comparison) and, for each of the three completed prior seasons, both the total at this point and the full-season total. A zero-history pitcher remains explicit rather than being omitted.
 
 ### Using Recent strain
 
