@@ -542,23 +542,13 @@ tbody tr.selected td { background: var(--accent-soft); }
 }
 .player-history-panel { color: var(--text); }
 .player-history-portrait { width: 48px; height: 64px; }
-.player-history-stats {
+.player-history-total {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
   margin: 0 0 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
 }
-.player-history-stats > div {
-  display: grid;
-  gap: 3px;
-  padding: 9px;
-  border-left: 1px solid var(--border);
-}
-.player-history-stats > div:first-child { border-left: 0; }
-.player-history-stats span { color: var(--muted); font-size: .68rem; line-height: 1.25; }
-.player-history-stats strong { font-size: .92rem; font-variant-numeric: tabular-nums; }
+.player-history-total span { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+.player-history-total strong { font-size: 2rem; line-height: 1; font-variant-numeric: tabular-nums; }
 .player-history-availability { margin: 0 0 10px; color: var(--muted); font-size: .78rem; line-height: 1.4; }
 .player-history-chart { color: var(--accent); cursor: default; }
 .player-history-band { fill: var(--accent-soft); fill-opacity: .9; }
