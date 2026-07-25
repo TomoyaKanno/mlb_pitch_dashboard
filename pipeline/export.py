@@ -701,7 +701,13 @@ def export_player_history(
                 f"missing required completed-season snapshot {historical_season} "
                 f"for {season} player history"
             )
-        check_persisted_snapshot(data_dir, historical_season)
+        verified_history = check_persisted_snapshot(data_dir, historical_season)
+        if verified_history["stale_games"] or verified_history["missing_games"]:
+            raise ValueError(
+                f"completed-season snapshot {historical_season} has incomplete coverage "
+                f"(stale_games={verified_history['stale_games']}, "
+                f"missing_games={verified_history['missing_games']})"
+            )
         historical[historical_season] = load_snapshot(data_dir, historical_season)
 
     leaders = aggregate_pitchers(snapshot)

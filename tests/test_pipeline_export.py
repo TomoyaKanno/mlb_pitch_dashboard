@@ -684,6 +684,8 @@ def test_player_history_exports_sparse_prior_season_points_and_zero_mlb_history(
         season: int,
         first_pitcher: tuple[int, str, int],
         last_pitcher: tuple[int, str, int],
+        *,
+        stale_second_game: bool = False,
     ) -> None:
         snapshot = Snapshot(season=season)
         game_rows = (
@@ -703,10 +705,16 @@ def test_player_history_exports_sparse_prior_season_points_and_zero_mlb_history(
                 game_pk, game_date, season, 200, "Opponent", 2000, "Opponent Starter", 10,
                 True, 0, "SP", "official starter",
             )
+        if stale_second_game:
+            game_pk = season * 10 + 2
+            snapshot.fetch_state[game_pk] = FetchStateRecord(
+                game_pk, "failed", NOW, NOW, "temporary upstream failure", 2,
+            )
         write_snapshot(snapshot, {
-            "result": "complete", "generated_at": NOW, "api_calls": 2,
-            "scheduled_games": 2, "games_requested": 2, "games_fetched": 2,
-            "games_failed": 0, "current_games": 2, "stale_games": 0, "missing_games": 0,
+            "result": "partial" if stale_second_game else "complete", "generated_at": NOW, "api_calls": 2,
+            "scheduled_games": 2, "games_requested": 2, "games_fetched": 1 if stale_second_game else 2,
+            "games_failed": int(stale_second_game), "current_games": 1 if stale_second_game else 2,
+            "stale_games": int(stale_second_game), "missing_games": 0,
         }, tmp_path)
 
     for season, pitches in ((2023, 80), (2024, 90), (2025, 100)):
@@ -722,6 +730,15 @@ def test_player_history_exports_sparse_prior_season_points_and_zero_mlb_history(
     assert veteran["seasons"][0]["points"] == [{"day": 184, "pitches": 80}]
     assert [season["total"] for season in newcomer["seasons"]] == [0, 0, 0, 70]
     assert all(not season["points"] for season in newcomer["seasons"][:3])
+
+    write_season(
+        2025,
+        (1000, "Opening Starter", 10),
+        (11, "Veteran", 100),
+        stale_second_game=True,
+    )
+    with pytest.raises(ValueError, match=r"completed-season snapshot 2025 has incomplete coverage"):
+        export_player_history(tmp_path, 2026)
 
 
 def test_team_pitcher_usage_keeps_swingman_pitches_in_each_appearance_role():
