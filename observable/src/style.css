@@ -556,6 +556,10 @@ tbody tr.selected td { background: var(--accent-soft); }
 @media (max-width: 760px) {
   .snapshot-panel { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .league-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Keep the wide bullpen table inside its own scroller instead of letting its
+     min-content width widen the full Recent strain screen on phones. */
+  .recent-strain,
+  .recent-strain > * { min-width: 0; }
   .recent-strain-header { display: grid; align-items: start; }
   .recent-strain-header label { width: 100%; max-width: 360px; }
   .recent-game-grid { grid-template-columns: 1fr; }
