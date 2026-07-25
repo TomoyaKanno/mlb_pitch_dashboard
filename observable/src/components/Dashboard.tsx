@@ -389,18 +389,20 @@ function PlayerHistoryPanel({
         <span><i className="legend-last-year" />{lastYear.season}</span>
         <span><i className="legend-band" />{prior[0].season}–{lastYear.season} range</span>
       </div>
-      <div className="player-history-season-summary" aria-label="Prior season workload totals">
-        <div className="player-history-season-row player-history-season-heading" aria-hidden="true">
-          <span>Season</span><span>At this point</span><span>Full season</span>
-        </div>
-        {prior.slice().reverse().map((season) => (
-          <div className="player-history-season-row" key={season.season}>
-            <strong>{season.season}</strong>
-            <span>{integer.format(playerValueAt(season, currentDay))}</span>
-            <span>{integer.format(season.total)}</span>
-          </div>
-        ))}
-      </div>
+      <table className="player-history-season-summary">
+        <thead>
+          <tr><th scope="col">Season</th><th scope="col">At this point</th><th scope="col">Full season</th></tr>
+        </thead>
+        <tbody>
+          {prior.slice().reverse().map((season) => (
+            <tr key={season.season}>
+              <th scope="row">{season.season}</th>
+              <td>{integer.format(playerValueAt(season, currentDay))}</td>
+              <td>{integer.format(season.total)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </aside>
   );
 }

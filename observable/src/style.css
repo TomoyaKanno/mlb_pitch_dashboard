@@ -571,20 +571,18 @@ tbody tr.selected td { background: var(--accent-soft); }
 .legend-current { background: var(--accent); }
 .legend-last-year { background: repeating-linear-gradient(90deg, var(--muted) 0 5px, transparent 5px 9px); }
 .legend-band { background: var(--accent-soft); border: 1px solid var(--border); }
-.player-history-season-summary { margin-top: 12px; border-top: 1px solid var(--border); }
-.player-history-season-row {
-  display: grid;
-  grid-template-columns: 1fr 1.35fr 1.15fr;
-  gap: 10px;
-  align-items: center;
-  min-height: 31px;
+.player-history-season-summary { width: 100%; margin-top: 12px; border-top: 1px solid var(--border); border-collapse: collapse; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.player-history-season-summary th,
+.player-history-season-summary td {
+  height: 31px;
+  padding: 0;
   border-bottom: 1px solid var(--border);
   color: var(--text);
-  font-size: .78rem;
-  font-variant-numeric: tabular-nums;
 }
-.player-history-season-row > span:not(:first-child) { text-align: right; }
-.player-history-season-heading { min-height: 26px; color: var(--muted); font-size: .66rem; text-transform: uppercase; letter-spacing: .04em; }
+.player-history-season-summary th:not(:first-child),
+.player-history-season-summary td { text-align: right; }
+.player-history-season-summary thead th { height: 26px; background: transparent; color: var(--muted); font-size: .66rem; letter-spacing: .04em; text-align: left; text-transform: uppercase; }
+.player-history-season-summary tbody th { background: transparent; font-size: .78rem; letter-spacing: normal; text-align: left; text-transform: none; }
 .metric { display: grid; grid-template-columns: minmax(70px, auto) 1fr; gap: 12px; align-items: center; padding-right: 14px; }
 .track { position: relative; height: 7px; overflow: visible; border-radius: 999px; background: var(--surface-2); }
 .fill { display: flex; min-width: 2px; height: 100%; overflow: hidden; border-radius: inherit; background: var(--accent); }
