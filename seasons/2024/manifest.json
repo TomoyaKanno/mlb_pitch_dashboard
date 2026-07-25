@@ -1,0 +1,84 @@
+{
+  "api_calls": 2430,
+  "current_games": 2429,
+  "files": {
+    "appearances/2024-03.jsonl": {
+      "bytes": 152937,
+      "sha256": "bcd8486d21b0263a4495166aa235015a02bb00cfd3f07c70d7bb4141ea1955e6"
+    },
+    "appearances/2024-04.jsonl": {
+      "bytes": 991272,
+      "sha256": "3d751773158a3741b5cd91e92f74175140dd40f64b3de838afd7ad66b89caa33"
+    },
+    "appearances/2024-05.jsonl": {
+      "bytes": 1011163,
+      "sha256": "12d441da531436ff6f6a36c6cb8c60a2328eed017e7ae4b88957a1628bec6a37"
+    },
+    "appearances/2024-06.jsonl": {
+      "bytes": 1017160,
+      "sha256": "4fff0a9f3e74af6057d47eb781e7796d32d812c53006071e2093439b968576a5"
+    },
+    "appearances/2024-07.jsonl": {
+      "bytes": 938350,
+      "sha256": "9e823b62dfeb38366f07f5e6bd5fc500c224dbe205c8b62985efbc34871b482f"
+    },
+    "appearances/2024-08.jsonl": {
+      "bytes": 1055144,
+      "sha256": "1fca178dcef8ad8e04b68fbad70cc8dc5240506121e9ab9ed456af4b2320cf65"
+    },
+    "appearances/2024-09.jsonl": {
+      "bytes": 1024409,
+      "sha256": "611aa303e54a13a5820ce1bbd4b169f0eae0e28232d226557d60433cd635e9c4"
+    },
+    "fetch-state.json": {
+      "bytes": 592737,
+      "sha256": "b62c91c5409a700b8f4aa094566bdf522c92ecac4150512b8d2ded8b3b19904d"
+    },
+    "games/2024-03.jsonl": {
+      "bytes": 12374,
+      "sha256": "c6ec43d636d41e8c32f1fede556c7f530cdcb434ef5e85fdddbdd9183493b8f0"
+    },
+    "games/2024-04.jsonl": {
+      "bytes": 89271,
+      "sha256": "53b43838f7e7c674339aaa1e268eca05974eaccffe5804a20dbd6c3c6dcb97c7"
+    },
+    "games/2024-05.jsonl": {
+      "bytes": 91933,
+      "sha256": "8dff3b0f717e91bb05529e75ee35ac364cdf12426772c3cc32279987df5988f4"
+    },
+    "games/2024-06.jsonl": {
+      "bytes": 90157,
+      "sha256": "6e4dc958c3970ca46c786090efb5522b1b9594afb84e034d979eb6a82f31856b"
+    },
+    "games/2024-07.jsonl": {
+      "bytes": 82961,
+      "sha256": "46d44b1fadbfc3ccd6ca709acec76c1d56c4d2a3eb913ecbcc8734fd36c04cb6"
+    },
+    "games/2024-08.jsonl": {
+      "bytes": 92840,
+      "sha256": "10b37c224ad3596bc2aa1df0e3ab549010f0fa7a0c21439595654714f9d34378"
+    },
+    "games/2024-09.jsonl": {
+      "bytes": 86543,
+      "sha256": "1a7583bebcc937faa7b4aca0231e128045a432454907c03fc02e8d4677aed947"
+    },
+    "next-games.json": {
+      "bytes": 59,
+      "sha256": "33fd566d0f78c848b0c337bd352efff39fab9161153adc1116412dd7489cad77"
+    },
+    "roster-pitchers.json": {
+      "bytes": 62,
+      "sha256": "a694f177adaec4f4ac5f0dd849ae21e7119ebb3048108d879181da956bc9cda9"
+    }
+  },
+  "games_failed": 0,
+  "games_fetched": 2429,
+  "games_requested": 2429,
+  "generated_at": "2026-07-25T03:09:11.272531+00:00",
+  "missing_games": 0,
+  "result": "complete",
+  "scheduled_games": 2429,
+  "schema_version": 1,
+  "season": 2024,
+  "stale_games": 0
+}
