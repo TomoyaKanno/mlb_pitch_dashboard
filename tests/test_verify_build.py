@@ -114,6 +114,39 @@ def _valid_payloads(data_commit: str = "data-sha") -> tuple[dict, dict]:
     return dashboard, series
 
 
+def _valid_player_history(dashboard: dict) -> dict:
+    current_season = dashboard["season"]
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "season": current_season,
+        "data_commit": dashboard["data_commit"],
+        "historical_seasons": [current_season - 3, current_season - 2, current_season - 1],
+        "players": [
+            {
+                "pitcher_id": leader["pitcher_id"],
+                "pitcher_name": leader["pitcher_name"],
+                "seasons": [
+                    {
+                        "season": historical_season,
+                        "season_days": 183,
+                        "total": 10,
+                        "appearances": 1,
+                        "points": [{"day": 30, "pitches": 10}],
+                    }
+                    for historical_season in range(current_season - 3, current_season)
+                ] + [{
+                    "season": current_season,
+                    "season_days": 120,
+                    "total": leader["total"],
+                    "appearances": 1,
+                    "points": [{"day": 120, "pitches": leader["total"]}],
+                }],
+            }
+            for leader in dashboard["player_totals"]
+        ],
+    }
+
+
 def _write_dist(
     tmp_path: Path,
     dashboard: dict,
@@ -126,6 +159,7 @@ def _write_dist(
     data_dir.mkdir(parents=True)
     (data_dir / "dashboard.test.json").write_text(json.dumps(dashboard))
     (data_dir / "team-timeseries.test.json").write_text(json.dumps(series))
+    (data_dir / "player-history.test.json").write_text(json.dumps(_valid_player_history(dashboard)))
     (dist_dir / "index.html").write_text(index)
     return dist_dir
 
@@ -145,6 +179,7 @@ def test_verify_browser_payload_accepts_a_reconciled_build(tmp_path: Path):
         "team_day_points": 30,
         "complete_games": 0,
         "player_totals": 30,
+        "player_history_players": 30,
         "team_usage_windows": 30,
         "recent_games": 30,
         "next_games": 30,

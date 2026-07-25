@@ -46,6 +46,32 @@ interface PlayerTotal {
   total: number;
 }
 
+interface PlayerHistoryPoint {
+  day: number;
+  pitches: number;
+}
+
+interface PlayerHistorySeason {
+  season: number;
+  season_days: number;
+  total: number;
+  appearances: number;
+  points: PlayerHistoryPoint[];
+}
+
+interface PlayerHistory {
+  pitcher_id: number;
+  pitcher_name: string;
+  seasons: PlayerHistorySeason[];
+}
+
+interface PlayerHistoryData {
+  schema_version: number;
+  season: number;
+  historical_seasons: number[];
+  players: PlayerHistory[];
+}
+
 interface PitcherUsage {
   pitcher_id: number;
   pitcher_name: string;
@@ -218,6 +244,153 @@ function formatAxisValue(value: number, view: View): string {
   if (view === "share") return `${Math.round(value * 100)}%`;
   if (value >= 1000) return `${Math.round(value / 1000)}k`;
   return integer.format(Math.round(value));
+}
+
+interface PlayerCurvePoint { day: number; value: number }
+
+function playerCurve(season: PlayerHistorySeason): PlayerCurvePoint[] {
+  const curve: PlayerCurvePoint[] = [{day: 0, value: 0}];
+  let total = 0;
+  for (const point of season.points) {
+    curve.push({day: point.day, value: total});
+    total += point.pitches;
+    curve.push({day: point.day, value: total});
+  }
+  if (curve[curve.length - 1].day !== season.season_days) {
+    curve.push({day: season.season_days, value: total});
+  }
+  return curve;
+}
+
+function playerValueAt(season: PlayerHistorySeason, day: number): number {
+  let total = 0;
+  for (const point of season.points) {
+    if (point.day > day) break;
+    total += point.pitches;
+  }
+  return total;
+}
+
+function numericPath(
+  series: PlayerCurvePoint[],
+  maxDay: number,
+  valueMax: number,
+  plot: {left: number; top: number; width: number; height: number},
+): string {
+  return series.map((point, index) => {
+    const x = plot.left + (point.day / maxDay) * plot.width;
+    const y = pointY(point.value, {min: 0, max: valueMax}, plot.top, plot.height);
+    return `${index === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ");
+}
+
+function PlayerHistoryPanel({
+  pitcher, history, onClose,
+}: {
+  pitcher: PlayerTotal;
+  history: PlayerHistory;
+  onClose: () => void;
+}) {
+  const width = 520;
+  const height = 268;
+  const plot = {left: 42, top: 16, width: 464, height: 176};
+  const current = history.seasons[history.seasons.length - 1];
+  const prior = history.seasons.slice(0, -1);
+  const lastYear = prior[prior.length - 1];
+  const maxDay = Math.max(...history.seasons.map((season) => season.season_days), 1);
+  const currentDay = current.season_days;
+  const historicAtCurrent = prior.map((season) => playerValueAt(season, currentDay));
+  const historicMin = Math.min(...historicAtCurrent);
+  const historicMax = Math.max(...historicAtCurrent);
+  const priorMlbSeasons = prior.filter((season) => season.total > 0).length;
+  const bandDays = Array.from(new Set([
+    0,
+    maxDay,
+    ...prior.flatMap((season) => [season.season_days, ...season.points.map((point) => point.day)]),
+  ])).sort((a, b) => a - b);
+  const band = bandDays.flatMap((day) => {
+    // Retain both sides of each game date so the envelope changes vertically,
+    // like the individual cumulative pitch curves, rather than ramping before
+    // a pitcher has actually thrown the pitches.
+    const before = prior.map((season) => playerValueAt(season, day - 1));
+    const after = prior.map((season) => playerValueAt(season, day));
+    return [
+      {day, low: Math.min(...before), high: Math.max(...before)},
+      {day, low: Math.min(...after), high: Math.max(...after)},
+    ];
+  });
+  const valueMax = niceCeil(Math.max(
+    pitcher.total,
+    ...history.seasons.map((season) => season.total),
+  ));
+  const yTicks = valueAxisTicks(0, valueMax, "total");
+  const currentPath = numericPath(playerCurve(current), maxDay, valueMax, plot);
+  const lastYearPath = numericPath(playerCurve(lastYear), maxDay, valueMax, plot);
+  const bandPath = `${band.map((point, index) => {
+    const x = plot.left + (point.day / maxDay) * plot.width;
+    const y = pointY(point.high, {min: 0, max: valueMax}, plot.top, plot.height);
+    return `${index === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ")} ${band.slice().reverse().map((point) => {
+    const x = plot.left + (point.day / maxDay) * plot.width;
+    const y = pointY(point.low, {min: 0, max: valueMax}, plot.top, plot.height);
+    return `L${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ")} Z`;
+  const currentX = plot.left + (currentDay / maxDay) * plot.width;
+
+  return (
+    <aside className="team-series-panel is-open player-history-panel" aria-label={`${pitcher.pitcher_name} workload history`}>
+      <div className="team-series-header">
+        <div className="team-series-identity">
+          <img
+            className="pitcher-portrait player-history-portrait"
+            src={`https://img.mlbstatic.com/mlb-photos/image/upload/w_128,d_people:generic:headshot:67:current.png,q_auto:best,f_auto/v1/people/${pitcher.pitcher_id}/headshot/67/current`}
+            alt=""
+            width={48}
+            height={64}
+            onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+          />
+          <div className="team-series-copy">
+            <p className="team-series-kicker">Player workload history</p>
+            <h2 className="team-series-title">{pitcher.pitcher_name}</h2>
+            <p className="secondary team-series-context">{pitcher.team_name} · cumulative pitches by regular-season day</p>
+          </div>
+        </div>
+        <button type="button" className="team-series-close" onClick={onClose}>Close</button>
+      </div>
+      <div className="player-history-stats" aria-label="Workload comparison at the current point in the season">
+        <div><span>Current</span><strong>{integer.format(pitcher.total)}</strong></div>
+        <div><span>{lastYear.season} at this point</span><strong>{integer.format(playerValueAt(lastYear, currentDay))}</strong></div>
+        <div><span>Prior 3-year range</span><strong>{integer.format(historicMin)}–{integer.format(historicMax)}</strong></div>
+      </div>
+      <p className="player-history-availability">
+        {priorMlbSeasons === 0
+          ? "No MLB pitch workload in the prior three completed seasons."
+          : `${priorMlbSeasons} of 3 prior completed seasons included MLB pitch workload.`}
+      </p>
+      <div className="team-series-chart-wrap">
+        <svg className="team-series-chart player-history-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${pitcher.pitcher_name} current workload compared with the prior three completed seasons`}>
+          {yTicks.map((tick) => {
+            const y = pointY(tick, {min: 0, max: valueMax}, plot.top, plot.height);
+            return <g key={tick}><line className="series-grid" x1={plot.left} x2={plot.left + plot.width} y1={y} y2={y} /><text className="series-axis-label" x={plot.left - 6} y={y} textAnchor="end" dominantBaseline="middle">{formatAxisValue(tick, "total")}</text></g>;
+          })}
+          <line className="series-axis" x1={plot.left} x2={plot.left} y1={plot.top} y2={plot.top + plot.height} />
+          <line className="series-axis" x1={plot.left} x2={plot.left + plot.width} y1={plot.top + plot.height} y2={plot.top + plot.height} />
+          <path className="player-history-band" d={bandPath} />
+          <path className="player-history-last-year" d={lastYearPath} />
+          <path className="player-history-current" d={currentPath} />
+          <line className="player-history-today" x1={currentX} x2={currentX} y1={plot.top} y2={plot.top + plot.height} />
+          <text className="series-axis-label" x={plot.left} y={plot.top + plot.height + 16} textAnchor="start">Opening day</text>
+          <text className="series-axis-label" x={plot.left + plot.width / 2} y={plot.top + plot.height + 16} textAnchor="middle">Midseason</text>
+          <text className="series-axis-label" x={plot.left + plot.width} y={plot.top + plot.height + 16} textAnchor="end">Regular-season end</text>
+        </svg>
+      </div>
+      <div className="player-history-legend" aria-label="Chart legend">
+        <span><i className="legend-current" />{current.season} current</span>
+        <span><i className="legend-last-year" />{lastYear.season}</span>
+        <span><i className="legend-band" />{prior[0].season}–{lastYear.season} range</span>
+      </div>
+    </aside>
+  );
 }
 
 type PitcherUsageKey = "total" | "official_sp" | "official_rp" | "adjusted_sp" | "adjusted_rp";
@@ -608,7 +781,13 @@ function TeamTable({
 }
 
 
-function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
+function PlayerTotalTable({
+  pitchers, selectedPitcherId, onSelectPitcher,
+}: {
+  pitchers: PlayerTotal[];
+  selectedPitcherId: number | null;
+  onSelectPitcher: (pitcherId: number) => void;
+}) {
   const maximum = Math.max(...pitchers.map((pitcher) => pitcher.total), 1);
   return (
     <section className="table-shell">
@@ -629,7 +808,20 @@ function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
           {pitchers.map((pitcher, index) => {
             const width = Math.max(2, pitcher.total / maximum * 100);
             return (
-              <tr key={pitcher.pitcher_id}>
+              <tr
+                key={pitcher.pitcher_id}
+                className={`player-row${selectedPitcherId === pitcher.pitcher_id ? " selected" : ""}`}
+                role="button"
+                tabIndex={0}
+                aria-pressed={selectedPitcherId === pitcher.pitcher_id}
+                onClick={() => onSelectPitcher(pitcher.pitcher_id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onSelectPitcher(pitcher.pitcher_id);
+                  }
+                }}
+              >
                 <td className="rank">{index + 1}</td>
                 <td className="team">
                   <span className="team-name">
@@ -678,10 +870,11 @@ function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
 }
 
 export function Dashboard({
-  data, timeseries,
+  data, timeseries, playerHistory,
 }: {
   data: DashboardData;
   timeseries: TeamTimeseriesData;
+  playerHistory: PlayerHistoryData;
 }) {
   const [screen, setScreen] = useState<"leaders" | "strain">("strain");
   const [recentTeamId, setRecentTeamId] = useState(119);
@@ -693,6 +886,7 @@ export function Dashboard({
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
   const [seriesMode, setSeriesMode] = useState<SeriesMode>("cumulative");
   const [panelOpen, setPanelOpen] = useState(false);
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const closingRef = useRef(false);
   const league = useMemo(() => leagueTotals(data.teams), [data.teams]);
   const dateDomain = useMemo(() => seriesDateDomain(timeseries.points), [timeseries.points]);
@@ -700,6 +894,10 @@ export function Dashboard({
   const selectedTeam = data.teams.find((team) => team.team_id === selectedTeamId) ?? null;
   const selectedPitcherUsage = data.team_pitcher_usage.find(
     (usage) => usage.team_id === selectedTeamId,
+  ) ?? null;
+  const selectedPlayer = data.player_totals.find((pitcher) => pitcher.pitcher_id === selectedPlayerId) ?? null;
+  const selectedPlayerHistory = playerHistory.players.find(
+    (player) => player.pitcher_id === selectedPlayerId,
   ) ?? null;
   const selectedSeries = useMemo(
     () => (selectedTeamId == null || view === "players"
@@ -755,6 +953,7 @@ export function Dashboard({
   function handleView(next: View) {
     setView(next);
     if (!seriesSupported(next) && selectedTeamId != null) beginClose();
+    if (next !== "players") setSelectedPlayerId(null);
   }
 
   function handleSelectTeam(teamId: number) {
@@ -764,6 +963,10 @@ export function Dashboard({
       return;
     }
     setSelectedTeamId(teamId);
+  }
+
+  function handleSelectPlayer(pitcherId: number) {
+    setSelectedPlayerId((selected) => selected === pitcherId ? null : pitcherId);
   }
 
   const showPanel = view !== "players" && selectedTeam != null && dateDomain != null;
@@ -793,7 +996,20 @@ export function Dashboard({
             {view !== "share" && view !== "players" && <label className="check"><input type="checkbox" checked={perGame} onChange={(event) => setPerGame(event.target.checked)} />Per game</label>}
           </section>
           {view === "players" ? (
-            <PlayerTotalTable pitchers={data.player_totals} />
+            <div className={selectedPlayer && selectedPlayerHistory ? "table-with-panel" : undefined}>
+              <PlayerTotalTable
+                pitchers={data.player_totals}
+                selectedPitcherId={selectedPlayerId}
+                onSelectPitcher={handleSelectPlayer}
+              />
+              {selectedPlayer && selectedPlayerHistory ? (
+                <PlayerHistoryPanel
+                  pitcher={selectedPlayer}
+                  history={selectedPlayerHistory}
+                  onClose={() => setSelectedPlayerId(null)}
+                />
+              ) : null}
+            </div>
           ) : (
             <div className={layoutWithPanel ? "table-with-panel" : undefined}>
             <TeamTable

@@ -284,10 +284,17 @@ td.rank, .metric strong { font-variant-numeric: tabular-nums; }
 .player-team-abbreviation { display: none; }
 .player-team-logo.is-hidden { display: none; }
 tbody tr.team-row { cursor: pointer; }
+tbody tr.player-row { cursor: pointer; }
 tbody tr.team-row:hover td,
-tbody tr.team-row:focus-visible td { background: var(--accent-soft); }
+tbody tr.team-row:focus-visible td,
+tbody tr.player-row:hover td,
+tbody tr.player-row:focus-visible td { background: var(--accent-soft); }
 tbody tr.team-row:focus-visible { outline: none; }
+tbody tr.player-row:focus-visible { outline: none; }
 tbody tr.team-row:focus-visible td:first-child {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+tbody tr.player-row:focus-visible td:first-child {
   box-shadow: inset 3px 0 0 var(--accent);
 }
 tbody tr.team-row[aria-pressed="true"] .team { color: var(--accent); }
@@ -533,6 +540,37 @@ tbody tr.selected td { background: var(--accent-soft); }
   margin: 6px 0 0;
   line-height: 1.45;
 }
+.player-history-panel { color: var(--text); }
+.player-history-portrait { width: 48px; height: 64px; }
+.player-history-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.player-history-stats > div {
+  display: grid;
+  gap: 3px;
+  padding: 9px;
+  border-left: 1px solid var(--border);
+}
+.player-history-stats > div:first-child { border-left: 0; }
+.player-history-stats span { color: var(--muted); font-size: .68rem; line-height: 1.25; }
+.player-history-stats strong { font-size: .92rem; font-variant-numeric: tabular-nums; }
+.player-history-availability { margin: 0 0 10px; color: var(--muted); font-size: .78rem; line-height: 1.4; }
+.player-history-chart { color: var(--accent); cursor: default; }
+.player-history-band { fill: var(--accent-soft); fill-opacity: .9; }
+.player-history-last-year { fill: none; stroke: var(--muted); stroke-width: 1.6; stroke-dasharray: 5 4; }
+.player-history-current { fill: none; stroke: var(--accent); stroke-width: 2.6; }
+.player-history-today { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 3; opacity: .7; }
+.player-history-legend { display: flex; flex-wrap: wrap; gap: 8px 13px; margin: 9px 0 0; color: var(--muted); font-size: .72rem; }
+.player-history-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.player-history-legend i { display: inline-block; width: 16px; height: 3px; border-radius: 3px; }
+.legend-current { background: var(--accent); }
+.legend-last-year { background: repeating-linear-gradient(90deg, var(--muted) 0 5px, transparent 5px 9px); }
+.legend-band { background: var(--accent-soft); border: 1px solid var(--border); }
 .metric { display: grid; grid-template-columns: minmax(70px, auto) 1fr; gap: 12px; align-items: center; padding-right: 14px; }
 .track { position: relative; height: 7px; overflow: visible; border-radius: 999px; background: var(--surface-2); }
 .fill { display: flex; min-width: 2px; height: 100%; overflow: hidden; border-radius: inherit; background: var(--accent); }
