@@ -76,6 +76,19 @@ interface TeamTimeseriesData {
 const integer = new Intl.NumberFormat("en-US");
 const decimal = new Intl.NumberFormat("en-US", {minimumFractionDigits: 1, maximumFractionDigits: 1});
 
+const teamAbbreviations: Record<number, string> = {
+  108: "LAA", 109: "ARI", 110: "BAL", 111: "BOS", 112: "CHC", 113: "CIN",
+  114: "CLE", 115: "COL", 116: "DET", 117: "HOU", 118: "KC", 119: "LAD",
+  120: "WSH", 121: "NYM", 133: "ATH", 134: "PIT", 135: "SD", 136: "SEA",
+  137: "SF", 138: "STL", 139: "TB", 140: "TEX", 141: "TOR", 142: "MIN",
+  143: "PHI", 144: "ATL", 145: "CWS", 146: "MIA", 147: "NYY", 158: "MIL",
+};
+
+function teamAbbreviation(teamId: number, teamName: string): string {
+  return teamAbbreviations[teamId]
+    ?? teamName.split(/\s+/).map((word) => word[0]).join("").slice(0, 3).toUpperCase();
+}
+
 const FRAMINGS: {view: View; label: string}[] = [
   {view: "total", label: "Team total"},
   {view: "sp", label: "SP workload"},
@@ -635,15 +648,18 @@ function PlayerTotalTable({pitchers}: {pitchers: PlayerTotal[]}) {
                 <td className="team player-team-cell" aria-label={pitcher.team_name} title={pitcher.team_name}>
                   <span className="team-name">
                     <img
-                      className="team-logo"
+                      className="team-logo player-team-logo"
                       src={`https://www.mlbstatic.com/team-logos/${pitcher.team_id}.svg`}
                       alt=""
                       width={22}
                       height={22}
                       loading="lazy"
-                      onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
+                      onError={(event) => { event.currentTarget.classList.add("is-hidden"); }}
                     />
                     <span className="player-team-name">{pitcher.team_name}</span>
+                    <span aria-hidden="true" className="player-team-abbreviation">
+                      {teamAbbreviation(pitcher.team_id, pitcher.team_name)}
+                    </span>
                   </span>
                 </td>
                 <td>
