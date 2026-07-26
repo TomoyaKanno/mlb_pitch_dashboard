@@ -1,6 +1,6 @@
 {
   "api_calls": 159,
-  "current_games": 1555,
+  "current_games": 1570,
   "files": {
     "appearances/2026-03.jsonl": {
       "bytes": 200789,
@@ -19,12 +19,12 @@
       "sha256": "3ad72c58401d4115acb4a069efb506fa13d373011b321b89d811636d836f0bc8"
     },
     "appearances/2026-07.jsonl": {
-      "bytes": 708247,
-      "sha256": "4289d3e2dd2ded0fc0a692322f59c9cc8cea7370ba2c35adecaad82df4d0df4b"
+      "bytes": 739023,
+      "sha256": "817e21a72f5b11e8650ef1ff1282e263b9ac4b64d983713b52b84818d182c1a9"
     },
     "fetch-state.json": {
-      "bytes": 379526,
-      "sha256": "fbe8f4ccfdafc6c98973e179981b016dbe5bb68e6d9b9fd38d41b8e0778540c4"
+      "bytes": 383201,
+      "sha256": "8a854be06ec1cb354f9d6fc81a67c0855ed2737bcd0a89155435c8d9e546a97d"
     },
     "games/2026-03.jsonl": {
       "bytes": 17046,
@@ -43,25 +43,25 @@
       "sha256": "bbae3d3d9edfb2229a2b4d208555f15276fb3ed86cff21f6992fb99c10eac8e2"
     },
     "games/2026-07.jsonl": {
-      "bytes": 61467,
-      "sha256": "6f6f4e6eee9e4189c009b60b4c0c14b87e6617df1d108a30a009e230c66ecb0a"
+      "bytes": 64831,
+      "sha256": "e0f5ffcdc42f64f8523caab901baaf84f91f8ef62fe10b473547e4a10ddf33e7"
     },
     "next-games.json": {
-      "bytes": 12814,
-      "sha256": "9853302cbda2f2db306169ea8f9895ad8a1710ffcf143d6759548eba69583395"
+      "bytes": 12888,
+      "sha256": "5c7e4d52930f6591522046956ed66418319591e269cc168722a22fec07c0a525"
     },
     "roster-pitchers.json": {
-      "bytes": 220656,
-      "sha256": "af9c4d8f763ad1e9c44c4815d51d75bf2990a9f36455fffc995fbaa6ab0ccac4"
+      "bytes": 220643,
+      "sha256": "21212460ae66f68ea4171b760ea2ca94f2da693b3e0eabdbe86e5808be6f6f3e"
     }
   },
   "games_failed": 0,
   "games_fetched": 96,
   "games_requested": 96,
-  "generated_at": "2026-07-25T10:45:13.798472+00:00",
+  "generated_at": "2026-07-26T10:54:39.944905+00:00",
   "missing_games": 0,
   "result": "complete",
-  "scheduled_games": 1555,
+  "scheduled_games": 1570,
   "schema_version": 1,
   "season": 2026,
   "stale_games": 0

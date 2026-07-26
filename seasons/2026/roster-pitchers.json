@@ -663,9 +663,9 @@
     {
       "depth_order": 6,
       "depth_role": "RP",
-      "jersey_number": "57",
-      "pitcher_id": 622694,
-      "pitcher_name": "Elieser Hern\u00e1ndez",
+      "jersey_number": "65",
+      "pitcher_id": 671162,
+      "pitcher_name": "Connor Thomas",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 144,
@@ -798,17 +798,6 @@
       "jersey_number": "61",
       "pitcher_id": 683627,
       "pitcher_name": "Anthony Molina",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 144,
-      "team_name": "Atlanta Braves"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "65",
-      "pitcher_id": 671162,
-      "pitcher_name": "Connor Thomas",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 144,
@@ -2371,8 +2360,8 @@
       "jersey_number": "43",
       "pitcher_id": 542888,
       "pitcher_name": "Shawn Armstrong",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 114,
       "team_name": "Cleveland Guardians"
     },
@@ -2411,6 +2400,17 @@
     },
     {
       "depth_order": 8,
+      "depth_role": "RP",
+      "jersey_number": "98",
+      "pitcher_id": 702021,
+      "pitcher_name": "Will Dion",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 114,
+      "team_name": "Cleveland Guardians"
+    },
+    {
+      "depth_order": 9,
       "depth_role": "SP",
       "jersey_number": "28",
       "pitcher_id": 676440,
@@ -2421,7 +2421,7 @@
       "team_name": "Cleveland Guardians"
     },
     {
-      "depth_order": 9,
+      "depth_order": 10,
       "depth_role": "SP",
       "jersey_number": "32",
       "pitcher_id": 668909,
@@ -2432,7 +2432,7 @@
       "team_name": "Cleveland Guardians"
     },
     {
-      "depth_order": 10,
+      "depth_order": 11,
       "depth_role": "SP",
       "jersey_number": "54",
       "pitcher_id": 676282,
@@ -2443,7 +2443,7 @@
       "team_name": "Cleveland Guardians"
     },
     {
-      "depth_order": 11,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "44",
       "pitcher_id": 677944,
@@ -2454,7 +2454,7 @@
       "team_name": "Cleveland Guardians"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "77",
       "pitcher_id": 800048,
@@ -2514,17 +2514,6 @@
       "jersey_number": "26",
       "pitcher_id": 671106,
       "pitcher_name": "Logan Allen",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 114,
-      "team_name": "Cleveland Guardians"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "98",
-      "pitcher_id": 702021,
-      "pitcher_name": "Will Dion",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 114,
@@ -3152,8 +3141,8 @@
       "jersey_number": "74",
       "pitcher_id": 687911,
       "pitcher_name": "Bryan King",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 117,
       "team_name": "Houston Astros"
     },
@@ -3273,8 +3262,8 @@
       "jersey_number": "41",
       "pitcher_id": 681293,
       "pitcher_name": "Spencer Arrighetti",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 117,
       "team_name": "Houston Astros"
     },
@@ -4956,8 +4945,8 @@
       "jersey_number": "54",
       "pitcher_id": 694397,
       "pitcher_name": "Marco Raya",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 142,
       "team_name": "Minnesota Twins"
     },
@@ -5734,17 +5723,6 @@
     {
       "depth_order": 4,
       "depth_role": "RP",
-      "jersey_number": "60",
-      "pitcher_id": 676661,
-      "pitcher_name": "Max Lazar",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 143,
-      "team_name": "Philadelphia Phillies"
-    },
-    {
-      "depth_order": 5,
-      "depth_role": "RP",
       "jersey_number": "55",
       "pitcher_id": 663767,
       "pitcher_name": "Chase Shugart",
@@ -5754,7 +5732,7 @@
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 6,
+      "depth_order": 5,
       "depth_role": "RP",
       "jersey_number": "51",
       "pitcher_id": 686751,
@@ -5765,18 +5743,18 @@
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 7,
+      "depth_order": 6,
       "depth_role": "RP",
       "jersey_number": "58",
       "pitcher_id": 621383,
       "pitcher_name": "Tanner Banks",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
       "team_id": 143,
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "jersey_number": "40",
       "pitcher_id": 641745,
@@ -5787,18 +5765,18 @@
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
-      "jersey_number": "71",
-      "pitcher_id": 686934,
-      "pitcher_name": "Alex McFarlane",
+      "jersey_number": "19",
+      "pitcher_id": 679775,
+      "pitcher_name": "Kyle Backhus",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 143,
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "CP",
       "jersey_number": "59",
       "pitcher_id": 661395,
@@ -5809,7 +5787,7 @@
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "SP",
       "jersey_number": "45",
       "pitcher_id": 554430,
@@ -5820,7 +5798,7 @@
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "SP",
       "jersey_number": "61",
       "pitcher_id": 650911,
@@ -5831,7 +5809,7 @@
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "44",
       "pitcher_id": 666200,
@@ -5842,11 +5820,22 @@
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "27",
       "pitcher_id": 605400,
       "pitcher_name": "Aaron Nola",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 143,
+      "team_name": "Philadelphia Phillies"
+    },
+    {
+      "depth_order": 14,
+      "depth_role": "SP",
+      "jersey_number": "48",
+      "pitcher_id": 662144,
+      "pitcher_name": "Brian Keller",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 143,
@@ -5858,6 +5847,17 @@
       "jersey_number": "57",
       "pitcher_id": 660604,
       "pitcher_name": "Alan Rangel",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 143,
+      "team_name": "Philadelphia Phillies"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "jersey_number": "71",
+      "pitcher_id": 686934,
+      "pitcher_name": "Alex McFarlane",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 143,
@@ -5888,22 +5888,22 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "19",
-      "pitcher_id": 679775,
-      "pitcher_name": "Kyle Backhus",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "jersey_number": "22",
+      "pitcher_id": 642152,
+      "pitcher_name": "Lou Trivino III",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 143,
       "team_name": "Philadelphia Phillies"
     },
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "22",
-      "pitcher_id": 642152,
-      "pitcher_name": "Lou Trivino III",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "jersey_number": "60",
+      "pitcher_id": 676661,
+      "pitcher_name": "Max Lazar",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 143,
       "team_name": "Philadelphia Phillies"
     },
@@ -7230,9 +7230,9 @@
     {
       "depth_order": 4,
       "depth_role": "RP",
-      "jersey_number": "62",
-      "pitcher_id": 592155,
-      "pitcher_name": "Cam Booser",
+      "jersey_number": "32",
+      "pitcher_id": 571927,
+      "pitcher_name": "Steven Matz",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 139,
@@ -7241,9 +7241,9 @@
     {
       "depth_order": 5,
       "depth_role": "RP",
-      "jersey_number": "56",
-      "pitcher_id": 688297,
-      "pitcher_name": "Chris Roycroft",
+      "jersey_number": "62",
+      "pitcher_id": 592155,
+      "pitcher_name": "Cam Booser",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 139,
@@ -7262,6 +7262,50 @@
     },
     {
       "depth_order": 7,
+      "depth_role": "RP",
+      "jersey_number": "39",
+      "pitcher_id": 655889,
+      "pitcher_name": "Manuel Rodr\u00edguez",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
+      "team_id": 139,
+      "team_name": "Tampa Bay Rays"
+    },
+    {
+      "depth_order": 8,
+      "depth_role": "RP",
+      "jersey_number": "63",
+      "pitcher_id": 670955,
+      "pitcher_name": "Edwin Uceta",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
+      "team_id": 139,
+      "team_name": "Tampa Bay Rays"
+    },
+    {
+      "depth_order": 9,
+      "depth_role": "RP",
+      "jersey_number": "24",
+      "pitcher_id": 621051,
+      "pitcher_name": "Steven Wilson",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
+      "team_id": 139,
+      "team_name": "Tampa Bay Rays"
+    },
+    {
+      "depth_order": 10,
+      "depth_role": "RP",
+      "jersey_number": "68",
+      "pitcher_id": 669169,
+      "pitcher_name": "Jonathan Heasley",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
+      "team_id": 139,
+      "team_name": "Tampa Bay Rays"
+    },
+    {
+      "depth_order": 11,
       "depth_role": "CP",
       "jersey_number": "47",
       "pitcher_id": 641329,
@@ -7272,7 +7316,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 8,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "57",
       "pitcher_id": 656876,
@@ -7283,7 +7327,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 9,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "28",
       "pitcher_id": 607259,
@@ -7294,7 +7338,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 10,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "18",
       "pitcher_id": 663556,
@@ -7305,7 +7349,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 11,
+      "depth_order": 15,
       "depth_role": "SP",
       "jersey_number": "22",
       "pitcher_id": 643377,
@@ -7316,7 +7360,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 12,
+      "depth_order": 16,
       "depth_role": "SP",
       "jersey_number": "61",
       "pitcher_id": 693855,
@@ -7351,11 +7395,11 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "63",
-      "pitcher_id": 670955,
-      "pitcher_name": "Edwin Uceta",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
+      "jersey_number": "56",
+      "pitcher_id": 688297,
+      "pitcher_name": "Chris Roycroft",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 139,
       "team_name": "Tampa Bay Rays"
     },
@@ -7395,28 +7439,6 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "68",
-      "pitcher_id": 669169,
-      "pitcher_name": "Jonathan Heasley",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 139,
-      "team_name": "Tampa Bay Rays"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "39",
-      "pitcher_id": 655889,
-      "pitcher_name": "Manuel Rodr\u00edguez",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 139,
-      "team_name": "Tampa Bay Rays"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
       "jersey_number": "59",
       "pitcher_id": 669438,
       "pitcher_name": "Mason Englert",
@@ -7442,28 +7464,6 @@
       "jersey_number": "44",
       "pitcher_id": 686752,
       "pitcher_name": "Ryan Pepiot",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 139,
-      "team_name": "Tampa Bay Rays"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "32",
-      "pitcher_id": 571927,
-      "pitcher_name": "Steven Matz",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
-      "team_id": 139,
-      "team_name": "Tampa Bay Rays"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "24",
-      "pitcher_id": 621051,
-      "pitcher_name": "Steven Wilson",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
       "team_id": 139,
