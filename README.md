@@ -70,7 +70,7 @@ The deployed browser downloads small team- and player-level aggregates generated
 
 ## Refresh and deployment lifecycle
 
-`Refresh dashboard data` runs at 09:17 UTC from March through November—5:17 a.m. Eastern throughout the regular season, which is entirely in EDT. The workflow deliberately uses GitHub's established UTC scheduler rather than the newer `timezone` schedule feature after the latter repeatedly dispatched this workflow about two hours late. Revisit the UTC conversion before a future season. It can also be run manually from the Actions tab.
+`Refresh dashboard data` runs at 09:17 UTC from March through November—5:17 a.m. Eastern throughout the regular season, which is entirely in EDT. Revisit the UTC conversion before a future season. GitHub dispatches the run well after the requested time, between 1h28m and 2h05m late over 21–25 July 2026, for reasons that sit outside this repository; [docs/deployment.md](docs/deployment.md) records the measurements. It can also be run manually from the Actions tab.
 
 1. Read the published season from `config/dashboard.json`.
 2. Load the previous snapshot from `dashboard-data`.
