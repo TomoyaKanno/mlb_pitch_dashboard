@@ -586,11 +586,11 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": null,
+      "jersey_number": "49",
       "pitcher_id": 656240,
       "pitcher_name": "Scott Blewett",
-      "status_code": "NYR",
-      "status_description": "Not Yet Reported",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 133,
       "team_name": "Athletics"
     },
@@ -1631,11 +1631,11 @@
     {
       "depth_order": 17,
       "depth_role": "SP",
-      "jersey_number": "50",
+      "jersey_number": null,
       "pitcher_id": 592791,
       "pitcher_name": "Jameson Taillon",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "DES",
+      "status_description": "Designated for Assignment",
       "team_id": 112,
       "team_name": "Chicago Cubs"
     },
@@ -1700,6 +1700,17 @@
       "jersey_number": "19",
       "pitcher_id": 656849,
       "pitcher_name": "David Peterson",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "jersey_number": "61",
+      "pitcher_id": 681806,
+      "pitcher_name": "Andrew Wantz",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 112,
@@ -6779,6 +6790,17 @@
     {
       "depth_order": 5,
       "depth_role": "RP",
+      "jersey_number": "48",
+      "pitcher_id": 695380,
+      "pitcher_name": "Alex Hoppe",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 136,
+      "team_name": "Seattle Mariners"
+    },
+    {
+      "depth_order": 6,
+      "depth_role": "RP",
       "jersey_number": "47",
       "pitcher_id": 666374,
       "pitcher_name": "Matt Brash",
@@ -6788,24 +6810,13 @@
       "team_name": "Seattle Mariners"
     },
     {
-      "depth_order": 6,
+      "depth_order": 7,
       "depth_role": "RP",
       "jersey_number": "88",
       "pitcher_id": 681867,
       "pitcher_name": "Cooper Criswell",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
-      "team_id": 136,
-      "team_name": "Seattle Mariners"
-    },
-    {
-      "depth_order": 7,
-      "depth_role": "RP",
-      "jersey_number": "48",
-      "pitcher_id": 695380,
-      "pitcher_name": "Alex Hoppe",
-      "status_code": "A",
-      "status_description": "Active",
       "team_id": 136,
       "team_name": "Seattle Mariners"
     },
@@ -7813,11 +7824,11 @@
     {
       "depth_order": 3,
       "depth_role": "RP",
-      "jersey_number": "63",
+      "jersey_number": null,
       "pitcher_id": 680755,
       "pitcher_name": "Braydon Fisher",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RST",
+      "status_description": "Restricted List",
       "team_id": 141,
       "team_name": "Toronto Blue Jays"
     },
@@ -7959,8 +7970,8 @@
       "jersey_number": "31",
       "pitcher_id": 453286,
       "pitcher_name": "Max Scherzer",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 141,
       "team_name": "Toronto Blue Jays"
     },
@@ -8176,6 +8187,17 @@
     {
       "depth_order": 11,
       "depth_role": "SP",
+      "jersey_number": "19",
+      "pitcher_id": 813349,
+      "pitcher_name": "Connelly Early",
+      "status_code": "NYR",
+      "status_description": "Not Yet Reported",
+      "team_id": 120,
+      "team_name": "Washington Nationals"
+    },
+    {
+      "depth_order": 12,
+      "depth_role": "SP",
       "jersey_number": "18",
       "pitcher_id": 641793,
       "pitcher_name": "Zack Littell",
@@ -8185,7 +8207,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "36",
       "pitcher_id": 571945,
@@ -8196,7 +8218,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "27",
       "pitcher_id": 663623,
@@ -8207,8 +8229,8 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 14,
-      "depth_role": "SP",
+      "depth_order": null,
+      "depth_role": null,
       "jersey_number": "54",
       "pitcher_id": 674841,
       "pitcher_name": "Andrew Alvarez",
@@ -8225,17 +8247,6 @@
       "pitcher_name": "Cole Henry",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
-      "team_id": 120,
-      "team_name": "Washington Nationals"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": null,
-      "pitcher_id": 813349,
-      "pitcher_name": "Connelly Early",
-      "status_code": "NYR",
-      "status_description": "Not Yet Reported",
       "team_id": 120,
       "team_name": "Washington Nationals"
     },
@@ -8308,17 +8319,6 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "58",
-      "pitcher_id": 640454,
-      "pitcher_name": "Matt Krook",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 120,
-      "team_name": "Washington Nationals"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
       "jersey_number": "70",
       "pitcher_id": 680730,
       "pitcher_name": "Mitchell Parker",
@@ -8333,8 +8333,8 @@
       "jersey_number": "75",
       "pitcher_id": 687606,
       "pitcher_name": "Paxton Schultz",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 120,
       "team_name": "Washington Nationals"
     },
