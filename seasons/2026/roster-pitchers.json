@@ -388,17 +388,6 @@
     {
       "depth_order": 6,
       "depth_role": "RP",
-      "jersey_number": null,
-      "pitcher_id": 664129,
-      "pitcher_name": "Geoff Hartlieb",
-      "status_code": "DES",
-      "status_description": "Designated for Assignment",
-      "team_id": 133,
-      "team_name": "Athletics"
-    },
-    {
-      "depth_order": 7,
-      "depth_role": "RP",
       "jersey_number": "66",
       "pitcher_id": 669620,
       "pitcher_name": "Brady Basso",
@@ -408,7 +397,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "jersey_number": "58",
       "pitcher_id": 696522,
@@ -419,7 +408,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
       "jersey_number": "19",
       "pitcher_id": 806960,
@@ -430,7 +419,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "RP",
       "jersey_number": "63",
       "pitcher_id": 686930,
@@ -441,7 +430,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "SP",
       "jersey_number": "40",
       "pitcher_id": 622663,
@@ -452,7 +441,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "SP",
       "jersey_number": "59",
       "pitcher_id": 605488,
@@ -463,7 +452,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "61",
       "pitcher_id": 695611,
@@ -474,7 +463,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "35",
       "pitcher_id": 669372,
@@ -485,7 +474,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "57",
       "pitcher_id": 682052,
@@ -496,7 +485,7 @@
       "team_name": "Athletics"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "jersey_number": "50",
       "pitcher_id": 678022,
@@ -674,17 +663,6 @@
     {
       "depth_order": 6,
       "depth_role": "RP",
-      "jersey_number": "65",
-      "pitcher_id": 671162,
-      "pitcher_name": "Connor Thomas",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 144,
-      "team_name": "Atlanta Braves"
-    },
-    {
-      "depth_order": 7,
-      "depth_role": "RP",
       "jersey_number": "58",
       "pitcher_id": 682989,
       "pitcher_name": "Victor Mederos",
@@ -694,7 +672,7 @@
       "team_name": "Atlanta Braves"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "CP",
       "jersey_number": "26",
       "pitcher_id": 628452,
@@ -705,7 +683,7 @@
       "team_name": "Atlanta Braves"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "SP",
       "jersey_number": "51",
       "pitcher_id": 519242,
@@ -716,7 +694,7 @@
       "team_name": "Atlanta Braves"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "SP",
       "jersey_number": "99",
       "pitcher_id": 675911,
@@ -727,7 +705,7 @@
       "team_name": "Atlanta Braves"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "SP",
       "jersey_number": "55",
       "pitcher_id": 693821,
@@ -738,7 +716,7 @@
       "team_name": "Atlanta Braves"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "SP",
       "jersey_number": "66",
       "pitcher_id": 656550,
@@ -749,7 +727,7 @@
       "team_name": "Atlanta Braves"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "40",
       "pitcher_id": 625643,
@@ -760,7 +738,7 @@
       "team_name": "Atlanta Braves"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "33",
       "pitcher_id": 527048,
@@ -771,7 +749,7 @@
       "team_name": "Atlanta Braves"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "33",
       "pitcher_id": 666214,
@@ -782,7 +760,7 @@
       "team_name": "Atlanta Braves"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "jersey_number": "56",
       "pitcher_id": 680885,
@@ -798,8 +776,8 @@
       "jersey_number": "32",
       "pitcher_id": 700363,
       "pitcher_name": "AJ Smith-Shawver",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 144,
       "team_name": "Atlanta Braves"
     },
@@ -811,6 +789,28 @@
       "pitcher_name": "Anthony Molina",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
+      "team_id": 144,
+      "team_name": "Atlanta Braves"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "jersey_number": "65",
+      "pitcher_id": 671162,
+      "pitcher_name": "Connor Thomas",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 144,
+      "team_name": "Atlanta Braves"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "jersey_number": "57",
+      "pitcher_id": 622694,
+      "pitcher_name": "Elieser Hern\u00e1ndez",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 144,
       "team_name": "Atlanta Braves"
     },
@@ -1576,6 +1576,17 @@
     {
       "depth_order": 12,
       "depth_role": "RP",
+      "jersey_number": "40",
+      "pitcher_id": 663765,
+      "pitcher_name": "Jake Woodford",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 13,
+      "depth_role": "RP",
       "jersey_number": "46",
       "pitcher_id": 668970,
       "pitcher_name": "Gavin Hollowell",
@@ -1585,7 +1596,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "CP",
       "jersey_number": "48",
       "pitcher_id": 694037,
@@ -1596,7 +1607,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 14,
+      "depth_order": 15,
       "depth_role": "SP",
       "jersey_number": "16",
       "pitcher_id": 571510,
@@ -1607,7 +1618,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 15,
+      "depth_order": 16,
       "depth_role": "SP",
       "jersey_number": "18",
       "pitcher_id": 684007,
@@ -1618,7 +1629,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 16,
+      "depth_order": 17,
       "depth_role": "SP",
       "jersey_number": "30",
       "pitcher_id": 665795,
@@ -1629,7 +1640,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 17,
+      "depth_order": 18,
       "depth_role": "SP",
       "jersey_number": null,
       "pitcher_id": 592791,
@@ -1640,7 +1651,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 18,
+      "depth_order": 19,
       "depth_role": "SP",
       "jersey_number": "53",
       "pitcher_id": 607067,
@@ -1651,7 +1662,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 19,
+      "depth_order": 20,
       "depth_role": "SP",
       "jersey_number": "32",
       "pitcher_id": 676962,
@@ -1662,7 +1673,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 20,
+      "depth_order": 21,
       "depth_role": "SP",
       "jersey_number": "22",
       "pitcher_id": 690990,
@@ -1673,7 +1684,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 21,
+      "depth_order": 22,
       "depth_role": "SP",
       "jersey_number": "35",
       "pitcher_id": 657006,
@@ -1684,7 +1695,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 22,
+      "depth_order": 23,
       "depth_role": "SP",
       "jersey_number": "72",
       "pitcher_id": 665871,
@@ -1695,22 +1706,11 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 23,
+      "depth_order": 24,
       "depth_role": "SP",
       "jersey_number": "19",
       "pitcher_id": 656849,
       "pitcher_name": "David Peterson",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "61",
-      "pitcher_id": 681806,
-      "pitcher_name": "Andrew Wantz",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 112,
@@ -2283,8 +2283,8 @@
       "jersey_number": "74",
       "pitcher_id": 683742,
       "pitcher_name": "Jose Franco",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 113,
       "team_name": "Cincinnati Reds"
     },
@@ -2525,8 +2525,8 @@
       "jersey_number": "41",
       "pitcher_id": 682982,
       "pitcher_name": "Daniel Espino",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 114,
       "team_name": "Cleveland Guardians"
     },
@@ -3229,8 +3229,8 @@
       "jersey_number": "66",
       "pitcher_id": 699044,
       "pitcher_name": "Miguel Ullola",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 117,
       "team_name": "Houston Astros"
     },
@@ -3328,8 +3328,8 @@
       "jersey_number": "39",
       "pitcher_id": 669713,
       "pitcher_name": "Hayden Wesneski",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 117,
       "team_name": "Houston Astros"
     },
@@ -3455,7 +3455,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "jersey_number": "61",
       "pitcher_id": 663878,
@@ -3466,7 +3466,29 @@
       "team_name": "Kansas City Royals"
     },
     {
+      "depth_order": 8,
+      "depth_role": "RP",
+      "jersey_number": "51",
+      "pitcher_id": 668834,
+      "pitcher_name": "Easton McGee",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 118,
+      "team_name": "Kansas City Royals"
+    },
+    {
       "depth_order": 9,
+      "depth_role": "RP",
+      "jersey_number": "60",
+      "pitcher_id": 668674,
+      "pitcher_name": "Lucas Erceg",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 118,
+      "team_name": "Kansas City Royals"
+    },
+    {
+      "depth_order": 10,
       "depth_role": "CP",
       "jersey_number": "53",
       "pitcher_id": 608032,
@@ -3477,7 +3499,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 10,
+      "depth_order": 11,
       "depth_role": "CP",
       "jersey_number": "56",
       "pitcher_id": 656638,
@@ -3488,7 +3510,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 11,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "55",
       "pitcher_id": 666142,
@@ -3499,7 +3521,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "67",
       "pitcher_id": 607625,
@@ -3510,7 +3532,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "52",
       "pitcher_id": 608379,
@@ -3521,7 +3543,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 14,
+      "depth_order": 15,
       "depth_role": "SP",
       "jersey_number": "50",
       "pitcher_id": 663460,
@@ -3532,7 +3554,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 15,
+      "depth_order": 16,
       "depth_role": "SP",
       "jersey_number": "65",
       "pitcher_id": 702070,
@@ -3543,7 +3565,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 16,
+      "depth_order": 17,
       "depth_role": "SP",
       "jersey_number": "32",
       "pitcher_id": 663568,
@@ -3554,7 +3576,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 17,
+      "depth_order": 18,
       "depth_role": "SP",
       "jersey_number": "58",
       "pitcher_id": 679883,
@@ -3565,7 +3587,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 18,
+      "depth_order": 19,
       "depth_role": "SP",
       "jersey_number": "62",
       "pitcher_id": 677976,
@@ -3600,17 +3622,6 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "51",
-      "pitcher_id": 668834,
-      "pitcher_name": "Easton McGee",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 118,
-      "team_name": "Kansas City Royals"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
       "jersey_number": "34",
       "pitcher_id": 669212,
       "pitcher_name": "Eli Morgan",
@@ -3638,17 +3649,6 @@
       "pitcher_name": "Jose Cuas",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
-      "team_id": 118,
-      "team_name": "Kansas City Royals"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "60",
-      "pitcher_id": 668674,
-      "pitcher_name": "Lucas Erceg",
-      "status_code": "A",
-      "status_description": "Active",
       "team_id": 118,
       "team_name": "Kansas City Royals"
     },
@@ -3732,17 +3732,6 @@
     {
       "depth_order": 3,
       "depth_role": "RP",
-      "jersey_number": "63",
-      "pitcher_id": 681217,
-      "pitcher_name": "Chase Silseth",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 108,
-      "team_name": "Los Angeles Angels"
-    },
-    {
-      "depth_order": 4,
-      "depth_role": "RP",
       "jersey_number": "37",
       "pitcher_id": 608718,
       "pitcher_name": "Brent Suter",
@@ -3752,7 +3741,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 5,
+      "depth_order": 4,
       "depth_role": "RP",
       "jersey_number": "40",
       "pitcher_id": 696147,
@@ -3763,7 +3752,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 6,
+      "depth_order": 5,
       "depth_role": "RP",
       "jersey_number": "52",
       "pitcher_id": 696519,
@@ -3774,7 +3763,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 7,
+      "depth_order": 6,
       "depth_role": "RP",
       "jersey_number": "65",
       "pitcher_id": 820862,
@@ -3785,7 +3774,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "SP",
       "jersey_number": "16",
       "pitcher_id": 579328,
@@ -3796,7 +3785,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "SP",
       "jersey_number": "59",
       "pitcher_id": 667755,
@@ -3807,7 +3796,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "SP",
       "jersey_number": "48",
       "pitcher_id": 672282,
@@ -3818,7 +3807,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "SP",
       "jersey_number": "21",
       "pitcher_id": 680570,
@@ -3829,7 +3818,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "SP",
       "jersey_number": "41",
       "pitcher_id": 686799,
@@ -3840,7 +3829,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "32",
       "pitcher_id": 696270,
@@ -3851,7 +3840,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "57",
       "pitcher_id": 700712,
@@ -4018,17 +4007,6 @@
     {
       "depth_order": 7,
       "depth_role": "RP",
-      "jersey_number": "57",
-      "pitcher_id": 656212,
-      "pitcher_name": "Charlie Barnes",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 119,
-      "team_name": "Los Angeles Dodgers"
-    },
-    {
-      "depth_order": 8,
-      "depth_role": "RP",
       "jersey_number": "49",
       "pitcher_id": 595014,
       "pitcher_name": "Blake Treinen",
@@ -4038,7 +4016,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
       "jersey_number": "78",
       "pitcher_id": 676508,
@@ -4049,7 +4027,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "RP",
       "jersey_number": "48",
       "pitcher_id": 660813,
@@ -4060,7 +4038,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "RP",
       "jersey_number": null,
       "pitcher_id": 664776,
@@ -4071,18 +4049,18 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "CP",
       "jersey_number": "3",
       "pitcher_id": 621242,
       "pitcher_name": "Edwin D\u00edaz",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 119,
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "18",
       "pitcher_id": 808967,
@@ -4093,7 +4071,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "17",
       "pitcher_id": 660271,
@@ -4104,7 +4082,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "80",
       "pitcher_id": 686218,
@@ -4115,7 +4093,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "jersey_number": "11",
       "pitcher_id": 808963,
@@ -4126,7 +4104,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "jersey_number": "33",
       "pitcher_id": 641778,
@@ -4137,7 +4115,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 18,
+      "depth_order": 17,
       "depth_role": "SP",
       "jersey_number": "70",
       "pitcher_id": 680736,
@@ -4148,7 +4126,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 19,
+      "depth_order": 18,
       "depth_role": "SP",
       "jersey_number": "7",
       "pitcher_id": 605483,
@@ -4159,7 +4137,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 20,
+      "depth_order": 19,
       "depth_role": "SP",
       "jersey_number": "31",
       "pitcher_id": 607192,
@@ -4170,7 +4148,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 21,
+      "depth_order": 20,
       "depth_role": "SP",
       "jersey_number": "35",
       "pitcher_id": 694813,
@@ -4666,17 +4644,6 @@
     },
     {
       "depth_order": 9,
-      "depth_role": "RP",
-      "jersey_number": "31",
-      "pitcher_id": 668831,
-      "pitcher_name": "Garrett Stallings",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 158,
-      "team_name": "Milwaukee Brewers"
-    },
-    {
-      "depth_order": 10,
       "depth_role": "CP",
       "jersey_number": "29",
       "pitcher_id": 656730,
@@ -4687,7 +4654,7 @@
       "team_name": "Milwaukee Brewers"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "SP",
       "jersey_number": "32",
       "pitcher_id": 694819,
@@ -4698,7 +4665,7 @@
       "team_name": "Milwaukee Brewers"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "SP",
       "jersey_number": "52",
       "pitcher_id": 690986,
@@ -4709,7 +4676,7 @@
       "team_name": "Milwaukee Brewers"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "53",
       "pitcher_id": 605540,
@@ -4720,7 +4687,7 @@
       "team_name": "Milwaukee Brewers"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "23",
       "pitcher_id": 687075,
@@ -4731,7 +4698,7 @@
       "team_name": "Milwaukee Brewers"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "55",
       "pitcher_id": 675660,
@@ -4742,7 +4709,7 @@
       "team_name": "Milwaukee Brewers"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "jersey_number": "43",
       "pitcher_id": 701656,
@@ -4753,13 +4720,24 @@
       "team_name": "Milwaukee Brewers"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "jersey_number": "46",
       "pitcher_id": 682990,
       "pitcher_name": "Quinn Priester",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
+      "team_id": 158,
+      "team_name": "Milwaukee Brewers"
+    },
+    {
+      "depth_order": 17,
+      "depth_role": "SP",
+      "jersey_number": "33",
+      "pitcher_id": 623381,
+      "pitcher_name": "Thomas Pannone",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 158,
       "team_name": "Milwaukee Brewers"
     },
@@ -4824,6 +4802,17 @@
       "jersey_number": "38",
       "pitcher_id": 680723,
       "pitcher_name": "Drew Rom",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 158,
+      "team_name": "Milwaukee Brewers"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "jersey_number": "31",
+      "pitcher_id": 668831,
+      "pitcher_name": "Garrett Stallings",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 158,
@@ -5363,8 +5352,8 @@
       "jersey_number": "91",
       "pitcher_id": 702752,
       "pitcher_name": "Jonathan Pintaro",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 121,
       "team_name": "New York Mets"
     },
@@ -5987,17 +5976,6 @@
     {
       "depth_order": 4,
       "depth_role": "RP",
-      "jersey_number": "72",
-      "pitcher_id": 676755,
-      "pitcher_name": "Isaac Mattson",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 134,
-      "team_name": "Pittsburgh Pirates"
-    },
-    {
-      "depth_order": 5,
-      "depth_role": "RP",
       "jersey_number": "66",
       "pitcher_id": 696062,
       "pitcher_name": "Wilber Dotel",
@@ -6007,11 +5985,22 @@
       "team_name": "Pittsburgh Pirates"
     },
     {
+      "depth_order": 5,
+      "depth_role": "RP",
+      "jersey_number": "97",
+      "pitcher_id": 676760,
+      "pitcher_name": "Ron Marinaccio",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 134,
+      "team_name": "Pittsburgh Pirates"
+    },
+    {
       "depth_order": 6,
       "depth_role": "RP",
-      "jersey_number": "14",
-      "pitcher_id": 685126,
-      "pitcher_name": "Brandon Eisert",
+      "jersey_number": "45",
+      "pitcher_id": 682995,
+      "pitcher_name": "Hunter Barco",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 134,
@@ -6020,9 +6009,9 @@
     {
       "depth_order": 7,
       "depth_role": "RP",
-      "jersey_number": "97",
-      "pitcher_id": 676760,
-      "pitcher_name": "Ron Marinaccio",
+      "jersey_number": "58",
+      "pitcher_id": 668716,
+      "pitcher_name": "Noah Murdock",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 134,
@@ -6041,6 +6030,17 @@
     },
     {
       "depth_order": 9,
+      "depth_role": "RP",
+      "jersey_number": "57",
+      "pitcher_id": 606965,
+      "pitcher_name": "Chris Devenski",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
+      "team_id": 134,
+      "team_name": "Pittsburgh Pirates"
+    },
+    {
+      "depth_order": 10,
       "depth_role": "SP",
       "jersey_number": "30",
       "pitcher_id": 694973,
@@ -6051,7 +6051,7 @@
       "team_name": "Pittsburgh Pirates"
     },
     {
-      "depth_order": 10,
+      "depth_order": 11,
       "depth_role": "SP",
       "jersey_number": "23",
       "pitcher_id": 656605,
@@ -6062,7 +6062,7 @@
       "team_name": "Pittsburgh Pirates"
     },
     {
-      "depth_order": 11,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "35",
       "pitcher_id": 677952,
@@ -6073,7 +6073,7 @@
       "team_name": "Pittsburgh Pirates"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "36",
       "pitcher_id": 696149,
@@ -6084,7 +6084,7 @@
       "team_name": "Pittsburgh Pirates"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "17",
       "pitcher_id": 683003,
@@ -6119,20 +6119,9 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "57",
-      "pitcher_id": 606965,
-      "pitcher_name": "Chris Devenski",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 134,
-      "team_name": "Pittsburgh Pirates"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "45",
-      "pitcher_id": 682995,
-      "pitcher_name": "Hunter Barco",
+      "jersey_number": "14",
+      "pitcher_id": 685126,
+      "pitcher_name": "Brandon Eisert",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 134,
@@ -6152,9 +6141,9 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "64",
-      "pitcher_id": 694753,
-      "pitcher_name": "Khristian Curtis",
+      "jersey_number": "72",
+      "pitcher_id": 676755,
+      "pitcher_name": "Isaac Mattson",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 134,
@@ -6163,9 +6152,9 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "58",
-      "pitcher_id": 668716,
-      "pitcher_name": "Noah Murdock",
+      "jersey_number": "64",
+      "pitcher_id": 694753,
+      "pitcher_name": "Khristian Curtis",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 134,
@@ -6251,9 +6240,9 @@
     {
       "depth_order": 6,
       "depth_role": "RP",
-      "jersey_number": "61",
-      "pitcher_id": 663362,
-      "pitcher_name": "Matt Waldron",
+      "jersey_number": "56",
+      "pitcher_id": 669093,
+      "pitcher_name": "Jeremiah Estrada",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 135,
@@ -6261,17 +6250,6 @@
     },
     {
       "depth_order": 7,
-      "depth_role": "RP",
-      "jersey_number": "56",
-      "pitcher_id": 669093,
-      "pitcher_name": "Jeremiah Estrada",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
-      "team_id": 135,
-      "team_name": "San Diego Padres"
-    },
-    {
-      "depth_order": 8,
       "depth_role": "RP",
       "jersey_number": "66",
       "pitcher_id": 688158,
@@ -6282,7 +6260,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
       "jersey_number": "40",
       "pitcher_id": 592094,
@@ -6293,7 +6271,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "CP",
       "jersey_number": "22",
       "pitcher_id": 695243,
@@ -6304,7 +6282,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "SP",
       "jersey_number": "34",
       "pitcher_id": 650633,
@@ -6315,7 +6293,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "SP",
       "jersey_number": "10",
       "pitcher_id": 621111,
@@ -6326,7 +6304,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "jersey_number": "17",
       "pitcher_id": 656288,
@@ -6337,7 +6315,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "jersey_number": "38",
       "pitcher_id": 676664,
@@ -6348,7 +6326,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "SP",
       "jersey_number": "33",
       "pitcher_id": 608566,
@@ -6359,7 +6337,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "jersey_number": "55",
       "pitcher_id": 608337,
@@ -6370,7 +6348,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "jersey_number": "27",
       "pitcher_id": 601713,
@@ -6381,7 +6359,7 @@
       "team_name": "San Diego Padres"
     },
     {
-      "depth_order": 18,
+      "depth_order": 17,
       "depth_role": "SP",
       "jersey_number": "44",
       "pitcher_id": 605397,
@@ -7219,17 +7197,6 @@
     {
       "depth_order": 1,
       "depth_role": "RP",
-      "jersey_number": "71",
-      "pitcher_id": 642121,
-      "pitcher_name": "Cole Sulser",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 139,
-      "team_name": "Tampa Bay Rays"
-    },
-    {
-      "depth_order": 2,
-      "depth_role": "RP",
       "jersey_number": "49",
       "pitcher_id": 687330,
       "pitcher_name": "Kevin Kelly",
@@ -7239,7 +7206,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 3,
+      "depth_order": 2,
       "depth_role": "RP",
       "jersey_number": "67",
       "pitcher_id": 668984,
@@ -7250,7 +7217,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 4,
+      "depth_order": 3,
       "depth_role": "RP",
       "jersey_number": "32",
       "pitcher_id": 571927,
@@ -7261,7 +7228,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 5,
+      "depth_order": 4,
       "depth_role": "RP",
       "jersey_number": "62",
       "pitcher_id": 592155,
@@ -7272,7 +7239,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 6,
+      "depth_order": 5,
       "depth_role": "RP",
       "jersey_number": "46",
       "pitcher_id": 518886,
@@ -7283,7 +7250,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 7,
+      "depth_order": 6,
       "depth_role": "RP",
       "jersey_number": "39",
       "pitcher_id": 655889,
@@ -7294,7 +7261,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "jersey_number": "63",
       "pitcher_id": 670955,
@@ -7305,7 +7272,7 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
       "jersey_number": "24",
       "pitcher_id": 621051,
@@ -7316,13 +7283,24 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "RP",
       "jersey_number": "68",
       "pitcher_id": 669169,
       "pitcher_name": "Jonathan Heasley",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
+      "team_id": 139,
+      "team_name": "Tampa Bay Rays"
+    },
+    {
+      "depth_order": 10,
+      "depth_role": "RP",
+      "jersey_number": "56",
+      "pitcher_id": 688297,
+      "pitcher_name": "Chris Roycroft",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 139,
       "team_name": "Tampa Bay Rays"
     },
@@ -7417,11 +7395,11 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "56",
-      "pitcher_id": 688297,
-      "pitcher_name": "Chris Roycroft",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "jersey_number": "71",
+      "pitcher_id": 642121,
+      "pitcher_name": "Cole Sulser",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 139,
       "team_name": "Tampa Bay Rays"
     },
@@ -7618,8 +7596,8 @@
       "jersey_number": "59",
       "pitcher_id": 692030,
       "pitcher_name": "Jose Corniell",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
       "team_id": 140,
       "team_name": "Texas Rangers"
     },
@@ -7719,6 +7697,17 @@
       "pitcher_name": "Jordan Montgomery",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
+      "team_id": 140,
+      "team_name": "Texas Rangers"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "jersey_number": null,
+      "pitcher_id": 681217,
+      "pitcher_name": "Chase Silseth",
+      "status_code": "NYR",
+      "status_description": "Not Yet Reported",
       "team_id": 140,
       "team_name": "Texas Rangers"
     },
@@ -7912,9 +7901,9 @@
     {
       "depth_order": 10,
       "depth_role": "RP",
-      "jersey_number": "58",
-      "pitcher_id": 669310,
-      "pitcher_name": "CJ Van Eyk",
+      "jersey_number": "64",
+      "pitcher_id": 671936,
+      "pitcher_name": "Adam Macko",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 141,
@@ -7923,9 +7912,9 @@
     {
       "depth_order": 11,
       "depth_role": "RP",
-      "jersey_number": "64",
-      "pitcher_id": 671936,
-      "pitcher_name": "Adam Macko",
+      "jersey_number": "37",
+      "pitcher_id": 689149,
+      "pitcher_name": "Chad Dallas",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 141,
@@ -8022,9 +8011,9 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "jersey_number": "37",
-      "pitcher_id": 689149,
-      "pitcher_name": "Chad Dallas",
+      "jersey_number": "58",
+      "pitcher_id": 669310,
+      "pitcher_name": "CJ Van Eyk",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 141,
@@ -8121,17 +8110,6 @@
     {
       "depth_order": 4,
       "depth_role": "RP",
-      "jersey_number": "47",
-      "pitcher_id": 681402,
-      "pitcher_name": "Gus Varland",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 120,
-      "team_name": "Washington Nationals"
-    },
-    {
-      "depth_order": 5,
-      "depth_role": "RP",
       "jersey_number": "50",
       "pitcher_id": 676571,
       "pitcher_name": "PJ Poulin",
@@ -8141,7 +8119,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 6,
+      "depth_order": 5,
       "depth_role": "RP",
       "jersey_number": "51",
       "pitcher_id": 687223,
@@ -8152,7 +8130,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 7,
+      "depth_order": 6,
       "depth_role": "RP",
       "jersey_number": "34",
       "pitcher_id": 676680,
@@ -8163,11 +8141,22 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "jersey_number": "74",
       "pitcher_id": 683000,
       "pitcher_name": "Riley Cornelio",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 120,
+      "team_name": "Washington Nationals"
+    },
+    {
+      "depth_order": 8,
+      "depth_role": "RP",
+      "jersey_number": "32",
+      "pitcher_id": 592866,
+      "pitcher_name": "Trevor Williams",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 120,
@@ -8286,6 +8275,17 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "jersey_number": "47",
+      "pitcher_id": 681402,
+      "pitcher_name": "Gus Varland",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 120,
+      "team_name": "Washington Nationals"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "jersey_number": "40",
       "pitcher_id": 680686,
       "pitcher_name": "Josiah Gray",
@@ -8344,8 +8344,8 @@
       "jersey_number": "75",
       "pitcher_id": 687606,
       "pitcher_name": "Paxton Schultz",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 120,
       "team_name": "Washington Nationals"
     },
@@ -8355,17 +8355,6 @@
       "jersey_number": "55",
       "pitcher_id": 663992,
       "pitcher_name": "Richard Lovelady",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 120,
-      "team_name": "Washington Nationals"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "jersey_number": "32",
-      "pitcher_id": 592866,
-      "pitcher_name": "Trevor Williams",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
       "team_id": 120,
