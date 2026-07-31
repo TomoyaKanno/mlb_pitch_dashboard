@@ -209,6 +209,22 @@ def test_verify_browser_payload_accepts_a_reconciled_build(tmp_path: Path):
     }
 
 
+def test_verify_browser_payload_requires_starter_rest_contract(tmp_path: Path):
+    dashboard, series = _valid_payloads()
+    dashboard.pop("starter_rest")
+    dist_dir = _write_dist(tmp_path, dashboard, series)
+
+    with pytest.raises(
+        BrowserPayloadValidationError,
+        match="missing one starter-rest record per team",
+    ):
+        verify_browser_payload(
+            dist_dir,
+            expected_season=2026,
+            expected_data_commit="data-sha",
+        )
+
+
 def test_verify_browser_payload_rejects_a_mismatched_data_revision(tmp_path: Path):
     dashboard, series = _valid_payloads()
     dist_dir = _write_dist(tmp_path, dashboard, series)
