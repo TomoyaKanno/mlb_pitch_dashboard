@@ -96,14 +96,8 @@ jobs:
         env:
           DATA_BRANCH: dashboard-data
         run: |
-          if git ls-remote --exit-code --heads origin "$DATA_BRANCH" >/dev/null 2>&1; then
-            git fetch --no-tags origin "+refs/heads/$DATA_BRANCH:refs/remotes/origin/$DATA_BRANCH"
-            git worktree add --detach "$DATA_DIR" "refs/remotes/origin/$DATA_BRANCH"
-          else
-            git worktree add --detach "$DATA_DIR" HEAD
-            git -C "$DATA_DIR" switch --orphan "$DATA_BRANCH"
-            git -C "$DATA_DIR" rm -rf --ignore-unmatch .
-          fi
+          git fetch --no-tags origin "+refs/heads/$DATA_BRANCH:refs/remotes/origin/$DATA_BRANCH"
+          git worktree add --detach "$DATA_DIR" "refs/remotes/origin/$DATA_BRANCH"
           cp docs/data-branch-readme.md "$DATA_DIR/README.md"
 
       - name: Update season snapshot

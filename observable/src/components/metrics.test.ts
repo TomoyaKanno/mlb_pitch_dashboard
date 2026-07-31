@@ -1,7 +1,8 @@
 import {describe, expect, it} from "vitest";
 import {
   averageBarPercent, averageMetric, completeGamesForTeam, completeGameSummary, coverageText,
-  formatSeriesValue, metricSeries, leagueTotals, metric, monthAxisTicks, nearestSeriesIndexByDate,
+  context, dateMs, dateToX, formatCompleteGameDate, formatMetric, formatSeriesValue,
+  label, metricSeries, leagueTotals, metric, monthAxisTicks, nearestSeriesIndexByDate,
   nextSort, niceCeil, rankTeams, rawMetric, seriesDateDomain, seriesSupported, seriesTitle,
   seriesTooltipText, statusLabel, statusTone, valueAxisTicks, nextGameTimeStatus,
   NEXT_GAME_OVER_AFTER_HOURS, type CompleteGame, type CoverageStatus,
@@ -64,6 +65,22 @@ describe("static dashboard metrics", () => {
     expect(rawMetric(team, "sp", "official")).toBe(8_400);
     expect(rawMetric(team, "sp", "adjusted")).toBe(8_900);
     expect(rawMetric(team, "rp", "adjusted")).toBe(6_100);
+    expect(rawMetric(team, "players", "adjusted")).toBe(15_000);
+    expect(rawMetric(team, "adjustment", "adjusted")).toBe(500);
+  });
+
+  it("formats every table framing without leaking raw units", () => {
+    expect(formatMetric(1_234, "total", false)).toBe("1,234");
+    expect(formatMetric(12.34, "total", true)).toBe("12.3");
+    expect(formatMetric(0.403, "share", false)).toBe("40.3%");
+    expect(formatMetric(12, "adjustment", false)).toBe("+12");
+
+    expect(label("total", false)).toBe("Total pitches");
+    expect(label("sp", true)).toBe("SP pitches per game");
+    expect(label("rp", false)).toBe("RP pitches");
+    expect(label("share", true)).toBe("Bullpen share");
+    expect(label("players", true)).toBe("Player total pitches");
+    expect(label("adjustment", true)).toBe("Net SP reclassification per game");
   });
 
   it("normalizes count metrics per game without changing shares", () => {
@@ -136,6 +153,19 @@ describe("static dashboard metrics", () => {
     expect(doubled.review_count).toBe(4);
   });
 
+  it("describes team role context against the same league framing", () => {
+    const league = leagueTotals([team]);
+
+    expect(context(team, league, "total", "adjusted"))
+      .toBe("59.3% SP · 40.7% RP");
+    expect(context(team, league, "sp", "official"))
+      .toBe("56.0% of team total · 0.0 pp vs MLB");
+    expect(context(team, league, "share", "adjusted"))
+      .toBe("59.3% SP · 0.0 pp vs MLB");
+    expect(context(team, league, "adjustment", "adjusted"))
+      .toBe("600 bulk → SP · 100 opener → RP");
+  });
+
   it("builds cumulative and daily series for the selected framing", () => {
     const points: TeamDayPoint[] = [
       {
@@ -194,6 +224,15 @@ describe("static dashboard metrics", () => {
       {date: "2026-03-26"},
       {date: "2026-07-19"},
     ])).toEqual({start: "2026-03-26", end: "2026-07-19"});
+  });
+
+  it("maps ISO calendar dates without local-time drift", () => {
+    const domain = {start: "2026-03-01", end: "2026-07-01"};
+
+    expect(dateMs("2026-07-01")).toBe(Date.UTC(2026, 6, 1));
+    expect(dateToX("2026-03-01", domain, 10, 400)).toBe(10);
+    expect(dateToX("2026-07-01", domain, 10, 400)).toBe(410);
+    expect(formatCompleteGameDate("2026-07-19")).toBe("Jul 19");
   });
 
   it("maps pointer x to the nearest day on the shared calendar scale", () => {

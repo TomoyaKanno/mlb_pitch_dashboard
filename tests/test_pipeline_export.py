@@ -35,10 +35,24 @@ from pipeline.storage import write_snapshot
 NOW = datetime(2026, 7, 20, 12, tzinfo=timezone.utc).isoformat()
 
 
+def _game_record(
+    game_pk: int,
+    game_date: str,
+    season: int = 2026,
+    *,
+    game_datetime: str | None = None,
+) -> GameRecord:
+    return GameRecord(
+        game_pk, game_date, season, "Final",
+        game_datetime or f"{game_date}T23:10:00Z",
+        100, "Away", 200, "Home",
+    )
+
+
 def _write_two_day_snapshot(tmp_path) -> None:
     snapshot = Snapshot(season=2026)
     for game_pk, game_date in ((1, "2026-07-18"), (2, "2026-07-19")):
-        snapshot.games[game_pk] = GameRecord(game_pk, game_date, 2026, "Final")
+        snapshot.games[game_pk] = _game_record(game_pk, game_date)
         snapshot.fetch_state[game_pk] = FetchStateRecord(
             game_pk, "success", NOW, NOW, None, 1,
         )
@@ -124,7 +138,7 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
         snapshot.appearances[row.key] = row
     snapshot.next_games[100] = NextGameRecord(
         100, "Away", 2, "2026-07-20", "2026-07-20T23:10:00Z",
-        200, "Home", False, 11, "Away Probable",
+        200, "Home", False, 11, "Away Probable", False, "2026-07-20",
     )
     refresh = {
         "result": "complete",
@@ -163,18 +177,17 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
         "opponent_id": 200,
         "opponent_name": "Home",
         "is_home": False,
-        "probable_pitcher_id": 11,
-        "probable_pitcher_name": "Away Probable",
-        "probable_jersey_number": None,
-        "probable_recent_starts": [{
+            "probable_pitcher_id": 11,
+            "probable_pitcher_name": "Away Probable",
+            "probable_recent_starts": [{
             "date": "2026-07-19",
             "game_pk": 1,
             "pitches": 30,
             "opponent_name": "Home",
         }],
-        "probable_days_rest": 0,
-        "is_rest_day_today": False,
-        "schedule_date": None,
+            "probable_days_rest": 0,
+            "is_rest_day_today": False,
+            "schedule_date": "2026-07-20",
     }]
 
 
@@ -242,8 +255,14 @@ def test_complete_games_are_game_grain_so_doubleheaders_keep_cgs():
 def test_recent_games_uses_scheduled_time_for_doubleheader_order():
     snapshot = Snapshot(season=2026)
     # The later game intentionally has the lower gamePk, so gamePk ordering would be wrong.
-    snapshot.games[900] = GameRecord(900, "2026-07-20", 2026, "Final", "2026-07-20T17:10:00Z")
-    snapshot.games[800] = GameRecord(800, "2026-07-20", 2026, "Final", "2026-07-20T23:10:00Z")
+    snapshot.games[900] = GameRecord(
+        900, "2026-07-20", 2026, "Final", "2026-07-20T17:10:00Z",
+        119, "Los Angeles Dodgers", 137, "San Francisco Giants",
+    )
+    snapshot.games[800] = GameRecord(
+        800, "2026-07-20", 2026, "Final", "2026-07-20T23:10:00Z",
+        119, "Los Angeles Dodgers", 137, "San Francisco Giants",
+    )
     snapshot.appearances[(900, 119, 1)] = AppearanceRecord(
         900, "2026-07-20", 2026, 119, "Los Angeles Dodgers", 1, "Early pitcher", 88,
         True, 0, "SP", "official starter",
@@ -259,15 +278,18 @@ def test_recent_games_uses_scheduled_time_for_doubleheader_order():
         "team_id": 119,
         "team_name": "Los Angeles Dodgers",
         "game_pk": 800,
-        "date": "2026-07-20",
-        "game_datetime": "2026-07-20T23:10:00Z",
+            "date": "2026-07-20",
+            "game_datetime": "2026-07-20T23:10:00Z",
+            "away_team_id": 119,
+            "away_team_name": "Los Angeles Dodgers",
+            "home_team_id": 137,
+            "home_team_name": "San Francisco Giants",
             "pitchers": [{
                 "pitcher_id": 2,
                 "pitcher_name": "Late pitcher",
                 "pitches": 94,
                 "official_started": True,
                 "appearance_order": 0,
-                "jersey_number": None,
             }],
     }]
 
@@ -332,14 +354,14 @@ def test_aggregate_helpers_agree_without_persistence():
 
 def test_bullpen_usage_uses_fourteen_day_window_and_sums_doubleheaders() -> None:
     snapshot = Snapshot(season=2026)
-    snapshot.games[900] = GameRecord(
-        900, "2026-07-20", 2026, "Final", "2026-07-20T17:10:00Z"
+    snapshot.games[900] = _game_record(
+        900, "2026-07-20", game_datetime="2026-07-20T17:10:00Z",
     )
-    snapshot.games[800] = GameRecord(
-        800, "2026-07-20", 2026, "Final", "2026-07-20T23:10:00Z"
+    snapshot.games[800] = _game_record(
+        800, "2026-07-20", game_datetime="2026-07-20T23:10:00Z",
     )
-    snapshot.games[700] = GameRecord(700, "2026-07-09", 2026, "Final")
-    snapshot.games[600] = GameRecord(600, "2026-07-06", 2026, "Final")
+    snapshot.games[700] = _game_record(700, "2026-07-09")
+    snapshot.games[600] = _game_record(600, "2026-07-06")
 
     def add(
         game_pk: int,
@@ -404,7 +426,7 @@ def test_bullpen_usage_uses_fourteen_day_window_and_sums_doubleheaders() -> None
 
 def test_bullpen_usage_includes_unused_depth_arms_and_roster_badges() -> None:
     snapshot = Snapshot(season=2026)
-    snapshot.games[1] = GameRecord(1, "2026-07-20", 2026, "Final")
+    snapshot.games[1] = _game_record(1, "2026-07-20")
     snapshot.appearances[(1, 17, 10)] = AppearanceRecord(
         1, "2026-07-20", 2026, 17, "Test Team", 10, "Used Reliever", 20,
         False, 1, "RP", "official reliever",
@@ -416,6 +438,10 @@ def test_bullpen_usage_includes_unused_depth_arms_and_roster_badges() -> None:
     snapshot.appearances[(1, 17, 3)] = AppearanceRecord(
         1, "2026-07-20", 2026, 17, "Test Team", 3, "Injured Reliever", 14,
         False, 2, "RP", "official reliever",
+    )
+    snapshot.appearances[(1, 17, 5)] = AppearanceRecord(
+        1, "2026-07-20", 2026, 17, "Test Team", 5, "Reserve Reliever", 12,
+        False, 3, "RP", "official reliever",
     )
     snapshot.roster_pitchers[(17, 1)] = RosterPitcherRecord(
         17, "Test Team", 1, "Unused Callup", "RP", 0, "A", "Active",
@@ -429,8 +455,11 @@ def test_bullpen_usage_includes_unused_depth_arms_and_roster_badges() -> None:
     snapshot.roster_pitchers[(17, 4)] = RosterPitcherRecord(
         17, "Test Team", 4, "Closer", "CP", 3, "A", "Active",
     )
+    snapshot.roster_pitchers[(17, 5)] = RosterPitcherRecord(
+        17, "Test Team", 5, "Reserve Reliever", "RP", 4, "RST", "Restricted List",
+    )
     snapshot.roster_pitchers[(17, 10)] = RosterPitcherRecord(
-        17, "Test Team", 10, "Used Reliever", "RP", 4, "RM", "Reassigned to Minors",
+        17, "Test Team", 10, "Used Reliever", "RP", 5, "RM", "Reassigned to Minors",
     )
     snapshot.roster_pitchers[(17, 99)] = RosterPitcherRecord(
         17, "Test Team", 99, "Starter Only", "SP", 5, "A", "Active",
@@ -442,6 +471,7 @@ def test_bullpen_usage_includes_unused_depth_arms_and_roster_badges() -> None:
         "Unused Callup",
         "Used Reliever",
         "Injured Reliever",
+        "Reserve Reliever",
     ]
     assert usage["pitchers"][0]["depth_role"] == "CP"
     assert usage["pitchers"][0]["on_depth_chart"] is True
@@ -452,6 +482,8 @@ def test_bullpen_usage_includes_unused_depth_arms_and_roster_badges() -> None:
     assert usage["pitchers"][2]["pitches"][-1] == 20
     assert usage["pitchers"][3]["availability"] == "IL"
     assert usage["pitchers"][3]["pitches"][-1] == 14
+    assert usage["pitchers"][4]["availability"] == "RST"
+    assert usage["pitchers"][4]["pitches"][-1] == 12
     assert all(row["pitcher_name"] != "Idle IL Reliever" for row in usage["pitchers"])
     assert all(row["pitcher_id"] != 99 for row in usage["pitchers"])
 
@@ -467,7 +499,7 @@ def test_bullpen_usage_prioritizes_latest_game_then_rolling_workload() -> None:
         (6, "2026-07-08"),
     )
     for game_pk, game_date in games:
-        snapshot.games[game_pk] = GameRecord(game_pk, game_date, 2026, "Final")
+        snapshot.games[game_pk] = _game_record(game_pk, game_date)
 
     def add(
         pitcher_id: int, pitcher_name: str, game_pk: int, game_date: str, pitches: int,
@@ -518,9 +550,7 @@ def test_starter_rest_uses_active_depth_chart_and_official_start_history() -> No
         (2, "2026-07-25"),
         (3, "2026-07-29"),
     ):
-        snapshot.games[game_pk] = GameRecord(
-            game_pk, game_date, 2026, "Final", f"{game_date}T23:10:00Z",
-        )
+        snapshot.games[game_pk] = _game_record(game_pk, game_date)
 
     # The current starter's most recent official start was for his prior team.
     snapshot.appearances[(2, 99, 1)] = AppearanceRecord(
@@ -547,11 +577,11 @@ def test_starter_rest_uses_active_depth_chart_and_official_start_history() -> No
     ):
         snapshot.roster_pitchers[(17, pitcher_id)] = RosterPitcherRecord(
             17, "Current Team", pitcher_id, name, role, order, status, status,
-            jersey_number=str(pitcher_id),
         )
     snapshot.next_games[17] = NextGameRecord(
         17, "Current Team", 4, "2026-08-01", "2026-08-01T23:10:00Z",
         18, "Opponent", True, None, None,
+        is_rest_day_today=False,
         schedule_date="2026-07-31",
     )
 
@@ -564,7 +594,6 @@ def test_starter_rest_uses_active_depth_chart_and_official_start_history() -> No
             {
                 "pitcher_id": 2,
                 "pitcher_name": "Opener",
-                "jersey_number": "2",
                 "depth_role": "SP",
                 "depth_order": 2,
                 "status_code": "A",
@@ -575,7 +604,6 @@ def test_starter_rest_uses_active_depth_chart_and_official_start_history() -> No
             {
                 "pitcher_id": 1,
                 "pitcher_name": "Traded Starter",
-                "jersey_number": "1",
                 "depth_role": "SP",
                 "depth_order": 5,
                 "status_code": "A",
@@ -586,7 +614,6 @@ def test_starter_rest_uses_active_depth_chart_and_official_start_history() -> No
             {
                 "pitcher_id": 3,
                 "pitcher_name": "New Starter",
-                "jersey_number": "3",
                 "depth_role": "SP",
                 "depth_order": 6,
                 "status_code": "A",
@@ -600,7 +627,7 @@ def test_starter_rest_uses_active_depth_chart_and_official_start_history() -> No
 
 def test_starter_rest_falls_back_to_latest_completed_game_date() -> None:
     snapshot = Snapshot(season=2026)
-    snapshot.games[1] = GameRecord(1, "2026-04-03", 2026, "Final")
+    snapshot.games[1] = _game_record(1, "2026-04-03")
     snapshot.appearances[(1, 17, 1)] = AppearanceRecord(
         1, "2026-04-03", 2026, 17, "Test Team", 1, "Starter", 80,
         True, 0, "SP", "official starter",
@@ -721,11 +748,11 @@ def test_probable_starter_exports_last_three_official_starts():
     )
     snapshot.next_games[100] = NextGameRecord(
         100, "Away", 5, "2026-07-24", "2026-07-24T23:10:00Z",
-        200, "Home", False, 11, "Starter",
+        200, "Home", False, 11, "Starter", False, "2026-07-23",
     )
     snapshot.next_games[200] = NextGameRecord(
         200, "Home", 5, "2026-07-24", "2026-07-24T23:10:00Z",
-        100, "Away", True, None, None,
+        100, "Away", True, None, None, False, "2026-07-23",
     )
 
     rows = {row["team_id"]: row for row in aggregate_next_games(snapshot)}
@@ -768,7 +795,6 @@ def test_next_game_exports_snapshot_rest_day_context() -> None:
         "is_home": True,
         "probable_pitcher_id": None,
         "probable_pitcher_name": None,
-        "probable_jersey_number": None,
         "probable_recent_starts": [],
         "probable_days_rest": None,
         "is_rest_day_today": True,
@@ -827,7 +853,7 @@ def test_player_history_exports_sparse_prior_season_points_and_zero_mlb_history(
             (season * 10 + 2, f"{season}-09-30", last_pitcher),
         )
         for game_pk, game_date, (pitcher_id, pitcher_name, pitches) in game_rows:
-            snapshot.games[game_pk] = GameRecord(game_pk, game_date, season, "Final")
+            snapshot.games[game_pk] = _game_record(game_pk, game_date, season)
             snapshot.fetch_state[game_pk] = FetchStateRecord(
                 game_pk, "success", NOW, NOW, None, 1,
             )

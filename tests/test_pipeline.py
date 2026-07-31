@@ -5,17 +5,27 @@ from datetime import datetime, timezone
 
 import pytest
 
-from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, RosterPitcherRecord, Snapshot
+from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, Snapshot
 from pipeline.storage import load_snapshot
 from pipeline.update import games_to_refresh, update_season
-from pipeline.validation import SnapshotValidationError, validate_snapshot
+from pipeline.validation import SnapshotValidationError
 
 
 NOW = datetime(2026, 7, 20, 12, tzinfo=timezone.utc)
 
 
 def game(game_pk: int, game_date: str) -> dict:
-    return {"game_pk": game_pk, "game_date": game_date, "season": 2026, "status": "Final"}
+    return {
+        "game_pk": game_pk,
+        "game_date": game_date,
+        "season": 2026,
+        "status": "Final",
+        "game_datetime": f"{game_date}T23:10:00Z",
+        "away_team_id": 100,
+        "away_team_name": "Away",
+        "home_team_id": 200,
+        "home_team_name": "Home",
+    }
 
 
 def boxscore(game_pk: int) -> list[dict]:
@@ -132,8 +142,91 @@ def test_recent_failure_preserves_last_known_good_data_as_stale(tmp_path):
     assert len(snapshot.appearances) == 3
     assert snapshot.fetch_state[1].fetch_status == "failed"
     assert snapshot.fetch_state[1].last_success_at is not None
+    assert snapshot.fetch_state[1].attempt_count == 2
+    assert summary.result == "failed"
     assert summary.stale_games == 1
     assert summary.missing_games == 0
+
+
+def test_first_failure_is_missing_and_successful_retry_becomes_current(tmp_path):
+    schedule = [game(1, "2026-06-01")]
+    boxes = {1: boxscore(1)}
+
+    failed = asyncio.run(
+        update_season(
+            2026,
+            tmp_path,
+            reconcile_days=0,
+            now=NOW,
+            client_factory=factory(schedule, boxes, failures={1}),
+        )
+    )
+    failed_snapshot = load_snapshot(tmp_path, 2026)
+
+    assert failed.result == "failed"
+    assert failed.current_games == 0
+    assert failed.stale_games == 0
+    assert failed.missing_games == 1
+    assert failed_snapshot.appearances == {}
+    assert failed_snapshot.fetch_state[1].fetch_status == "failed"
+    assert failed_snapshot.fetch_state[1].last_success_at is None
+    assert failed_snapshot.fetch_state[1].last_error == "temporary MLB failure"
+    assert failed_snapshot.fetch_state[1].attempt_count == 1
+
+    recovered = asyncio.run(
+        update_season(
+            2026,
+            tmp_path,
+            reconcile_days=0,
+            now=NOW,
+            client_factory=factory(schedule, boxes),
+        )
+    )
+    recovered_snapshot = load_snapshot(tmp_path, 2026)
+
+    assert recovered.result == "complete"
+    assert recovered.current_games == 1
+    assert recovered.stale_games == 0
+    assert recovered.missing_games == 0
+    assert recovered_snapshot.fetch_state[1].fetch_status == "success"
+    assert recovered_snapshot.fetch_state[1].last_error is None
+    assert recovered_snapshot.fetch_state[1].last_success_at == NOW.isoformat()
+    assert recovered_snapshot.fetch_state[1].attempt_count == 2
+    assert len(recovered_snapshot.appearances) == 3
+
+
+def test_new_game_failure_is_partial_when_prior_games_remain_current(tmp_path):
+    existing_schedule = [game(1, "2026-06-01")]
+    boxes = {1: boxscore(1), 2: boxscore(2)}
+    asyncio.run(
+        update_season(
+            2026,
+            tmp_path,
+            reconcile_days=0,
+            now=NOW,
+            client_factory=factory(existing_schedule, boxes),
+        )
+    )
+
+    summary = asyncio.run(
+        update_season(
+            2026,
+            tmp_path,
+            reconcile_days=0,
+            now=NOW,
+            client_factory=factory(
+                [*existing_schedule, game(2, "2026-06-02")],
+                boxes,
+                failures={2},
+            ),
+        )
+    )
+
+    assert summary.result == "partial"
+    assert summary.games_requested == 1
+    assert summary.current_games == 1
+    assert summary.stale_games == 0
+    assert summary.missing_games == 1
 
 
 def test_refresh_plan_includes_missing_failed_and_recent_games():
@@ -149,36 +242,121 @@ def test_refresh_plan_includes_missing_failed_and_recent_games():
     assert [row.game_pk for row in planned] == [1, 2]
 
 
-def test_validation_rejects_success_without_two_official_starters():
+def test_force_refresh_includes_every_scheduled_game():
+    games = [
+        GameRecord.from_dict(game(1, "2026-06-01")),
+        GameRecord.from_dict(game(2, "2026-06-02")),
+    ]
     snapshot = Snapshot(season=2026)
-    snapshot.games[1] = GameRecord.from_dict(game(1, "2026-06-01"))
-    snapshot.fetch_state[1] = FetchStateRecord(1, "success", NOW.isoformat(), NOW.isoformat(), None, 1)
-    snapshot.appearances[(1, 100, 11)] = AppearanceRecord(
-        1, "2026-06-01", 2026, 100, "Away", 11, "Pitcher", 12, False, 0, "RP", "official reliever"
-    )
+    for game_record in games:
+        snapshot.fetch_state[game_record.game_pk] = FetchStateRecord(
+            game_record.game_pk, "success", NOW.isoformat(), NOW.isoformat(), None, 1,
+        )
+        appearance_record = AppearanceRecord(
+            game_record.game_pk,
+            game_record.game_date,
+            2026,
+            100,
+            "Away",
+            game_record.game_pk * 10,
+            "Pitcher",
+            80,
+            True,
+            0,
+            "SP",
+            "official starter",
+        )
+        snapshot.appearances[appearance_record.key] = appearance_record
 
-    with pytest.raises(SnapshotValidationError):
-        validate_snapshot(snapshot)
+    assert games_to_refresh(
+        games, snapshot, force=False, reconcile_days=0, as_of=NOW.date(),
+    ) == []
+    assert games_to_refresh(
+        games, snapshot, force=True, reconcile_days=0, as_of=NOW.date(),
+    ) == games
 
 
-def test_validation_rejects_roster_pitcher_with_depth_role_but_no_order():
-    snapshot = Snapshot(season=2026)
-    snapshot.roster_pitchers[(17, 1)] = RosterPitcherRecord(
-        17, "Test Team", 1, "Broken Reliever", "RP", None, "A", "Active",
-    )
-
-    with pytest.raises(SnapshotValidationError, match="incomplete depth fields"):
-        validate_snapshot(snapshot)
+def test_refresh_rejects_negative_reconciliation_window(tmp_path):
+    with pytest.raises(ValueError, match="reconcile_days"):
+        asyncio.run(update_season(2026, tmp_path, reconcile_days=-1, now=NOW))
 
 
-def test_validation_rejects_roster_pitcher_with_invalid_depth_role():
-    snapshot = Snapshot(season=2026)
-    snapshot.roster_pitchers[(17, 1)] = RosterPitcherRecord(
-        17, "Test Team", 1, "Utility Arm", "UTIL", 0, "A", "Active",
-    )
+@pytest.mark.parametrize(
+    ("duplicate", "message"),
+    [
+        ("schedule", "duplicate game identifiers"),
+        ("next-games", "upcoming schedule contains duplicate teams"),
+        ("roster", "pitching roster contains duplicate team/pitcher rows"),
+    ],
+)
+def test_refresh_rejects_duplicate_upstream_records(tmp_path, duplicate, message):
+    schedule = [game(1, "2026-06-01")]
+    next_games = [
+        {
+            "team_id": 100,
+            "team_name": "Away",
+            "game_pk": 2,
+            "game_date": "2026-06-02",
+            "game_datetime": "2026-06-02T23:10:00Z",
+            "opponent_id": 200,
+            "opponent_name": "Home",
+            "is_home": False,
+            "probable_pitcher_id": None,
+            "probable_pitcher_name": None,
+            "is_rest_day_today": False,
+            "schedule_date": "2026-06-01",
+        },
+    ]
+    rosters = [
+        {
+            "team_id": 100,
+            "team_name": "Away",
+            "pitcher_id": 11,
+            "pitcher_name": "Starter",
+            "depth_role": "SP",
+            "depth_order": 0,
+            "status_code": "A",
+            "status_description": "Active",
+        },
+    ]
+    if duplicate == "schedule":
+        schedule *= 2
+    elif duplicate == "next-games":
+        next_games *= 2
+    else:
+        rosters *= 2
 
-    with pytest.raises(SnapshotValidationError, match="invalid depth role"):
-        validate_snapshot(snapshot)
+    with pytest.raises(SnapshotValidationError, match=message):
+        asyncio.run(
+            update_season(
+                2026,
+                tmp_path,
+                reconcile_days=0,
+                now=NOW,
+                client_factory=factory(
+                    schedule,
+                    {1: boxscore(1)},
+                    next_games=next_games,
+                    rosters=rosters,
+                ),
+            )
+        )
+
+
+def test_refresh_rejects_duplicate_appearance_from_boxscore(tmp_path):
+    rows = boxscore(1)
+    boxes = {1: [rows[0], rows[0], *rows[1:]]}
+
+    with pytest.raises(SnapshotValidationError, match="duplicate appearance returned by MLB"):
+        asyncio.run(
+            update_season(
+                2026,
+                tmp_path,
+                reconcile_days=0,
+                now=NOW,
+                client_factory=factory([game(1, "2026-06-01")], boxes),
+            )
+        )
 
 
 def test_schedule_regression_is_rejected_before_writing(tmp_path):
@@ -210,6 +388,8 @@ def test_refresh_persists_next_game_with_optional_probable_starter(tmp_path):
             "is_home": False,
             "probable_pitcher_id": 11,
             "probable_pitcher_name": "Away Probable",
+            "is_rest_day_today": False,
+            "schedule_date": "2026-07-20",
         },
         {
             "team_id": 200,
@@ -222,6 +402,8 @@ def test_refresh_persists_next_game_with_optional_probable_starter(tmp_path):
             "is_home": True,
             "probable_pitcher_id": None,
             "probable_pitcher_name": None,
+            "is_rest_day_today": False,
+            "schedule_date": "2026-07-20",
         },
     ]
     asyncio.run(
@@ -246,6 +428,8 @@ def test_refresh_persists_next_game_with_optional_probable_starter(tmp_path):
         is_home=False,
         probable_pitcher_id=11,
         probable_pitcher_name="Away Probable",
+        is_rest_day_today=False,
+        schedule_date="2026-07-20",
     )
     assert snapshot.next_games[200].probable_pitcher_name is None
     assert (tmp_path / "seasons/2026/next-games.json").exists()

@@ -2,7 +2,6 @@
   "schema_version": 1,
   "season": 2026,
   "generated_at": "2026-07-20T17:10:40.988903+00:00",
-  "code_commit": null,
   "data_commit": null,
   "status": {
     "result": "complete",

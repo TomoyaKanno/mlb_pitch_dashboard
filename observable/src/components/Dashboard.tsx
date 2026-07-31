@@ -27,7 +27,6 @@ interface DashboardData {
   schema_version: number;
   season: number;
   generated_at: string;
-  code_commit: string | null;
   data_commit: string | null;
   status: Status;
   teams: Team[];
@@ -995,7 +994,7 @@ export function Dashboard({
         <h1>{screen === "leaders" ? "Who has thrown the most pitches?" : "What did this staff just throw?"}</h1>
         <p className="lede">{screen === "leaders"
           ? "Compare total, starter, and bullpen workloads with an auditable adjustment for openers and bulk appearances."
-          : "Review the pitcher workloads from a team's most recently completed game."}</p>
+          : "Review the pitcher workloads from a team's latest available completed game."}</p>
       </header>
       <nav className="screen-selector" aria-label="Dashboard screen">
         <button type="button" className={screen === "strain" ? "active" : undefined} onClick={() => setScreen("strain")}>Recent strain</button>

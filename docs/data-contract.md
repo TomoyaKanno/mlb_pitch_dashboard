@@ -1,16 +1,14 @@
 # Durable data contract
 
-The build-time pipeline writes normalized, versioned season snapshots. These files are source data for a later static-site build; they are not the built GitHub Pages output.
-
-## Command
+The refresh pipeline writes normalized season snapshots for a later static-site build. They are source data, not compiled Pages output.
 
 ```bash
 python -m pipeline.update --season 2026 --data-dir ./dashboard-data
 ```
 
-An empty directory triggers a full bootstrap. Later runs request games that are missing, previously failed, or within the current season's reconciliation window. `--force` requests every completed game, and `--reconcile-days` controls the default seven-day window.
+An empty directory bootstraps the season. Later runs fetch missing games, prior failures, and games inside the reconciliation window; `--force` intentionally refetches every completed game.
 
-## Layout
+## Storage layout
 
 ```text
 dashboard-data/
@@ -24,60 +22,58 @@ dashboard-data/
       manifest.json
 ```
 
-Game and appearance records are partitioned by month to keep automated diffs small. Administrative fetch state, the current next-game read model, and pitching depth/40-man roster status are separate from baseball facts. The manifest identifies schema version 1, coverage, API calls, failures, and SHA-256 hashes for every data file.
+Game and appearance records are partitioned monthly to keep machine-generated diffs small. Fetch state, upcoming schedules, and pitching roster context are stored separately from completed-game facts. The manifest records the schema version, coverage, API-call and failure counts, and SHA-256 hash of every data file.
 
-Appearance records include both MLB's official `gamesStarted` designation and the conservative role-adjusted classification. A short, ineffective official start therefore remains an SP unless the established opener rules identify it as relief usage.
+The repository supports one current contract. Required files and fields are read directly; there are no compatibility paths for old snapshots because source and data are deployed together. A meaningful contract change must rebuild `dashboard-data` through the validated refresh workflow.
 
-### `roster-pitchers.json`
+## Core semantics
 
-For the current calendar season, refresh fetches each team's `rosterType=depthChart` and `rosterType=40Man` pitching rows and persists them as `RosterPitcherRecord`s:
+- A team's pitches equal both `official_sp + official_rp` and `adjusted_sp + adjusted_rp`.
+- Official SP/RP is MLB's per-game `gamesStarted` designation. A short or ineffective official start remains SP.
+- Role adjustment is conservative and auditable. Ambiguous long relief remains RP with `needs_review`; reviewed exceptions use `config/role_overrides.json`.
+- Every scheduled completed game is current, stale, or missing. A snapshot is complete only when all are current.
+- A failed refetch preserves prior appearances as stale. A first-time failure is missing and is retried on the next refresh.
+- A completed-game schedule that loses a previously persisted game is rejected.
+- In-memory validation runs before writing; persisted reload then verifies structure, coverage, arithmetic, and manifest hashes before commit.
 
-- Depth-chart abbreviations map to `depth_role`: `SP`, bullpen `P` → `RP`, closer `CP`.
-- Depth order preserves MLB's published order within the chart.
-- Status codes come from MLB (`A`, `D10`/`D15`/`D60`, `RM`, …). Export maps those to compact `availability` badges (`IL`, `Minors`) for the bullpen UI and admits only active (`A`) depth-chart SPs to starter-rest context.
-- Optional `jersey_number` is stored when MLB provides one. The current UI does not render jersey watermarks; the field remains available for a later presentation experiment.
-- Historical seasons skip the roster fetch (empty file contents / empty snapshot map), matching upcoming-game behavior.
+For the current calendar season, `roster-pitchers.json` combines MLB pitching depth-chart order with 40-man status. Depth roles are `SP`, `RP`, or closer `CP`. Status `A` is active; every other status becomes a compact availability badge for bullpen context. Historical seasons keep the required roster file empty and skip live roster/upcoming-game fetches.
 
-Legacy snapshots without `roster-pitchers.json` remain valid; export then falls back to appearance-only bullpen rows and an explicit empty starter-rest list for each team rather than inferring a current rotation from historical appearances.
+## Browser exports
 
-## Browser-ready exports
+`pipeline.export` turns a validated snapshot into three build-time read models:
 
-`pipeline.export` projects the validated snapshot into static JSON consumed at Observable build time. These are read models, not a second source of truth:
+| Artifact | Contents |
+| --- | --- |
+| Season dashboard | Team totals, top-30 pitchers, team top-five usage by role framing, latest and next games, bullpen windows, and starter-rest context |
+| Team timeseries | Daily team increments and game-grain complete games |
+| Player history | Current top-30 pitchers across the selected season and three completed predecessors |
 
-| Artifact | Loader | Contents |
-| --- | --- | --- |
-| Season dashboard | `observable/src/data/dashboard.json.py` | One season-total row per team, the top 30 individual pitcher totals, per-team top-five pitcher usage lists for each role framing, one latest completed game, one upcoming-game record (optional probable starter with recent-start and rest-day context), one 14-day roster-aware bullpen-usage window, and one active-starter rest record per team |
-| Team timeseries | `observable/src/data/team-timeseries.json.py` | Daily team increments for the timeline, plus game-grain `complete_games` (0 official RP, with pitcher) |
-| Player history | `observable/src/data/player-history.json.py` | Sparse date-normalized pitch increments and season totals for the current top 30 player leaders across the configured season and its three completed predecessors; the Player total panel uses it for the workload-history chart and four-row comparison table |
+These payloads are intentionally smaller than the durable snapshot. The browser receives only what the UI renders and never receives a full appearance corpus.
 
-The season-dashboard payload is a required, single-version compiled contract: its top-level `starter_rest` field must contain one record for every exported team. The current UI is never paired with an older browser-ready payload because Observable compiles code and data into the same artifact, and the browser does not fetch pitch data at runtime. Compatibility is handled at the source-snapshot boundary instead: a legacy snapshot without `roster-pitchers.json` still exports the required per-team records with empty `pitchers` lists.
+### Season and player totals
 
-Each `player_totals` row sums every persisted appearance for one `pitcher_id`, including appearances before a trade. When the current roster snapshot has that pitcher, it provides the displayed team/name; otherwise export falls back to the latest appearance. Rows are sorted by total pitches descending, then name and id, and capped at 30.
+Player totals follow `pitcher_id` across teams, so pre-trade appearances remain included. Current roster context supplies the displayed team when present; otherwise the latest appearance does. The current-season history total must equal the corresponding top-30 total.
 
-The player-history export deliberately does not ship every historical appearance to the browser. It loads the validated snapshots for `season - 3` through the configured season, then exports only the current top 30 `pitcher_id`s. Each historical season supplies a sparse sequence of per-date pitch increments normalized to regular-season day zero, a total, and appearance count. Missing MLB history is an explicit zero-total season, allowing the UI to distinguish a pitcher without demonstrated prior major-league workload from one with an established comparison range. The Player total panel shows the selected season’s total as its hero/current-table value and deliberately leaves that row’s full-season comparison visually blank; completed prior-season rows show both the selected-point and full-season totals. The current-season history total must exactly equal its `player_totals` row.
+Historical player series are sparse daily increments normalized to regular-season day zero. A season with no MLB appearances is exported as an explicit zero rather than omitted. Completed prior seasons retain both at-this-point and full-season totals; the active season has no full-season comparison.
 
-Each `team_pitcher_usage` row belongs to one team and contains a top-five list for `total`, `official_sp`, `official_rp`, `adjusted_sp`, and `adjusted_rp`. Each list sums only appearances for that team, ranks by its named metric (then pitcher name/id), and may contain fewer than five pitchers. Official and adjusted SP/RP are appearance-level classifications, so a swingman can appear in both SP and RP lists; the dashboard selects the list matching its current role basis.
+Each team has top-five pitcher lists for total, official SP/RP, and adjusted SP/RP workload. Classification is per appearance, so a swingman may appear in both role lists.
 
-Daily team points must reconcile to season team totals: summing each metric (and game counts) across dates for a team equals that team's dashboard row. The dashboard derives cumulative series with a prefix sum (`metricSeries`); daily/timecourse mode plots each day's increment (share uses that day's SP/RP split). Role adjustment has no timeline yet.
+### Team timelines and games
 
-Recent games are selected at **game** grain. `GameRecord.game_datetime` stores MLB's scheduled `gameDate`, so a doubleheader chooses the later scheduled game even when its `game_pk` does not sort last. Old snapshots without this optional field use `game_pk` only until their next normal refresh rewrites the game records. Pitchers are ordered by `appearance_order` and may include an optional `jersey_number` from the roster snapshot.
+Daily timeseries metrics and game counts must sum to the season team row. Cumulative charts are prefix sums of those increments. Complete games remain at `(game_pk, team_id)` grain so a doubleheader cannot hide one inside a calendar-day total.
 
-Each `next_games` row is the earliest non-final regular-season game returned for a team in the 14-day schedule window. It also carries `schedule_date` and `is_rest_day_today`, computed during refresh from the entire regular-season slate for that date. A team with any game on the slate—including a final, postponed, cancelled, or suspended game—never receives the rest-day flag; this deliberately avoids an incorrect “rest day” claim after a same-day game or schedule disruption. The browser renders that flag only while `schedule_date` equals today in Eastern time, so a stale static snapshot does not persist yesterday’s notice. It includes the opponent and home/away context. MLB may omit a `probable_pitcher`; consumers must display that as unannounced rather than infer one. When a probable starter is present, the export also includes `probable_recent_starts` (up to three most recent official `gamesStarted` appearances with date, pitches, and opponent), `probable_days_rest` (calendar days between the latest of those starts and the upcoming game, minus one), and optional `probable_jersey_number`. Unannounced rows keep an empty start list and a null days-rest value. Existing snapshots created before this read model legitimately export an empty `next_games` list until their next successful refresh.
+The latest available completed game is chosen from persisted appearances by MLB's scheduled `gameDate`, not `game_pk`, and carries the full matchup. On a partial snapshot this wording matters: the export does not imply that a missing newer game was fetched. Pitchers retain MLB appearance order.
 
-Each `bullpen_usage` row contains 14 unique, ordered calendar dates ending on that team's latest completed-game date. Pitch arrays align positionally with those dates and contain non-negative official-reliever pitch counts. Doubleheader appearances are summed into the same calendar-day cell; official starters are excluded. Depth-chart bullpen arms (`RP` / closer `CP`) are included even with zero pitches so unused active call-ups remain visible. IL and Minors arms with no in-window pitches are omitted; those badges appear only when the arm actually worked in the window. When `roster-pitchers.json` is present, each pitcher may also carry `on_depth_chart`, `depth_role`, `depth_order`, `availability`, and `status_description`. Legacy snapshots without roster data still export appearance-only rows with null roster fields. Rows first separate currently unavailable IL/Minors arms at the bottom. Within each group, pitchers who worked in the latest completed game sort by that game's relief pitches descending; remaining ties resolve by 3-, 5-, then 14-calendar-day totals, followed by name/id for stability.
+The next-game export is the earliest non-final regular-season game in the schedule window. MLB may omit a probable starter; the UI reports that directly rather than inferring one. When announced, recent-start context uses official starts only. The rest-day flag comes from the full slate for the refresh's Eastern schedule date and is displayed only while that date is still today, preventing stale notices.
 
-Each `starter_rest` row belongs to one team and carries `as_of_date` plus the team's active MLB depth-chart starters. The as-of date uses the refresh's Eastern `schedule_date` when present and is never earlier than that team's latest completed game; legacy schedule records fall back to the latest completed-game date. Pitchers must have `depth_role=SP`, `status_code=A`, a non-negative `depth_order`, and a unique MLB player id within the team list. Rows preserve MLB's published depth-chart order instead of ranking or claiming fatigue/readiness.
+### Bullpen and starter context
 
-For each listed starter, `last_start_date` and `last_start_pitches` come from that pitcher's latest official `gamesStarted` appearance in the season snapshot, keyed by pitcher id across teams so trades do not reset rest. Role-adjusted SP appearances do not count unless MLB also marked the appearance as an official start. `days_rest` is the number of complete calendar off-days between `last_start_date` and `as_of_date`: `(as_of_date - last_start_date) - 1`, floored at zero. The start date and as-of date are therefore both excluded, matching the probable-starter convention. All three history fields remain null when the pitcher has no official start in the published season; export does not reach into an unvalidated prior season or invent a value. Portraits remain display-only MLB CDN assets selected from `pitcher_id` in the browser.
+Each team gets 14 ordered calendar dates ending with its latest available completed game. Pitch arrays align positionally with those dates and include official reliever pitches only; doubleheaders sum within a date. Active depth-chart relievers appear even with zero pitches. Non-active pitchers remain only when they worked during the window, retain their status badge and history, and sort below active arms.
 
-Complete games are listed at **game** grain, not calendar day: a doubleheader can hide a CG inside a day total that still has RP pitches from the other game. Each `complete_games` row is a `(game_pk, team_id)` with zero official RP pitches and a single pitcher. Team timelines use this sibling export; player workload history is already delivered through the compact player-history export rather than a full appearance corpus.
+Within each availability group, sorting prioritizes latest-game relief pitches, then 3-, 5-, and 14-day totals, then name and id.
 
-## Failure behavior
+Starter rest contains active depth-chart SPs in MLB's published order. The last start follows `pitcher_id` across trades and counts only official starts. Days of rest are complete off-days between the start and as-of dates: `(as_of_date - last_start_date) - 1`, floored at zero. History stays null when the pitcher has no official start in the published season; export does not infer one or reach into an unvalidated season.
 
-- A failed first fetch is recorded as missing.
-- A failed reconciliation fetch preserves the prior appearances and marks them stale.
-- Per-game failures do not discard successful games from the same run.
-- A schedule that loses a previously completed game is rejected as an unsafe regression.
-- Structural errors such as missing teams, missing official starters, duplicate appearance order, or unclassified appearances prevent the snapshot from being written.
+## Failure and ownership boundary
 
-The scheduled `Refresh dashboard data` workflow commits only a validated snapshot to the orphan `dashboard-data` branch. A separate least-privilege workflow builds from that revision and gives GitHub Pages an ephemeral artifact.
+Per-game MLB failures may produce a valid partial snapshot, but structural corruption, arithmetic disagreement, schedule regression, or manifest mismatch prevents any commit. `Refresh dashboard data` is the only automated writer to the orphan `dashboard-data` branch. The Pages workflow consumes a specific validated data revision and publishes compiled output only as an ephemeral artifact.

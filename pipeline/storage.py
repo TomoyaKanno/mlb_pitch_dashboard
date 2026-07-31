@@ -52,45 +52,42 @@ def load_snapshot(data_dir: Path, season: int) -> Snapshot:
             snapshot.appearances[row.key] = row
 
     state_path = root / "fetch-state.json"
-    if state_path.exists():
-        payload = json.loads(state_path.read_text())
-        if int(payload.get("schema_version", 0)) != SCHEMA_VERSION:
-            raise ValueError(f"unsupported schema version in {state_path}")
-        if int(payload["season"]) != season:
-            raise ValueError(f"fetch state in {state_path} belongs to another season")
-        for value in payload.get("games", []):
-            row = FetchStateRecord.from_dict(value)
-            if row.game_pk in snapshot.fetch_state:
-                raise ValueError(f"duplicate fetch state {row.game_pk}")
-            snapshot.fetch_state[row.game_pk] = row
+    payload = json.loads(state_path.read_text())
+    if int(payload.get("schema_version", 0)) != SCHEMA_VERSION:
+        raise ValueError(f"unsupported schema version in {state_path}")
+    if int(payload["season"]) != season:
+        raise ValueError(f"fetch state in {state_path} belongs to another season")
+    for value in payload.get("games", []):
+        row = FetchStateRecord.from_dict(value)
+        if row.game_pk in snapshot.fetch_state:
+            raise ValueError(f"duplicate fetch state {row.game_pk}")
+        snapshot.fetch_state[row.game_pk] = row
 
     next_games_path = root / "next-games.json"
-    if next_games_path.exists():
-        payload = json.loads(next_games_path.read_text())
-        if int(payload.get("schema_version", 0)) != SCHEMA_VERSION:
-            raise ValueError(f"unsupported schema version in {next_games_path}")
-        if int(payload["season"]) != season:
-            raise ValueError(f"next-game data in {next_games_path} belongs to another season")
-        for value in payload.get("games", []):
-            row = NextGameRecord.from_dict(value)
-            if row.team_id in snapshot.next_games:
-                raise ValueError(f"duplicate next game for team {row.team_id}")
-            snapshot.next_games[row.team_id] = row
+    payload = json.loads(next_games_path.read_text())
+    if int(payload.get("schema_version", 0)) != SCHEMA_VERSION:
+        raise ValueError(f"unsupported schema version in {next_games_path}")
+    if int(payload["season"]) != season:
+        raise ValueError(f"next-game data in {next_games_path} belongs to another season")
+    for value in payload.get("games", []):
+        row = NextGameRecord.from_dict(value)
+        if row.team_id in snapshot.next_games:
+            raise ValueError(f"duplicate next game for team {row.team_id}")
+        snapshot.next_games[row.team_id] = row
 
     roster_path = root / "roster-pitchers.json"
-    if roster_path.exists():
-        payload = json.loads(roster_path.read_text())
-        if int(payload.get("schema_version", 0)) != SCHEMA_VERSION:
-            raise ValueError(f"unsupported schema version in {roster_path}")
-        if int(payload["season"]) != season:
-            raise ValueError(f"roster data in {roster_path} belongs to another season")
-        for value in payload.get("pitchers", []):
-            row = RosterPitcherRecord.from_dict(value)
-            if row.key in snapshot.roster_pitchers:
-                raise ValueError(
-                    f"duplicate roster pitcher {row.pitcher_id} for team {row.team_id}"
-                )
-            snapshot.roster_pitchers[row.key] = row
+    payload = json.loads(roster_path.read_text())
+    if int(payload.get("schema_version", 0)) != SCHEMA_VERSION:
+        raise ValueError(f"unsupported schema version in {roster_path}")
+    if int(payload["season"]) != season:
+        raise ValueError(f"roster data in {roster_path} belongs to another season")
+    for value in payload.get("pitchers", []):
+        row = RosterPitcherRecord.from_dict(value)
+        if row.key in snapshot.roster_pitchers:
+            raise ValueError(
+                f"duplicate roster pitcher {row.pitcher_id} for team {row.team_id}"
+            )
+        snapshot.roster_pitchers[row.key] = row
     return snapshot
 
 

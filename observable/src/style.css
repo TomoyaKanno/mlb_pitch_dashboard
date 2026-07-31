@@ -697,7 +697,7 @@ tbody tr.selected td { background: var(--accent-soft); }
   white-space: nowrap;
 }
 .roster-badge.il { color: var(--warning); border-color: color-mix(in srgb, var(--warning) 45%, var(--border)); }
-.roster-badge.minors { color: var(--muted); }
+.roster-badge.unavailable { color: var(--muted); }
 .roster-badge.role { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 .heat-date, .heat-cell { min-width: 48px; }
 .heat-cell { color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -719,7 +719,7 @@ tbody tr.selected td { background: var(--accent-soft); }
 .heat-total-heading:last-child,
 .heat-total-cell:last-child { border-right: 1px solid var(--border); }
 .heat-total-cell { color: var(--text); font-weight: 700; }
-/* IL and Minors rows are historical context, not current relief options. */
+/* Non-active rows are historical context, not current relief options. */
 .bullpen-unavailable th,
 .bullpen-unavailable .heat-cell:not(.used),
 .bullpen-unavailable .heat-total-cell {

@@ -13,11 +13,11 @@ class GameRecord:
     game_date: str
     season: int
     status: str
-    game_datetime: str | None = None
-    away_team_id: int | None = None
-    away_team_name: str | None = None
-    home_team_id: int | None = None
-    home_team_name: str | None = None
+    game_datetime: str
+    away_team_id: int
+    away_team_name: str
+    home_team_id: int
+    home_team_name: str
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "GameRecord":
@@ -26,19 +26,11 @@ class GameRecord:
             game_date=str(value["game_date"]),
             season=int(value["season"]),
             status=str(value["status"]),
-            game_datetime=(str(value["game_datetime"]) if value.get("game_datetime") else None),
-            away_team_id=(
-                int(value["away_team_id"]) if value.get("away_team_id") is not None else None
-            ),
-            away_team_name=(
-                str(value["away_team_name"]) if value.get("away_team_name") else None
-            ),
-            home_team_id=(
-                int(value["home_team_id"]) if value.get("home_team_id") is not None else None
-            ),
-            home_team_name=(
-                str(value["home_team_name"]) if value.get("home_team_name") else None
-            ),
+            game_datetime=str(value["game_datetime"]),
+            away_team_id=int(value["away_team_id"]),
+            away_team_name=str(value["away_team_name"]),
+            home_team_id=int(value["home_team_id"]),
+            home_team_name=str(value["home_team_name"]),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -78,9 +70,9 @@ class AppearanceRecord:
             pitches=int(value["pitches"]),
             official_started=bool(value["official_started"]),
             appearance_order=int(value["appearance_order"]),
-            adjusted_role=str(value.get("adjusted_role", "RP")),
-            classification_reason=str(value.get("classification_reason", "unclassified")),
-            needs_review=bool(value.get("needs_review", False)),
+            adjusted_role=str(value["adjusted_role"]),
+            classification_reason=str(value["classification_reason"]),
+            needs_review=bool(value["needs_review"]),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -117,15 +109,14 @@ class NextGameRecord:
     team_name: str
     game_pk: int
     game_date: str
-    game_datetime: str | None
+    game_datetime: str
     opponent_id: int
     opponent_name: str
     is_home: bool
     probable_pitcher_id: int | None
     probable_pitcher_name: str | None
-    # Snapshot-time schedule context; legacy next-game records omit these safely.
-    is_rest_day_today: bool = False
-    schedule_date: str | None = None
+    is_rest_day_today: bool
+    schedule_date: str
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "NextGameRecord":
@@ -134,7 +125,7 @@ class NextGameRecord:
             team_name=str(value["team_name"]),
             game_pk=int(value["game_pk"]),
             game_date=str(value["game_date"]),
-            game_datetime=(str(value["game_datetime"]) if value.get("game_datetime") else None),
+            game_datetime=str(value["game_datetime"]),
             opponent_id=int(value["opponent_id"]),
             opponent_name=str(value["opponent_name"]),
             is_home=bool(value["is_home"]),
@@ -148,8 +139,8 @@ class NextGameRecord:
                 if value.get("probable_pitcher_name")
                 else None
             ),
-            is_rest_day_today=bool(value.get("is_rest_day_today", False)),
-            schedule_date=(str(value["schedule_date"]) if value.get("schedule_date") else None),
+            is_rest_day_today=bool(value["is_rest_day_today"]),
+            schedule_date=str(value["schedule_date"]),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -173,7 +164,6 @@ class RosterPitcherRecord:
     depth_order: int | None
     status_code: str
     status_description: str
-    jersey_number: str | None = None
 
     @property
     def key(self) -> tuple[int, int]:
@@ -181,7 +171,6 @@ class RosterPitcherRecord:
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "RosterPitcherRecord":
-        jersey = value.get("jersey_number")
         return cls(
             team_id=int(value["team_id"]),
             team_name=str(value["team_name"]),
@@ -193,7 +182,6 @@ class RosterPitcherRecord:
             ),
             status_code=str(value["status_code"]),
             status_description=str(value["status_description"]),
-            jersey_number=(str(jersey) if jersey else None),
         )
 
     def to_dict(self) -> dict[str, Any]:

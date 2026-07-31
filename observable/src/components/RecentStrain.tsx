@@ -10,7 +10,6 @@ export interface RecentPitcher {
   pitches: number;
   official_started: boolean;
   appearance_order: number;
-  jersey_number?: string | null;
 }
 
 export interface RecentTeamGame {
@@ -18,11 +17,11 @@ export interface RecentTeamGame {
   team_name: string;
   game_pk: number;
   date: string;
-  game_datetime: string | null;
-  away_team_id?: number | null;
-  away_team_name?: string | null;
-  home_team_id?: number | null;
-  home_team_name?: string | null;
+  game_datetime: string;
+  away_team_id: number;
+  away_team_name: string;
+  home_team_id: number;
+  home_team_name: string;
   pitchers: RecentPitcher[];
 }
 
@@ -30,7 +29,7 @@ export interface ProbableRecentStart {
   date: string;
   game_pk: number;
   pitches: number;
-  opponent_name: string | null;
+  opponent_name: string;
 }
 
 export interface NextTeamGame {
@@ -38,28 +37,27 @@ export interface NextTeamGame {
   team_name: string;
   game_pk: number;
   date: string;
-  game_datetime: string | null;
+  game_datetime: string;
   opponent_id: number;
   opponent_name: string;
   is_home: boolean;
   probable_pitcher_id: number | null;
   probable_pitcher_name: string | null;
-  probable_jersey_number?: string | null;
   probable_recent_starts: ProbableRecentStart[];
   probable_days_rest: number | null;
-  is_rest_day_today?: boolean;
-  schedule_date?: string | null;
+  is_rest_day_today: boolean;
+  schedule_date: string;
 }
 
 export interface BullpenUsagePitcher {
   pitcher_id: number;
   pitcher_name: string;
   pitches: number[];
-  depth_role?: "RP" | "CP" | null;
-  depth_order?: number | null;
-  on_depth_chart?: boolean;
-  availability?: string | null;
-  status_description?: string | null;
+  depth_role: "RP" | "CP" | null;
+  depth_order: number | null;
+  on_depth_chart: boolean;
+  availability: string | null;
+  status_description: string | null;
 }
 
 export interface BullpenUsage {
@@ -73,7 +71,6 @@ export interface BullpenUsage {
 export interface StarterRestPitcher {
   pitcher_id: number;
   pitcher_name: string;
-  jersey_number: string | null;
   depth_role: "SP";
   depth_order: number;
   status_code: "A";
@@ -128,7 +125,7 @@ function heatCellStyle(pitches: number): CSSProperties | undefined {
   return {background: `color-mix(in srgb, var(--accent) ${accentShare}%, var(--surface))`};
 }
 
-function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
+function BullpenHeatmap({usage}: {usage: BullpenUsage}) {
   return (
     <section className="bullpen-usage" aria-labelledby="bullpen-usage-title">
       <div className="bullpen-usage-header">
@@ -137,17 +134,15 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
           <h2 id="bullpen-usage-title">Bullpen, last 14 days</h2>
           <p className="secondary">
             Official reliever pitch counts by day, plus available depth-chart arms who have not
-            appeared yet. IL and Minors rows retain their recent usage but are muted because those
+            appeared yet. Non-active rows retain their recent usage but are muted because those
             pitchers are no longer available.
           </p>
         </div>
-        {usage ? (
-          <span className="usage-window">
-            {formatFullDate(usage.dates[0])} – {formatFullDate(usage.end_date)}
-          </span>
-        ) : null}
+        <span className="usage-window">
+          {formatFullDate(usage.dates[0])} – {formatFullDate(usage.end_date)}
+        </span>
       </div>
-      {usage && usage.pitchers.length > 0 ? (
+      {usage.pitchers.length > 0 ? (
         <div className="heatmap-scroll">
           <table className="bullpen-heatmap">
             <thead>
@@ -177,7 +172,7 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
             <tbody>
               {usage.pitchers.map((pitcher) => {
                 const unused = pitcher.on_depth_chart && pitcher.pitches.every((value) => value === 0);
-                const unavailable = pitcher.availability === "IL" || pitcher.availability === "Minors";
+                const unavailable = pitcher.availability !== null;
                 const rowClass = [
                   unused ? "bullpen-unused" : undefined,
                   unavailable ? "bullpen-unavailable" : undefined,
@@ -192,7 +187,7 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
                         ) : null}
                         {pitcher.availability ? (
                           <span
-                            className={`roster-badge ${pitcher.availability === "IL" ? "il" : "minors"}`}
+                            className={`roster-badge ${pitcher.availability === "IL" ? "il" : "unavailable"}`}
                             title={pitcher.status_description ?? pitcher.availability}
                           >
                             {pitcher.availability}
@@ -201,7 +196,7 @@ function BullpenHeatmap({usage}: {usage: BullpenUsage | null}) {
                       </span>
                     </th>
                     {usage.dates.map((day, index) => {
-                      const pitches = pitcher.pitches[index] ?? 0;
+                      const pitches = pitcher.pitches[index];
                       const description = pitches ? `${pitches} pitches` : "no pitches";
                       const label = `${pitcher.pitcher_name}: ${description} on ${formatFullDate(day)}`;
                       return (
@@ -315,7 +310,7 @@ function PitcherAppearanceList({
   pitchers: RecentPitcher[];
 }) {
   return (
-    <ul className="pitcher-appearance-list" aria-label={`${teamName} pitcher workloads from its last completed game`}>
+    <ul className="pitcher-appearance-list" aria-label={`${teamName} pitcher workloads from its latest available completed game`}>
       {pitchers.map((pitcher) => (
         <li key={pitcher.pitcher_id} className="pitcher-appearance-row">
           <PitcherPortrait pitcherId={pitcher.pitcher_id} />
@@ -330,7 +325,7 @@ function PitcherAppearanceList({
   );
 }
 
-function StarterRestPanel({rest}: {rest: StarterRest | null}) {
+function StarterRestPanel({rest}: {rest: StarterRest}) {
   return (
     <section className="starter-rest" aria-labelledby="starter-rest-title">
       <div className="starter-rest-header">
@@ -342,11 +337,9 @@ function StarterRestPanel({rest}: {rest: StarterRest | null}) {
             starts only and excludes both the start date and the as-of date.
           </p>
         </div>
-        {rest ? (
-          <span className="usage-window">Entering {formatFullDate(rest.as_of_date)}</span>
-        ) : null}
+        <span className="usage-window">Entering {formatFullDate(rest.as_of_date)}</span>
       </div>
-      {rest && rest.pitchers.length > 0 ? (
+      {rest.pitchers.length > 0 ? (
         <ul
           className="starter-rest-list"
           aria-label={`${rest.team_name} active starter rest entering ${formatFullDate(rest.as_of_date)}`}
@@ -371,9 +364,7 @@ function StarterRestPanel({rest}: {rest: StarterRest | null}) {
         </ul>
       ) : (
         <p className="secondary starter-rest-empty">
-          {rest
-            ? "No active depth-chart starters are available in this snapshot."
-            : "Starter-rest roster context is not available in this snapshot."}
+          No active depth-chart starters are available in this snapshot.
         </p>
       )}
     </section>
@@ -381,8 +372,8 @@ function StarterRestPanel({rest}: {rest: StarterRest | null}) {
 }
 
 function ProbableStarterPanel({game}: {game: NextTeamGame}) {
-  const recentStarts = game.probable_recent_starts ?? [];
-  const daysRest = game.probable_days_rest ?? null;
+  const recentStarts = game.probable_recent_starts;
+  const daysRest = game.probable_days_rest;
   if (game.probable_pitcher_id == null || !game.probable_pitcher_name) {
     return (
       <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
@@ -413,7 +404,7 @@ function ProbableStarterPanel({game}: {game: NextTeamGame}) {
             <li key={start.game_pk} className="probable-start-row">
               <div className="probable-start-copy">
                 <strong>{formatShortDate(start.date)}</strong>
-                <span>{start.opponent_name ? `vs ${start.opponent_name}` : "Official start"}</span>
+                <span>vs {start.opponent_name}</span>
               </div>
               <span className="pitcher-appearance-pitches">{integer.format(start.pitches)}</span>
             </li>
@@ -499,7 +490,6 @@ function RestDayPanel({game}: {game: NextTeamGame | null}) {
   if (
     game == null
     || !game.is_rest_day_today
-    || !game.schedule_date
     || game.schedule_date !== easternCalendarDate()
   ) return null;
 
@@ -558,13 +548,7 @@ function Matchup({away, home}: {away: MatchupTeam; home: MatchupTeam}) {
   );
 }
 
-function recentMatchup(game: RecentTeamGame): {away: MatchupTeam; home: MatchupTeam} | null {
-  if (
-    game.away_team_id == null
-    || !game.away_team_name
-    || game.home_team_id == null
-    || !game.home_team_name
-  ) return null;
+function recentMatchup(game: RecentTeamGame): {away: MatchupTeam; home: MatchupTeam} {
   return {
     away: {
       teamId: game.away_team_id,
@@ -606,8 +590,8 @@ export function RecentStrain({
   }
   const nextGame = nextGames.find((game) => game.team_id === selected.team_id) ?? null;
   const nextGameStatus = nextGameTimeStatus(nextGame?.game_datetime ?? null, nowMs);
-  const usage = bullpenUsage.find((item) => item.team_id === selected.team_id) ?? null;
-  const rest = starterRest.find((item) => item.team_id === selected.team_id) ?? null;
+  const usage = bullpenUsage.find((item) => item.team_id === selected.team_id)!;
+  const rest = starterRest.find((item) => item.team_id === selected.team_id)!;
   const totalPitches = selected.pitchers.reduce((total, pitcher) => total + pitcher.pitches, 0);
   const lastMatchup = recentMatchup(selected);
 
@@ -618,7 +602,7 @@ export function RecentStrain({
           <p className="eyebrow">Staff workload context</p>
           <h2>{selected.team_name}</h2>
           <p className="secondary">
-            Last completed-game workloads and the next scheduled opponent. Probable starters are MLB schedule designations.
+            Latest available completed-game workloads and the next scheduled opponent. Probable starters are MLB schedule designations.
           </p>
         </div>
         <label>
@@ -635,19 +619,9 @@ export function RecentStrain({
       </div>
       <RestDayPanel game={nextGame} />
       <div className="recent-game-grid">
-        <section className="recent-game-card" aria-label="Last completed game">
-          <p className="recent-card-label">Last completed game</p>
-          {lastMatchup ? (
-            <Matchup away={lastMatchup.away} home={lastMatchup.home} />
-          ) : (
-            <div className="recent-game-body">
-              <TeamLogo teamId={selected.team_id} />
-              <div className="recent-game-copy">
-                <strong>{selected.team_name}</strong>
-                <span>Full matchup will appear after the next data refresh.</span>
-              </div>
-            </div>
-          )}
+        <section className="recent-game-card" aria-label="Latest available completed game">
+          <p className="recent-card-label">Latest available completed game</p>
+          <Matchup away={lastMatchup.away} home={lastMatchup.home} />
           <GameContext date={selected.date} gamePk={selected.game_pk} destination="box-score" />
           <div className="recent-game-copy" style={{justifyItems: "center", textAlign: "center"}}>
             <strong>{integer.format(totalPitches)} pitches · {selected.pitchers.length} pitchers used</strong>
