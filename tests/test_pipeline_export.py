@@ -13,6 +13,7 @@ from pipeline.export import (
     aggregate_pitchers,
     aggregate_team_pitcher_usage,
     aggregate_recent_games,
+    aggregate_starter_rest,
     aggregate_team_timeseries,
     aggregate_teams,
     export_dashboard,
@@ -151,6 +152,7 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
     assert away["opener_to_rp"] == 30
     assert payload["status"]["current_games"] == 1
     assert payload["bullpen_usage"] == aggregate_bullpen_usage(snapshot)
+    assert payload["starter_rest"] == aggregate_starter_rest(snapshot)
     assert payload["next_games"] == aggregate_next_games(snapshot)
     assert payload["next_games"] == [{
         "team_id": 100,
@@ -509,6 +511,109 @@ def test_bullpen_usage_prioritizes_latest_game_then_rolling_workload() -> None:
     ]
 
 
+def test_starter_rest_uses_active_depth_chart_and_official_start_history() -> None:
+    snapshot = Snapshot(season=2026)
+    for game_pk, game_date in (
+        (1, "2026-07-24"),
+        (2, "2026-07-25"),
+        (3, "2026-07-29"),
+    ):
+        snapshot.games[game_pk] = GameRecord(
+            game_pk, game_date, 2026, "Final", f"{game_date}T23:10:00Z",
+        )
+
+    # The current starter's most recent official start was for his prior team.
+    snapshot.appearances[(2, 99, 1)] = AppearanceRecord(
+        2, "2026-07-25", 2026, 99, "Prior Team", 1, "Traded Starter", 88,
+        True, 0, "SP", "official starter",
+    )
+    snapshot.appearances[(1, 17, 2)] = AppearanceRecord(
+        1, "2026-07-24", 2026, 17, "Current Team", 2, "Opener", 42,
+        True, 0, "RP", "relief-dominant opener",
+    )
+    # A later role-adjusted SP relief appearance must not reset official rest.
+    snapshot.appearances[(3, 17, 2)] = AppearanceRecord(
+        3, "2026-07-29", 2026, 17, "Current Team", 2, "Opener", 55,
+        False, 1, "SP", "starter-identity bulk appearance",
+    )
+
+    for pitcher_id, name, role, order, status in (
+        (1, "Traded Starter", "SP", 5, "A"),
+        (2, "Opener", "SP", 2, "A"),
+        (3, "New Starter", "SP", 6, "A"),
+        (4, "Injured Starter", "SP", 1, "D15"),
+        (5, "Reliever", "RP", 0, "A"),
+        (6, "Forty Man Only", None, None, "A"),
+    ):
+        snapshot.roster_pitchers[(17, pitcher_id)] = RosterPitcherRecord(
+            17, "Current Team", pitcher_id, name, role, order, status, status,
+            jersey_number=str(pitcher_id),
+        )
+    snapshot.next_games[17] = NextGameRecord(
+        17, "Current Team", 4, "2026-08-01", "2026-08-01T23:10:00Z",
+        18, "Opponent", True, None, None,
+        schedule_date="2026-07-31",
+    )
+
+    rows = {row["team_id"]: row for row in aggregate_starter_rest(snapshot)}
+    assert rows[17] == {
+        "team_id": 17,
+        "team_name": "Current Team",
+        "as_of_date": "2026-07-31",
+        "pitchers": [
+            {
+                "pitcher_id": 2,
+                "pitcher_name": "Opener",
+                "jersey_number": "2",
+                "depth_role": "SP",
+                "depth_order": 2,
+                "status_code": "A",
+                "last_start_date": "2026-07-24",
+                "last_start_pitches": 42,
+                "days_rest": 6,
+            },
+            {
+                "pitcher_id": 1,
+                "pitcher_name": "Traded Starter",
+                "jersey_number": "1",
+                "depth_role": "SP",
+                "depth_order": 5,
+                "status_code": "A",
+                "last_start_date": "2026-07-25",
+                "last_start_pitches": 88,
+                "days_rest": 5,
+            },
+            {
+                "pitcher_id": 3,
+                "pitcher_name": "New Starter",
+                "jersey_number": "3",
+                "depth_role": "SP",
+                "depth_order": 6,
+                "status_code": "A",
+                "last_start_date": None,
+                "last_start_pitches": None,
+                "days_rest": None,
+            },
+        ],
+    }
+
+
+def test_starter_rest_falls_back_to_latest_completed_game_date() -> None:
+    snapshot = Snapshot(season=2026)
+    snapshot.games[1] = GameRecord(1, "2026-04-03", 2026, "Final")
+    snapshot.appearances[(1, 17, 1)] = AppearanceRecord(
+        1, "2026-04-03", 2026, 17, "Test Team", 1, "Starter", 80,
+        True, 0, "SP", "official starter",
+    )
+    snapshot.roster_pitchers[(17, 1)] = RosterPitcherRecord(
+        17, "Test Team", 1, "Starter", "SP", 0, "A", "Active",
+    )
+
+    rest = aggregate_starter_rest(snapshot)[0]
+    assert rest["as_of_date"] == "2026-04-03"
+    assert rest["pitchers"][0]["days_rest"] == 0
+
+
 def test_fixture_bullpen_usage_matches_recent_team_contract() -> None:
     root = Path(__file__).resolve().parents[1]
     payload = json.loads(
@@ -528,6 +633,35 @@ def test_fixture_bullpen_usage_matches_recent_team_contract() -> None:
             assert all(isinstance(value, int) and value >= 0 for value in pitcher["pitches"])
             assert isinstance(pitcher.get("on_depth_chart"), bool)
             assert pitcher.get("availability") is None or isinstance(pitcher["availability"], str)
+
+
+def test_fixture_starter_rest_matches_recent_team_contract() -> None:
+    root = Path(__file__).resolve().parents[1]
+    payload = json.loads(
+        (root / "observable" / "fixtures" / "dashboard.json").read_text()
+    )
+    starter_rest = payload["starter_rest"]
+
+    assert {row["team_id"] for row in starter_rest} == {
+        row["team_id"] for row in payload["recent_games"]
+    }
+    for rest in starter_rest:
+        assert isinstance(rest["as_of_date"], str)
+        assert rest["pitchers"] == sorted(
+            rest["pitchers"],
+            key=lambda pitcher: (
+                pitcher["depth_order"], pitcher["pitcher_name"], pitcher["pitcher_id"],
+            ),
+        )
+        for pitcher in rest["pitchers"]:
+            assert pitcher["depth_role"] == "SP"
+            assert pitcher["status_code"] == "A"
+            if pitcher["last_start_date"] is None:
+                assert pitcher["last_start_pitches"] is None
+                assert pitcher["days_rest"] is None
+            else:
+                assert pitcher["last_start_pitches"] > 0
+                assert pitcher["days_rest"] >= 0
 
 
 

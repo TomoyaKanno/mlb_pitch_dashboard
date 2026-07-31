@@ -6,7 +6,7 @@ import {
   seriesTooltipText, statusLabel, statusTone, valueAxisTicks, nextGameTimeStatus,
   NEXT_GAME_OVER_AFTER_HOURS, type CompleteGame, type CoverageStatus,
   type Team, type TeamDayPoint,
-  BULLPEN_TOTAL_WINDOWS, trailingPitchTotal,
+  BULLPEN_TOTAL_WINDOWS, daysRestLabel, trailingPitchTotal,
 } from "./metrics";
 
 const team: Team = {
@@ -51,6 +51,13 @@ describe("static dashboard metrics", () => {
     expect(trailingPitchTotal(pitches, 14)).toBe(101);
     expect(trailingPitchTotal([8, 0], 5)).toBe(8);
     expect(trailingPitchTotal(pitches, 0)).toBe(0);
+  });
+
+  it("formats baseball rest without inventing missing start history", () => {
+    expect(daysRestLabel(null)).toBe("No prior starts this season");
+    expect(daysRestLabel(0)).toBe("0 days rest");
+    expect(daysRestLabel(1)).toBe("1 day rest");
+    expect(daysRestLabel(5)).toBe("5 days rest");
   });
 
   it("switches between official and adjusted role totals", () => {

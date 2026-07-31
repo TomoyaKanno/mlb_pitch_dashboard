@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -332,6 +333,111 @@ def verify_browser_payload(
                     "bullpen-usage availability must be a string or null"
                 )
 
+    starter_rest = payload.get("starter_rest")
+    if not isinstance(starter_rest, list) or len(starter_rest) != len(teams):
+        raise BrowserPayloadValidationError(
+            "dashboard missing one starter-rest record per team"
+        )
+    if {row.get("team_id") for row in starter_rest} != team_ids:
+        raise BrowserPayloadValidationError(
+            "starter-rest teams do not match season teams"
+        )
+    for rest in starter_rest:
+        if not isinstance(rest.get("team_name"), str) or not rest["team_name"]:
+            raise BrowserPayloadValidationError(
+                "starter-rest has an invalid team name"
+            )
+        as_of_value = rest.get("as_of_date")
+        if not isinstance(as_of_value, str):
+            raise BrowserPayloadValidationError(
+                "starter-rest as-of date must be a string"
+            )
+        try:
+            as_of_date = date.fromisoformat(as_of_value)
+        except ValueError as exc:
+            raise BrowserPayloadValidationError(
+                "starter-rest has an invalid as-of date"
+            ) from exc
+        pitchers = rest.get("pitchers")
+        if not isinstance(pitchers, list):
+            raise BrowserPayloadValidationError(
+                "starter-rest pitchers must be a list"
+            )
+        if len({pitcher.get("pitcher_id") for pitcher in pitchers}) != len(pitchers):
+            raise BrowserPayloadValidationError(
+                "starter-rest list contains duplicate pitchers"
+            )
+        if pitchers != sorted(
+            pitchers,
+            key=lambda pitcher: (
+                (
+                    pitcher.get("depth_order")
+                    if isinstance(pitcher.get("depth_order"), int)
+                    else 10**9
+                ),
+                (
+                    pitcher.get("pitcher_name")
+                    if isinstance(pitcher.get("pitcher_name"), str)
+                    else ""
+                ),
+                (
+                    pitcher.get("pitcher_id")
+                    if isinstance(pitcher.get("pitcher_id"), int)
+                    else 10**9
+                ),
+            ),
+        ):
+            raise BrowserPayloadValidationError(
+                "starter-rest pitchers are not in depth-chart order"
+            )
+        for pitcher in pitchers:
+            if (
+                not isinstance(pitcher.get("pitcher_id"), int)
+                or not isinstance(pitcher.get("pitcher_name"), str)
+                or not pitcher["pitcher_name"]
+                or pitcher.get("depth_role") != "SP"
+                or not isinstance(pitcher.get("depth_order"), int)
+                or pitcher["depth_order"] < 0
+                or pitcher.get("status_code") != "A"
+                or (
+                    pitcher.get("jersey_number") is not None
+                    and not isinstance(pitcher["jersey_number"], str)
+                )
+            ):
+                raise BrowserPayloadValidationError(
+                    "starter-rest contains an invalid active starter row"
+                )
+            last_start_value = pitcher.get("last_start_date")
+            last_start_pitches = pitcher.get("last_start_pitches")
+            days_rest = pitcher.get("days_rest")
+            if last_start_value is None:
+                if last_start_pitches is not None or days_rest is not None:
+                    raise BrowserPayloadValidationError(
+                        "starter without start history must have null workload context"
+                    )
+                continue
+            if (
+                not isinstance(last_start_value, str)
+                or not isinstance(last_start_pitches, int)
+                or last_start_pitches <= 0
+                or not isinstance(days_rest, int)
+                or days_rest < 0
+            ):
+                raise BrowserPayloadValidationError(
+                    "starter-rest contains invalid start history"
+                )
+            try:
+                last_start_date = date.fromisoformat(last_start_value)
+            except ValueError as exc:
+                raise BrowserPayloadValidationError(
+                    "starter-rest has an invalid last-start date"
+                ) from exc
+            expected_days_rest = max(0, (as_of_date - last_start_date).days - 1)
+            if last_start_date > as_of_date or days_rest != expected_days_rest:
+                raise BrowserPayloadValidationError(
+                    "starter-rest days do not match its dates"
+                )
+
     status = payload.get("status")
     if not isinstance(status, dict) or status.get("result") not in {
         "complete",
@@ -380,6 +486,7 @@ def verify_browser_payload(
         "recent_games": len(recent_games),
         "next_games": len(next_games),
         "bullpen_windows": len(bullpen_usage),
+        "starter_rest_records": len(starter_rest),
         "current_games": int(status.get("current_games", 0)),
     }
 
@@ -420,7 +527,8 @@ def main() -> None:
         f"{result['team_usage_windows']} team usage windows, "
         f"{result['recent_games']} recent team games, "
         f"{result['next_games']} next team games, "
-        f"{result['bullpen_windows']} bullpen windows, and "
+        f"{result['bullpen_windows']} bullpen windows, "
+        f"{result['starter_rest_records']} starter-rest records, and "
         f"{result['current_games']} current games"
     )
 

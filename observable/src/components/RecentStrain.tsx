@@ -1,6 +1,6 @@
 import {useEffect, useState, type CSSProperties} from "npm:react";
 import {
-  BULLPEN_TOTAL_WINDOWS, nextGameTimeStatus, trailingPitchTotal,
+  BULLPEN_TOTAL_WINDOWS, daysRestLabel, nextGameTimeStatus, trailingPitchTotal,
   type NextGameTimeStatus,
 } from "./metrics.js";
 
@@ -68,6 +68,25 @@ export interface BullpenUsage {
   end_date: string;
   dates: string[];
   pitchers: BullpenUsagePitcher[];
+}
+
+export interface StarterRestPitcher {
+  pitcher_id: number;
+  pitcher_name: string;
+  jersey_number: string | null;
+  depth_role: "SP";
+  depth_order: number;
+  status_code: "A";
+  last_start_date: string | null;
+  last_start_pitches: number | null;
+  days_rest: number | null;
+}
+
+export interface StarterRest {
+  team_id: number;
+  team_name: string;
+  as_of_date: string;
+  pitchers: StarterRestPitcher[];
 }
 
 interface MatchupTeam {
@@ -311,10 +330,54 @@ function PitcherAppearanceList({
   );
 }
 
-function daysRestLabel(daysRest: number | null): string {
-  if (daysRest == null) return "No prior starts this season";
-  if (daysRest === 1) return "1 day rest";
-  return `${daysRest} days rest`;
+function StarterRestPanel({rest}: {rest: StarterRest | null}) {
+  return (
+    <section className="starter-rest" aria-labelledby="starter-rest-title">
+      <div className="starter-rest-header">
+        <div>
+          <p className="eyebrow">Rotation context</p>
+          <h2 id="starter-rest-title">Starter rest</h2>
+          <p className="secondary">
+            Active MLB depth-chart starters in published order. Rest counts official
+            starts only and excludes both the start date and the as-of date.
+          </p>
+        </div>
+        {rest ? (
+          <span className="usage-window">Entering {formatFullDate(rest.as_of_date)}</span>
+        ) : null}
+      </div>
+      {rest && rest.pitchers.length > 0 ? (
+        <ul
+          className="starter-rest-list"
+          aria-label={`${rest.team_name} active starter rest entering ${formatFullDate(rest.as_of_date)}`}
+        >
+          {rest.pitchers.map((pitcher) => {
+            const lastStart = pitcher.last_start_date
+              ? `Last start ${formatShortDate(pitcher.last_start_date)}`
+                + (pitcher.last_start_pitches == null
+                  ? ""
+                  : ` · ${integer.format(pitcher.last_start_pitches)} pitches`)
+              : "No official start in this season snapshot";
+            return (
+              <li key={pitcher.pitcher_id} className="starter-rest-row">
+                <PitcherPortrait pitcherId={pitcher.pitcher_id} width={48} height={64} />
+                <PitcherNameStack name={pitcher.pitcher_name} meta={lastStart} />
+                <span className="starter-rest-value">
+                  {daysRestLabel(pitcher.days_rest)}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p className="secondary starter-rest-empty">
+          {rest
+            ? "No active depth-chart starters are available in this snapshot."
+            : "Starter-rest roster context is not available in this snapshot."}
+        </p>
+      )}
+    </section>
+  );
 }
 
 function ProbableStarterPanel({game}: {game: NextTeamGame}) {
@@ -523,11 +586,12 @@ function nextMatchup(game: NextTeamGame): {away: MatchupTeam; home: MatchupTeam}
 }
 
 export function RecentStrain({
-  games, nextGames, bullpenUsage, selectedTeamId, onSelectTeam,
+  games, nextGames, bullpenUsage, starterRest, selectedTeamId, onSelectTeam,
 }: {
   games: RecentTeamGame[];
   nextGames: NextTeamGame[];
   bullpenUsage: BullpenUsage[];
+  starterRest: StarterRest[];
   selectedTeamId: number;
   onSelectTeam: (teamId: number) => void;
 }) {
@@ -543,6 +607,7 @@ export function RecentStrain({
   const nextGame = nextGames.find((game) => game.team_id === selected.team_id) ?? null;
   const nextGameStatus = nextGameTimeStatus(nextGame?.game_datetime ?? null, nowMs);
   const usage = bullpenUsage.find((item) => item.team_id === selected.team_id) ?? null;
+  const rest = starterRest.find((item) => item.team_id === selected.team_id) ?? null;
   const totalPitches = selected.pitchers.reduce((total, pitcher) => total + pitcher.pitches, 0);
   const lastMatchup = recentMatchup(selected);
 
@@ -612,6 +677,7 @@ export function RecentStrain({
         </section>
       </div>
       <BullpenHeatmap usage={usage} />
+      <StarterRestPanel rest={rest} />
     </section>
   );
 }
