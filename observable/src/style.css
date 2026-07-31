@@ -70,6 +70,36 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
 .recent-game-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .recent-game-card { display: grid; align-content: start; gap: 12px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
 .recent-card-label { margin: 0; color: var(--muted); font-size: .72rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
+.next-game-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.next-game-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: .7rem;
+  font-weight: 750;
+  letter-spacing: .02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.next-game-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.next-game-status-live {
+  border-color: color-mix(in srgb, var(--series-sp) 55%, var(--border));
+  color: var(--series-sp);
+  background: color-mix(in srgb, var(--series-sp) 12%, var(--surface));
+  animation: next-game-live-pulse 2s ease-in-out infinite;
+}
+.next-game-status-over { background: color-mix(in srgb, var(--surface-2) 65%, var(--surface)); }
+@keyframes next-game-live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--series-sp) 0%, transparent); }
+  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--series-sp) 18%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .next-game-status-live { animation: none; }
+}
 .recent-game-body { display: flex; align-items: center; gap: 14px; }
 .recent-team-logo { flex: none; object-fit: contain; }
 .recent-game-copy { display: grid; gap: 3px; min-width: 0; }
