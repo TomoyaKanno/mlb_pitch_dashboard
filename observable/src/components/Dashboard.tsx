@@ -8,7 +8,7 @@ import {
   type SeriesMode, type SortColumn, type SortDirection, type Team, type TeamDayPoint, type View,
 } from "./metrics.js";
 import {
-  RecentStrain, type BullpenUsage, type NextTeamGame, type RecentTeamGame,
+  RecentStrain, type BullpenUsage, type NextTeamGame, type RecentTeamGame, type StarterRest,
 } from "./RecentStrain.js";
 
 interface Status {
@@ -36,6 +36,7 @@ interface DashboardData {
   recent_games: RecentTeamGame[];
   next_games: NextTeamGame[];
   bullpen_usage: BullpenUsage[];
+  starter_rest: StarterRest[];
 }
 
 interface PlayerTotal {
@@ -1065,6 +1066,7 @@ export function Dashboard({
           games={data.recent_games}
           nextGames={data.next_games}
           bullpenUsage={data.bullpen_usage}
+          starterRest={data.starter_rest}
           selectedTeamId={recentTeamId}
           onSelectTeam={setRecentTeamId}
         />

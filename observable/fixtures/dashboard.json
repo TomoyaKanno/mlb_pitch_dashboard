@@ -615,6 +615,135 @@
       ]
     }
   ],
+  "starter_rest": [
+    {
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers",
+      "as_of_date": "2026-07-20",
+      "pitchers": [
+        {
+          "pitcher_id": 656941,
+          "pitcher_name": "Yoshinobu Yamamoto",
+          "jersey_number": "18",
+          "depth_role": "SP",
+          "depth_order": 0,
+          "status_code": "A",
+          "last_start_date": "2026-07-20",
+          "last_start_pitches": 96,
+          "days_rest": 0
+        },
+        {
+          "pitcher_id": 641778,
+          "pitcher_name": "Eric Lauer",
+          "jersey_number": "33",
+          "depth_role": "SP",
+          "depth_order": 1,
+          "status_code": "A",
+          "last_start_date": "2026-07-15",
+          "last_start_pitches": 91,
+          "days_rest": 4
+        },
+        {
+          "pitcher_id": 808967,
+          "pitcher_name": "Roki Sasaki",
+          "jersey_number": "11",
+          "depth_role": "SP",
+          "depth_order": 2,
+          "status_code": "A",
+          "last_start_date": null,
+          "last_start_pitches": null,
+          "days_rest": null
+        }
+      ]
+    },
+    {
+      "team_id": 121,
+      "team_name": "New York Mets",
+      "as_of_date": "2026-07-20",
+      "pitchers": [
+        {
+          "pitcher_id": 621121,
+          "pitcher_name": "David Peterson",
+          "jersey_number": null,
+          "depth_role": "SP",
+          "depth_order": 0,
+          "status_code": "A",
+          "last_start_date": "2026-07-20",
+          "last_start_pitches": 91,
+          "days_rest": 0
+        },
+        {
+          "pitcher_id": 673540,
+          "pitcher_name": "Kodai Senga",
+          "jersey_number": "34",
+          "depth_role": "SP",
+          "depth_order": 1,
+          "status_code": "A",
+          "last_start_date": "2026-07-16",
+          "last_start_pitches": 88,
+          "days_rest": 3
+        }
+      ]
+    },
+    {
+      "team_id": 147,
+      "team_name": "New York Yankees",
+      "as_of_date": "2026-07-20",
+      "pitchers": [
+        {
+          "pitcher_id": 543135,
+          "pitcher_name": "Gerrit Cole",
+          "jersey_number": "45",
+          "depth_role": "SP",
+          "depth_order": 0,
+          "status_code": "A",
+          "last_start_date": "2026-07-20",
+          "last_start_pitches": 98,
+          "days_rest": 0
+        },
+        {
+          "pitcher_id": 608331,
+          "pitcher_name": "Max Fried",
+          "jersey_number": "54",
+          "depth_role": "SP",
+          "depth_order": 1,
+          "status_code": "A",
+          "last_start_date": "2026-07-15",
+          "last_start_pitches": 94,
+          "days_rest": 4
+        }
+      ]
+    },
+    {
+      "team_id": 136,
+      "team_name": "Seattle Mariners",
+      "as_of_date": "2026-07-20",
+      "pitchers": [
+        {
+          "pitcher_id": 669203,
+          "pitcher_name": "Logan Gilbert",
+          "jersey_number": "36",
+          "depth_role": "SP",
+          "depth_order": 0,
+          "status_code": "A",
+          "last_start_date": "2026-07-20",
+          "last_start_pitches": 102,
+          "days_rest": 0
+        },
+        {
+          "pitcher_id": 669923,
+          "pitcher_name": "George Kirby",
+          "jersey_number": "68",
+          "depth_role": "SP",
+          "depth_order": 1,
+          "status_code": "A",
+          "last_start_date": "2026-07-16",
+          "last_start_pitches": 97,
+          "days_rest": 3
+        }
+      ]
+    }
+  ],
   "team_pitcher_usage": [
     {
       "team_id": 119,

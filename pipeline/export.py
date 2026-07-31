@@ -504,6 +504,110 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
     return sorted(result, key=lambda row: row["team_name"])
 
 
+def _baseball_days_rest(last_start_date: str, target_date: str) -> int:
+    """Calendar off-days between an official start and the target date."""
+    last_date = date.fromisoformat(last_start_date)
+    target = date.fromisoformat(target_date)
+    return max(0, (target - last_date).days - 1)
+
+
+def aggregate_starter_rest(snapshot: Snapshot) -> list[dict[str, Any]]:
+    """Active MLB depth-chart starters and rest since their last official start.
+
+    The target date is the Eastern schedule date captured by refresh, falling
+    back to the team's latest completed game for legacy snapshots. Only active
+    depth-chart ``SP`` rows are current rotation context; injured, reassigned,
+    and 40-man-only pitchers are deliberately excluded. Start history follows
+    the pitcher across teams and uses MLB's official ``gamesStarted`` flag.
+    """
+    by_game_team = _appearances_by_game_team(snapshot)
+    latest_team_games = _latest_team_games(snapshot, by_game_team)
+
+    official_starts: dict[int, list[Any]] = defaultdict(list)
+    for row in snapshot.appearances.values():
+        if row.official_started:
+            official_starts[row.pitcher_id].append(row)
+    for starts in official_starts.values():
+        starts.sort(
+            key=lambda row: (
+                row.game_date,
+                (
+                    snapshot.games[row.game_pk].game_datetime or ""
+                    if row.game_pk in snapshot.games
+                    else ""
+                ),
+                row.game_pk,
+            ),
+            reverse=True,
+        )
+
+    roster_by_team: dict[int, list[Any]] = defaultdict(list)
+    for row in snapshot.roster_pitchers.values():
+        if row.depth_role == "SP" and row.status_code == "A":
+            roster_by_team[row.team_id].append(row)
+
+    result: list[dict[str, Any]] = []
+    for team_id, (latest_game, latest_rows) in latest_team_games.items():
+        next_game = snapshot.next_games.get(team_id)
+        as_of_date = max(
+            latest_game.game_date,
+            (
+                next_game.schedule_date
+                if next_game is not None and next_game.schedule_date
+                else latest_game.game_date
+            ),
+        )
+        starters = sorted(
+            roster_by_team.get(team_id, []),
+            key=lambda row: (
+                row.depth_order if row.depth_order is not None else 10**9,
+                row.pitcher_name,
+                row.pitcher_id,
+            ),
+        )
+        pitchers: list[dict[str, Any]] = []
+        for roster in starters:
+            last_start = next(
+                (
+                    row
+                    for row in official_starts.get(roster.pitcher_id, [])
+                    if row.game_date <= as_of_date
+                ),
+                None,
+            )
+            if last_start is not None:
+                last_start_date = last_start.game_date
+                last_start_pitches = last_start.pitches
+                days_rest = _baseball_days_rest(last_start_date, as_of_date)
+            else:
+                last_start_date = None
+                last_start_pitches = None
+                days_rest = None
+            pitchers.append(
+                {
+                    "pitcher_id": roster.pitcher_id,
+                    "pitcher_name": roster.pitcher_name,
+                    "jersey_number": roster.jersey_number,
+                    "depth_role": roster.depth_role,
+                    "depth_order": roster.depth_order,
+                    "status_code": roster.status_code,
+                    "last_start_date": last_start_date,
+                    "last_start_pitches": last_start_pitches,
+                    "days_rest": days_rest,
+                }
+            )
+        result.append(
+            {
+                "team_id": team_id,
+                "team_name": latest_rows[0].team_name,
+                "as_of_date": as_of_date,
+                "pitchers": pitchers,
+            }
+        )
+
+    return sorted(result, key=lambda row: row["team_name"])
+
+
 def _probable_recent_starts(
     snapshot: Snapshot,
     pitcher_id: int,
@@ -543,10 +647,7 @@ def _probable_recent_starts(
     if not recent:
         return [], None
 
-    last_date = date.fromisoformat(recent[0]["date"])
-    next_date = date.fromisoformat(next_game_date)
-    days_rest = max(0, (next_date - last_date).days - 1)
-    return recent, days_rest
+    return recent, _baseball_days_rest(recent[0]["date"], next_game_date)
 
 
 def aggregate_next_games(snapshot: Snapshot) -> list[dict[str, Any]]:
@@ -667,6 +768,7 @@ def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
         "recent_games": aggregate_recent_games(snapshot),
         "next_games": aggregate_next_games(snapshot),
         "bullpen_usage": aggregate_bullpen_usage(snapshot),
+        "starter_rest": aggregate_starter_rest(snapshot),
     }
 
 

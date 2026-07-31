@@ -97,6 +97,12 @@ export function trailingPitchTotal(pitches: readonly number[], days: number): nu
   return pitches.slice(-days).reduce((total, value) => total + value, 0);
 }
 
+export function daysRestLabel(daysRest: number | null): string {
+  if (daysRest == null) return "No prior starts this season";
+  if (daysRest === 1) return "1 day rest";
+  return `${daysRest} days rest`;
+}
+
 function roleKey(basis: Basis, role: "sp" | "rp"): keyof Team {
   return `${basis}_${role}` as keyof Team;
 }

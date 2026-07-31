@@ -18,7 +18,8 @@ The Observable Framework application in `observable/` is the only supported user
   - last completed game as stacked pitcher rows with MLB headshots, official SP/RP, pitch counts, and a direct box-score button;
   - next scheduled opponent with MLB’s optional probable starter, days of rest, that pitcher’s last three official starts, and an official MLB Gameday button;
   - a full-width rest-day notice when the snapshot's schedule date matches today in Eastern time and the selected team has no game on that slate;
-  - a 14-day bullpen heatmap of official relief pitches, including unused active depth-chart arms and IL/Minors badges only for arms who worked in the window.
+  - a 14-day bullpen heatmap of official relief pitches, including unused active depth-chart arms and IL/Minors badges only for arms who worked in the window;
+  - a starter-rest list of active MLB depth-chart SPs, with portraits, their latest official-start workload, and completed calendar days of rest entering the snapshot date.
 
 The official starter is not inferred from appearance order, pitch count, outing length, or effectiveness. A starter removed after one inning remains an official SP. The role-adjusted view is a separate analytical layer:
 
@@ -46,7 +47,7 @@ flowchart TD
 | `dashboard-data` | Machine-managed normalized season snapshots; never merged into `main` |
 | GitHub Actions artifact | Ephemeral compiled site served by GitHub Pages; never committed |
 
-The deployed browser downloads small team- and player-level aggregates generated at build time: team season totals, top-30 player totals, a compact four-season history only for those current player leaders, one top-five pitcher-usage list per team and role framing, one latest completed-game pitcher list, one upcoming-game schedule record (optional probable starter, recent-start context, and snapshot-time rest-day status), one 14-day bullpen-usage window enriched with depth-chart roster context per team, plus a sibling team timeseries payload (daily increments for the chart and game-grain complete games). Data acquisition, role classification, persistence, validation, and export all happen before deployment.
+The deployed browser downloads small team- and player-level aggregates generated at build time: team season totals, top-30 player totals, a compact four-season history only for those current player leaders, one top-five pitcher-usage list per team and role framing, one latest completed-game pitcher list, one upcoming-game schedule record (optional probable starter, recent-start context, and snapshot-time rest-day status), one 14-day bullpen-usage window enriched with depth-chart roster context per team, one active-starter rest record per team, plus a sibling team timeseries payload (daily increments for the chart and game-grain complete games). Data acquisition, role classification, persistence, validation, and export all happen before deployment.
 
 ### Using the timeline panel
 
@@ -67,6 +68,7 @@ The deployed browser downloads small team- and player-level aggregates generated
 - **Next game** shows the matchup and, when MLB lists a probable starter, a larger portrait, days of rest, and up to three prior official starts (date, opponent, pitches). Its date is paired with an official MLB Gameday button; missing probables stay explicitly unannounced.
 - **Rest day** appears above the two game cards only when the refreshed MLB schedule has no selected-team game on the snapshot date and that date is today in Eastern time. This avoids declaring a rest day from a stale snapshot or after a same-day completed game.
 - **Bullpen, last 14 days** is a daily heatmap of official reliever pitches with row-aligned 3-, 5-, and 14-calendar-day totals for each pitcher. It ranks active pitchers by latest-game relief usage first, then 3/5/14-day workload; unavailable IL/Minors arms remain at the bottom. Active depth-chart bullpen arms appear even before they throw; IL and Minors rows are muted but retain their pitch history, and those badges appear only for arms who recorded pitches in the window.
+- **Starter rest** lists only active (`status_code=A`) MLB depth-chart SPs in MLB's published order. Each row shows a portrait, last official-start date and pitch count, and completed calendar days of rest entering the displayed snapshot date. The count excludes both the start date and the as-of date, follows a traded pitcher across teams by MLB player id, and never treats a role-adjusted relief outing as a start. A pitcher without an official start in the published season remains explicit rather than receiving an inferred value. This is schedule/workload context, not a readiness or fatigue score.
 
 ## Refresh and deployment lifecycle
 
@@ -78,7 +80,7 @@ The deployed browser downloads small team- and player-level aggregates generated
 4. Fetch only missing games, prior failures, and games inside the seven-day reconciliation window. A forced run fetches every completed game.
 5. Classify appearances, validate structural and arithmetic invariants, write normalized JSONL partitions plus next-game and roster read models, and verify the persisted files and hashes.
 6. Commit the snapshot to `dashboard-data` only after validation succeeds.
-7. Trigger `Build and deploy dashboard`, which checks out current source and data, exports the 30-team season totals, top-30 player totals, per-team top-five pitcher workloads, latest-game workloads, upcoming games with probable-starter and rest-day context, roster-aware bullpen windows, and reconciled team timeseries, builds the site, and deploys a Pages artifact.
+7. Trigger `Build and deploy dashboard`, which checks out current source and data, exports the 30-team season totals, top-30 player totals, per-team top-five pitcher workloads, latest-game workloads, upcoming games with probable-starter and rest-day context, roster-aware bullpen windows, active-starter rest records, and reconciled team timeseries, builds the site, and deploys a Pages artifact.
 
 The three completed prior seasons are bootstrapped once through the same validated manual refresh workflow, then remain immutable baseball facts. Scheduled refreshes continue to update only the configured current season.
 

@@ -85,6 +85,25 @@ def _valid_payloads(data_commit: str = "data-sha") -> tuple[dict, dict]:
         }
         for team in teams
     ]
+    starter_rest = [
+        {
+            "team_id": team["team_id"],
+            "team_name": team["team_name"],
+            "as_of_date": "2026-07-23",
+            "pitchers": [{
+                "pitcher_id": team["team_id"],
+                "pitcher_name": f"Starter {team['team_id']:02d}",
+                "jersey_number": None,
+                "depth_role": "SP",
+                "depth_order": 0,
+                "status_code": "A",
+                "last_start_date": "2026-07-18",
+                "last_start_pitches": 6,
+                "days_rest": 4,
+            }],
+        }
+        for team in teams
+    ]
     points = [
         {
             "date": "2026-07-23",
@@ -103,6 +122,7 @@ def _valid_payloads(data_commit: str = "data-sha") -> tuple[dict, dict]:
         "recent_games": recent_games,
         "next_games": next_games,
         "bullpen_usage": bullpen_usage,
+        "starter_rest": starter_rest,
     }
     series = {
         "schema_version": SCHEMA_VERSION,
@@ -184,6 +204,7 @@ def test_verify_browser_payload_accepts_a_reconciled_build(tmp_path: Path):
         "recent_games": 30,
         "next_games": 30,
         "bullpen_windows": 30,
+        "starter_rest_records": 30,
         "current_games": 30,
     }
 
@@ -255,6 +276,38 @@ def test_verify_browser_payload_rejects_timeseries_drift(tmp_path: Path):
     dist_dir = _write_dist(tmp_path, dashboard, drifted)
 
     with pytest.raises(ValueError, match="timeseries total"):
+        verify_browser_payload(
+            dist_dir,
+            expected_season=2026,
+            expected_data_commit="data-sha",
+        )
+
+
+def test_verify_browser_payload_rejects_starter_rest_drift(tmp_path: Path):
+    dashboard, series = _valid_payloads()
+    dashboard["starter_rest"][0]["pitchers"][0]["days_rest"] = 5
+    dist_dir = _write_dist(tmp_path, dashboard, series)
+
+    with pytest.raises(
+        BrowserPayloadValidationError,
+        match="starter-rest days do not match",
+    ):
+        verify_browser_payload(
+            dist_dir,
+            expected_season=2026,
+            expected_data_commit="data-sha",
+        )
+
+
+def test_verify_browser_payload_rejects_inactive_starter_rest_row(tmp_path: Path):
+    dashboard, series = _valid_payloads()
+    dashboard["starter_rest"][0]["pitchers"][0]["status_code"] = "D15"
+    dist_dir = _write_dist(tmp_path, dashboard, series)
+
+    with pytest.raises(
+        BrowserPayloadValidationError,
+        match="invalid active starter row",
+    ):
         verify_browser_payload(
             dist_dir,
             expected_season=2026,

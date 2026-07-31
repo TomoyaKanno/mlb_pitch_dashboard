@@ -732,6 +732,60 @@ tbody tr.selected td { background: var(--accent-soft); }
 }
 @media (max-width: 640px) { .bullpen-usage-header { align-items: flex-start; flex-direction: column; } .usage-window { text-align: left; } }
 
+.starter-rest { margin-top: 4px; }
+.starter-rest-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.starter-rest h2 { margin: 2px 0 4px; font-size: 1.25rem; }
+.starter-rest-header .secondary { max-width: 720px; margin: 0; line-height: 1.45; }
+.starter-rest-list {
+  display: grid;
+  gap: 0;
+  width: 100%;
+  max-width: none;
+  margin: 12px 0 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  list-style: none;
+}
+.starter-rest-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(96px, auto);
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+}
+.starter-rest-row:first-child { border-top: 0; }
+.starter-rest-row .pitcher-portrait { width: 48px; height: 64px; }
+.starter-rest-row .pitcher-meta {
+  margin-top: 3px;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 550;
+}
+.starter-rest-value {
+  justify-self: end;
+  max-width: 132px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+  line-height: 1.2;
+  text-align: center;
+}
+.starter-rest-empty { margin: 12px 0 0; }
+@media (max-width: 640px) {
+  .starter-rest-header { align-items: flex-start; flex-direction: column; }
+  .starter-rest-row { grid-template-columns: auto minmax(0, 1fr) minmax(78px, auto); gap: 9px; }
+  .starter-rest-value { max-width: 100px; padding-inline: 7px; font-size: .72rem; }
+}
+
 
 .recent-game-context .game-action-button {
   align-items: center;
