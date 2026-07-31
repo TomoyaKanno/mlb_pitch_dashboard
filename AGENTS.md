@@ -68,6 +68,13 @@ Do not reintroduce an application server or client-side refresh path as an assum
 
 Do not introduce a new deployment target, secret, credential-bearing workflow, automatic merge path, external write integration, runtime backend, or client-side MLB data-fetch path without explicit user approval. Loading static display assets (team logos, pitcher portraits) from a public CDN is permitted and does not require a backend. Maintenance of the approved GitHub Pages and data-refresh workflows is allowed when part of the requested change.
 
+## Scheduled Actions timing
+
+- Treat GitHub `schedule` as best-effort, not a wall clock. From 21–31 July 2026, the 09:17 UTC production refresh ran 1h28m–3h20m late (2h04m median); from 25–31 July, the minimal 08:17 UTC probe ran 1h43m–3h23m late (2h28m median). Paired delays correlated at `r=0.988`, while runner pickup took only 3–12 seconds, locating the delay before job execution.
+- The behavior persisted with both timezone-aware and plain UTC cron and matches public reports of two-to-four-hour morning delays. GitHub [documents that schedules may be delayed or dropped under load](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule) without a timing SLA; only 23 and 25 July overlapped relevant status incidents, while the worst paired delay was 27 July with no matching Actions incident.
+- Production therefore runs the same serialized incremental refresh at 07:17 and 09:17 UTC (3:17 and 5:17 Eastern during the regular season). The early pass improves practical freshness and the later pass is a conservative backstop; neither is an exact-time guarantee.
+- Do not re-diagnose this evidence as a workflow, permission, checkout, or runner defect, and do not promise exact freshness from GitHub cron. An external scheduler or write integration requires explicit user approval.
+
 ## Observable and React rule
 
 Observable Framework's Markdown JSX renderer uses its self-hosted npm React runtime. Components using hooks must import React symbols from `npm:react`:

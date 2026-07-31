@@ -2,21 +2,22 @@ name: Refresh dashboard data
 
 on:
   schedule:
-    # 09:17 UTC is 05:17 Eastern while EDT is in effect, which covers the whole
-    # 2026 regular season. Revisit before next season; under EST it is 04:17.
+    # Run the same incremental refresh twice nightly. During EDT, which covers
+    # the whole 2026 regular season, 07:17 UTC is 03:17 Eastern and 09:17 UTC is
+    # 05:17 Eastern. The early pass improves morning freshness; the later pass
+    # is the conservative backstop for unusually late games. Revisit the UTC
+    # conversion before next season; under EST these are 02:17 and 04:17.
     #
-    # Expect this to dispatch late. Measured 2026-07-21..25: 2h03m, 2h04m,
-    # 2h05m, 1h56m, 1h28m. The three weekday figures fall within 97 seconds of
-    # each other and the delay drops off toward the weekend, which points at
-    # load on GitHub's scheduler rather than anything here. Run creation itself
-    # is late (created_at == run_started_at, so it is not runner starvation),
-    # and schedule-latency-probe.yml -- no permissions, no checkout, 8s of work
-    # -- is delayed just as much.
+    # Expect both schedules to dispatch late. From 2026-07-21..31, the existing
+    # 09:17 run was 1h28m..3h20m late (2h04m median); the minimal 08:17 latency
+    # probe was delayed comparably. Run creation itself is late and runner
+    # pickup takes only seconds, locating the delay upstream of this workflow.
     #
     # An earlier note here blamed GitHub's timezone-aware `timezone:` key and
     # switched to plain UTC to avoid it. The data does not support that: "17 5"
     # with America/New_York and "17 9" UTC denote the same instant, so the
     # switch changed nothing, and the delay continued afterward.
+    - cron: "17 7 * 3-11 *"
     - cron: "17 9 * 3-11 *"
   workflow_dispatch:
     inputs:

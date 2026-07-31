@@ -1,10 +1,10 @@
 # Scheduled data-branch refresh
 
-The `Refresh dashboard data` GitHub Actions workflow is the only automated writer to the orphan `dashboard-data` branch. It runs nightly during the baseball season and remains manually runnable for recovery and historical refreshes.
+The `Refresh dashboard data` GitHub Actions workflow is the only automated writer to the orphan `dashboard-data` branch. It runs twice nightly during the baseball season and remains manually runnable for recovery and historical refreshes.
 
 ## Schedule
 
-The workflow runs daily at 09:17 UTC from March through November. The 2026 regular season is entirely in EDT, so that is 5:17 a.m. Eastern throughout the regular season. Revisit the UTC conversion before a future season. GitHub dispatches the run well after that time, between 1h28m and 2h05m late over 21–25 July 2026, for reasons that sit outside this repository; [deployment.md](deployment.md) records the measurements. The default published season comes from `config/dashboard.json`, which is changed intentionally after a new regular season begins rather than inferred from the calendar in January.
+The workflow runs at 07:17 and 09:17 UTC each day from March through November. The 2026 regular season is entirely in EDT, so those are 3:17 and 5:17 a.m. Eastern throughout the regular season. Both schedules run the identical incremental update: the early pass publishes completed games sooner on typical nights, while the later pass reconciles games that finished unusually late. The shared `dashboard-data-refresh` concurrency group serializes the runs if GitHub dispatches them close together, and queued refreshes are never cancelled midway. Revisit the UTC conversion before a future season. GitHub may dispatch either run well after its requested time; [deployment.md](deployment.md) records the measurements. The default published season comes from `config/dashboard.json`, which is changed intentionally after a new regular season begins rather than inferred from the calendar in January.
 
 ## Running it
 

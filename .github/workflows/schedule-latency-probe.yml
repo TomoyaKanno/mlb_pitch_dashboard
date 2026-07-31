@@ -2,7 +2,8 @@ name: Probe GitHub schedule latency
 
 on:
   schedule:
-    # Temporary comparison point for the 09:17 UTC production refresh.
+    # Temporary comparison point between the 07:17 and 09:17 UTC production
+    # refreshes.
     # During the 2026 regular season, 08:17 UTC is 04:17 Eastern.
     - cron: "17 8 * 3-11 *"
   workflow_dispatch:
