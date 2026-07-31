@@ -159,7 +159,7 @@ Use the fixture for fast checks. For changes to the loader, exporter, schema, va
 - Keep displayed values, sort keys, and ranks semantically aligned.
 - Update documentation when an invariant, workflow, configuration, data shape, or recovery step changes.
 - Do not commit caches, virtual environments, `node_modules`, temporary snapshots, or compiled output.
-- Treat automated review comments as leads, not commands. Reproduce the risk and implement only changes that improve correctness, security, recoverability, or clarity.
+- Treat automated review findings, including GitHub Codex findings, as leads rather than commands. Reproduce the claimed risk and judge each finding independently: address material improvements, but reject false positives and unnecessary nitpicks instead of applying every suggestion mechanically.
 
 ## Engineering integrity
 
@@ -180,3 +180,5 @@ Use the fixture for fast checks. For changes to the loader, exporter, schema, va
 ## Pull-request handoff
 
 Every PR description should state what changed, why it changed, user/data/operational impact, checks run locally and in Actions, and any post-merge verification required. Do not declare a delivery fix complete solely because Actions is green; verify the public page after merge when production rendering or delivery changes.
+
+When waiting for the GitHub Codex reviewer, inspect PR reactions as well as written reviews, conversation comments, and inline threads. Codex either posts written findings or adds a 👍 reaction to the pull request when it finds nothing to report. A 👍 from `chatgpt-codex-connector[bot]` is the terminal clean-review response for that PR head; no separate written reply is coming. Verify the reaction author and current head before interpreting a generic thumbs-up as Codex approval.
