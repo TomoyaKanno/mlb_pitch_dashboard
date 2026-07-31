@@ -3,7 +3,8 @@ import {
   averageBarPercent, averageMetric, completeGamesForTeam, completeGameSummary, coverageText,
   formatSeriesValue, metricSeries, leagueTotals, metric, monthAxisTicks, nearestSeriesIndexByDate,
   nextSort, niceCeil, rankTeams, rawMetric, seriesDateDomain, seriesSupported, seriesTitle,
-  seriesTooltipText, statusLabel, statusTone, valueAxisTicks, type CompleteGame, type CoverageStatus,
+  seriesTooltipText, statusLabel, statusTone, valueAxisTicks, nextGameTimeStatus,
+  NEXT_GAME_OVER_AFTER_HOURS, type CompleteGame, type CoverageStatus,
   type Team, type TeamDayPoint,
   BULLPEN_TOTAL_WINDOWS, trailingPitchTotal,
 } from "./metrics";
@@ -23,6 +24,24 @@ const team: Team = {
 };
 
 describe("static dashboard metrics", () => {
+  it("classifies next-game timing without showing a pre-start badge", () => {
+    const scheduled = "2026-07-31T20:00:00Z";
+    const start = Date.parse(scheduled);
+
+    expect(nextGameTimeStatus(scheduled, start - 1)).toBeNull();
+    expect(nextGameTimeStatus(scheduled, start)).toBe("live");
+    expect(nextGameTimeStatus(scheduled, start + 90 * 60 * 1000)).toBe("live");
+    expect(nextGameTimeStatus(
+      scheduled,
+      start + NEXT_GAME_OVER_AFTER_HOURS * 60 * 60 * 1000 - 1,
+    )).toBe("live");
+    expect(nextGameTimeStatus(
+      scheduled,
+      start + NEXT_GAME_OVER_AFTER_HOURS * 60 * 60 * 1000,
+    )).toBe("over");
+    expect(nextGameTimeStatus(null, start)).toBeNull();
+  });
+
   it("sums trailing calendar-day relief pitches for the heatmap totals", () => {
     const pitches = [3, 0, 11, 5, 0, 22, 7, 4, 0, 16, 9, 0, 18, 6];
 

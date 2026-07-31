@@ -1,5 +1,8 @@
-import type {CSSProperties} from "npm:react";
-import {BULLPEN_TOTAL_WINDOWS, trailingPitchTotal} from "./metrics.js";
+import {useEffect, useState, type CSSProperties} from "npm:react";
+import {
+  BULLPEN_TOTAL_WINDOWS, nextGameTimeStatus, trailingPitchTotal,
+  type NextGameTimeStatus,
+} from "./metrics.js";
 
 export interface RecentPitcher {
   pitcher_id: number;
@@ -368,6 +371,27 @@ function boxScoreHref(gamePk: number): string {
   return gameDayHref(gamePk) + "/final/box";
 }
 
+const CLOCK_REFRESH_MS = 60_000;
+
+function useCurrentTime(): number {
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = window.setInterval(() => setNowMs(Date.now()), CLOCK_REFRESH_MS);
+    return () => window.clearInterval(timer);
+  }, []);
+  return nowMs;
+}
+
+function NextGameStatusBadge({status}: {status: Exclude<NextGameTimeStatus, null>}) {
+  const label = status === "live" ? "Likely live" : "Likely over";
+  return (
+    <span className={`next-game-status next-game-status-${status}`} role="status">
+      <span className="next-game-status-dot" aria-hidden="true" />
+      {label}
+    </span>
+  );
+}
+
 function easternCalendarDate(): string {
   const values = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {
@@ -507,6 +531,7 @@ export function RecentStrain({
   selectedTeamId: number;
   onSelectTeam: (teamId: number) => void;
 }) {
+  const nowMs = useCurrentTime();
   const selected = games.find((game) => game.team_id === selectedTeamId) ?? games[0] ?? null;
   if (!selected) {
     return (
@@ -516,6 +541,7 @@ export function RecentStrain({
     );
   }
   const nextGame = nextGames.find((game) => game.team_id === selected.team_id) ?? null;
+  const nextGameStatus = nextGameTimeStatus(nextGame?.game_datetime ?? null, nowMs);
   const usage = bullpenUsage.find((item) => item.team_id === selected.team_id) ?? null;
   const totalPitches = selected.pitchers.reduce((total, pitcher) => total + pitcher.pitches, 0);
   const lastMatchup = recentMatchup(selected);
@@ -567,7 +593,10 @@ export function RecentStrain({
           />
         </section>
         <section className="recent-game-card" aria-label="Next game">
-          <p className="recent-card-label">Next game</p>
+          <div className="next-game-card-heading">
+            <p className="recent-card-label">Next game</p>
+            {nextGameStatus ? <NextGameStatusBadge status={nextGameStatus} /> : null}
+          </div>
           {nextGame ? (
             <>
               <Matchup {...nextMatchup(nextGame)} />

@@ -72,6 +72,25 @@ const LEAGUE_KEYS = [
 
 export const BULLPEN_TOTAL_WINDOWS = [3, 5, 14] as const;
 
+export type NextGameTimeStatus = "live" | "over" | null;
+export const NEXT_GAME_OVER_AFTER_HOURS = 4;
+
+/**
+ * Classifies an upcoming game's schedule time using the browser's current clock.
+ * A null result means the scheduled start has not passed, so the UI stays quiet.
+ */
+export function nextGameTimeStatus(
+  gameDatetime: string | null,
+  nowMs: number = Date.now(),
+): NextGameTimeStatus {
+  if (!gameDatetime) return null;
+  const scheduledMs = Date.parse(gameDatetime);
+  if (!Number.isFinite(scheduledMs) || nowMs < scheduledMs) return null;
+  const elapsedMs = nowMs - scheduledMs;
+  const overAfterMs = NEXT_GAME_OVER_AFTER_HOURS * 60 * 60 * 1000;
+  return elapsedMs >= overAfterMs ? "over" : "live";
+}
+
 /** Sums a pitcher's trailing calendar-day relief pitches, inclusive of the heatmap end date. */
 export function trailingPitchTotal(pitches: readonly number[], days: number): number {
   if (!Number.isInteger(days) || days <= 0) return 0;
