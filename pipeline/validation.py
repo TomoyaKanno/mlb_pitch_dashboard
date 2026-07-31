@@ -22,15 +22,14 @@ def validate_snapshot(snapshot: Snapshot) -> None:
             errors.append(f"next game {next_game.game_pk} has the same team and opponent")
         if not next_game.team_name or not next_game.opponent_name:
             errors.append(f"next game {next_game.game_pk} is missing a team name")
-        if next_game.schedule_date is not None:
-            try:
-                schedule_date = date.fromisoformat(next_game.schedule_date)
-                if next_game.is_rest_day_today and date.fromisoformat(next_game.game_date) <= schedule_date:
-                    errors.append(
-                        f"next game {next_game.game_pk} marks a rest day without a later next game"
-                    )
-            except ValueError:
-                errors.append(f"next game {next_game.game_pk} has an invalid schedule date")
+        try:
+            schedule_date = date.fromisoformat(next_game.schedule_date)
+            if next_game.is_rest_day_today and date.fromisoformat(next_game.game_date) <= schedule_date:
+                errors.append(
+                    f"next game {next_game.game_pk} marks a rest day without a later next game"
+                )
+        except ValueError:
+            errors.append(f"next game {next_game.game_pk} has an invalid schedule date")
         if bool(next_game.probable_pitcher_id is None) != bool(next_game.probable_pitcher_name is None):
             errors.append(f"next game {next_game.game_pk} has incomplete probable-pitcher data")
 

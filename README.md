@@ -2,116 +2,46 @@
 
 [Open the live dashboard](https://tomoyakanno.github.io/mlb_pitch_dashboard/)
 
-An interactive static dashboard that ranks all 30 MLB teams by workload and the top 30 individual pitchers by pitches thrown, while separating starter and reliever workload. It calculates its aggregates from the public MLB Stats API, preserves validated season snapshots in git, and publishes a browser-only site through GitHub Pages.
+An interactive view of MLB pitcher workload. It ranks all 30 teams and the top 30 pitchers by pitches thrown, separates official starter and reliever work, and adds recent-game schedule context without claiming to measure fatigue or readiness.
 
-The Observable Framework application in `observable/` is the only supported user interface. Production has no application server or runtime database, and the browser makes no MLB Stats API calls — every pitch aggregate is precomputed at build time. The browser does load static display assets — team logos and pitcher portraits — directly from MLB's public CDN so those images never need to be committed to the repository or served from Pages. This keeps the deployment a pure static GitHub Pages site.
+The supported product is a static Observable Framework site. A Python pipeline reads the public MLB Stats API, validates a durable snapshot, and creates browser-ready aggregates during the site build. Production has no application server, runtime database, or client-side MLB data requests. Team logos and pitcher portraits are display assets loaded from MLB's public CDN.
 
-## What the dashboard measures
+## What it shows
 
-- **Team total** pitches thrown by each team's pitchers.
-- **Player total** pitches thrown by the top 30 individual pitchers, including pre-trade appearances and the current team label when roster data is available.
-- **Official SP and RP workload** using MLB's per-game `gamesStarted` designation.
-- **Role-adjusted SP and RP workload** for opener and bulk-pitcher games.
-- **Bullpen share**, **reclassified pitches**, per-game rates, and appearances that need human review.
-- **Team timelines** (cumulative or daily) on a shared season calendar axis, with hover tooltips and game-grain complete-game notes (pitcher + date).
-- **Recent strain**: workload context for one team (LAD by default) — not a fatigue score:
-  - last completed game as stacked pitcher rows with MLB headshots, official SP/RP, pitch counts, and a direct box-score button;
-  - next scheduled opponent with MLB’s optional probable starter, days of rest, that pitcher’s last three official starts, and an official MLB Gameday button;
-  - a full-width rest-day notice when the snapshot's schedule date matches today in Eastern time and the selected team has no game on that slate;
-  - a 14-day bullpen heatmap of official relief pitches, including unused active depth-chart arms and IL/Minors badges only for arms who worked in the window;
-  - a starter-rest list of active MLB depth-chart SPs, with portraits, their latest official-start workload, and completed calendar days of rest entering the snapshot date.
+- **Recent strain** — one team's latest available completed-game pitcher usage, next matchup and optional probable starter, 14-day bullpen workload, and active-starter rest context.
+- **Season leaders** — team total, official or role-adjusted SP/RP workload, bullpen share, role adjustments, per-game rates, and the top 30 pitchers.
+- **Team timelines** — cumulative or daily workload on a shared season date axis, with game-level complete-game notes.
+- **Player history** — the selected season alongside the prior three completed seasons for a current top-30 pitcher.
 
-The official starter is not inferred from appearance order, pitch count, outing length, or effectiveness. A starter removed after one inning remains an official SP. The role-adjusted view is a separate analytical layer:
-
-- An official start remains SP by default, including a short or ineffective start.
-- A reliever is moved to SP only when he throws at least 45 pitches and has another official MLB start within 28 days.
-- An official starter is moved to RP only when he has an opener-shaped outing and strongly relief-dominant surrounding usage.
-- A long relief outing without MLB starter evidence remains RP and is flagged for review.
-- `config/role_overrides.json` can resolve known edge cases by `gamePk:playerId`.
-
-This deliberately avoids treating every long reliever, Triple-A call-up, or emergency bulk pitcher as a starter.
+Official SP/RP comes directly from MLB's per-game `gamesStarted` value. It is never inferred from appearance order, pitch count, outing length, or effectiveness. The separate role-adjusted view conservatively handles opener and bulk-pitcher games; ambiguous long relief outings remain RP and are flagged for review. Reviewed exceptions live in `config/role_overrides.json`.
 
 ## Architecture
 
 ```mermaid
-flowchart TD
+flowchart LR
     A["MLB Stats API"] --> B["Python refresh pipeline"]
     B --> C["Validated dashboard-data branch"]
-    C --> D["Observable build"]
+    C --> D["Observable static build"]
     D --> E["GitHub Pages artifact"]
 ```
 
-| Location | Purpose |
+| Location | Ownership |
 | --- | --- |
-| `main` | Application, pipeline, configuration, tests, and documentation |
-| `dashboard-data` | Machine-managed normalized season snapshots; never merged into `main` |
-| GitHub Actions artifact | Ephemeral compiled site served by GitHub Pages; never committed |
+| `main` | Human-maintained source, tests, configuration, workflows, and documentation |
+| `dashboard-data` | Orphan, machine-managed validated snapshots; never merged into `main` |
+| Pages artifact | Ephemeral compiled site; never committed |
 
-The deployed browser downloads small team- and player-level aggregates generated at build time: team season totals, top-30 player totals, a compact four-season history only for those current player leaders, one top-five pitcher-usage list per team and role framing, one latest completed-game pitcher list, one upcoming-game schedule record (optional probable starter, recent-start context, and snapshot-time rest-day status), one 14-day bullpen-usage window enriched with depth-chart roster context per team, one active-starter rest record per team, plus a sibling team timeseries payload (daily increments for the chart and game-grain complete games). Data acquisition, role classification, persistence, validation, and export all happen before deployment.
+There is one active source/data contract. Meaningful schema or export changes rebuild the durable data rather than preserving compatibility with old snapshots. This keeps validation at clear boundaries instead of accumulating migration code for versions that cannot be live together.
 
-### Using the timeline panel
+The refresh workflow updates missing games, prior failures, and a recent reconciliation window. It preserves last-known-good appearances when a refetch fails, marks first-time failures missing, validates both before and after serialization, and commits only a valid snapshot. A failed refresh or build leaves the prior Pages site online.
 
-- Click any table row to open that team's series beside the table (slides in; Role adjustment disables row clicks).
-- Charts use one shared linear date domain for every team, with month labels on X and tidy value ticks on Y.
-- Hover the series for the nearest game day; complete games (zero official RP pitches in that `game_pk`) are listed under the chart with the pitcher name — never inferred from calendar-day totals, so doubleheaders do not hide a CG.
-
-### Using Season leaders
-
-- **Team total** ranks all 30 clubs and keeps the existing team timeline available.
-- Team total, SP workload, and RP workload details include a season-to-date top-five pitcher list. SP/RP uses the selected official or role-adjusted basis per appearance, so swingmen can appear in both.
-- **Player total** ranks the top 30 individual pitchers by season pitch count. A traded pitcher’s total includes every season appearance and is labeled with his current roster team when available. Selecting a pitcher opens a desktop-first cumulative workload comparison with one current-season hero total, a chart of the current curve, last season, and the three-prior-season min–max band, plus a compact table. The table shows the selected season’s current total (with no full-season comparison) and, for each of the three completed prior seasons, both the total at this point and the full-season total. A zero-history pitcher remains explicit rather than being omitted.
-
-### Using Recent strain
-
-- **Recent strain** opens by default; pick a team (defaults to the Dodgers) or switch to **Season leaders** for the season-wide views.
-- **Last completed game** lists each pitcher who appeared, ordered by MLB appearance order, with a portrait tile, split first/last name, official SP/RP, and pitch count. Its date is paired with a button to the official MLB box score.
-- **Next game** shows the matchup and, when MLB lists a probable starter, a larger portrait, days of rest, and up to three prior official starts (date, opponent, pitches). Its date is paired with an official MLB Gameday button; missing probables stay explicitly unannounced.
-- **Rest day** appears above the two game cards only when the refreshed MLB schedule has no selected-team game on the snapshot date and that date is today in Eastern time. This avoids declaring a rest day from a stale snapshot or after a same-day completed game.
-- **Bullpen, last 14 days** is a daily heatmap of official reliever pitches with row-aligned 3-, 5-, and 14-calendar-day totals for each pitcher. It ranks active pitchers by latest-game relief usage first, then 3/5/14-day workload; unavailable IL/Minors arms remain at the bottom. Active depth-chart bullpen arms appear even before they throw; IL and Minors rows are muted but retain their pitch history, and those badges appear only for arms who recorded pitches in the window.
-- **Starter rest** lists only active (`status_code=A`) MLB depth-chart SPs in MLB's published order. Each row shows a portrait, last official-start date and pitch count, and completed calendar days of rest entering the displayed snapshot date. The count excludes both the start date and the as-of date, follows a traded pitcher across teams by MLB player id, and never treats a role-adjusted relief outing as a start. A pitcher without an official start in the published season remains explicit rather than receiving an inferred value. This is schedule/workload context, not a readiness or fatigue score.
-
-## Refresh and deployment lifecycle
-
-`Refresh dashboard data` runs twice daily from March through November, at 07:17 and 09:17 UTC—3:17 and 5:17 a.m. Eastern throughout the regular season, which is entirely in EDT. Both schedules invoke the same serialized incremental pipeline: the early pass improves morning freshness, while the existing later pass remains a conservative backstop for unusually late games. Revisit the UTC conversion before a future season. GitHub dispatches scheduled runs well after their requested times; [docs/deployment.md](docs/deployment.md) records the measurements and operational expectations. The workflow can also be run manually from the Actions tab.
-
-1. Read the published season from `config/dashboard.json`.
-2. Load the previous snapshot from `dashboard-data`.
-3. Request the completed-game schedule, each team's upcoming-game schedule record, and (for the current calendar season) each team's pitching depth chart plus 40-man roster status.
-4. Fetch only missing games, prior failures, and games inside the seven-day reconciliation window. A forced run fetches every completed game.
-5. Classify appearances, validate structural and arithmetic invariants, write normalized JSONL partitions plus next-game and roster read models, and verify the persisted files and hashes.
-6. Commit the snapshot to `dashboard-data` only after validation succeeds.
-7. Trigger `Build and deploy dashboard`, which checks out current source and data, exports the 30-team season totals, top-30 player totals, per-team top-five pitcher workloads, latest-game workloads, upcoming games with probable-starter and rest-day context, roster-aware bullpen windows, active-starter rest records, and reconciled team timeseries, builds the site, and deploys a Pages artifact.
-
-The three completed prior seasons are bootstrapped once through the same validated manual refresh workflow, then remain immutable baseball facts. Scheduled refreshes continue to update only the configured current season.
-
-The configured season changes intentionally rather than rolling over on January 1. This prevents an empty new-season dataset from replacing an established snapshot before regular-season games exist.
-
-To refresh manually, open **Actions → Refresh dashboard data → Run workflow** on `main`. Leave season blank to use the configured season, keep **Force rebuild** off for a normal incremental update, and retain the seven-day reconciliation window unless investigating a correction.
-
-The MLB client caps concurrency, paces request starts, retries `429`, `5xx`, and transport failures with jittered exponential backoff, and honors a numeric `Retry-After` header.
-
-| Variable | Default | Meaning |
-| --- | --- | --- |
-| `MLB_CONCURRENCY` | `8` | Maximum in-flight requests |
-| `MLB_RATE_LIMIT` | `5` | Maximum request starts per second; `0` disables pacing |
-
-### Failure behavior
-
-- One failed game does not discard successful games from the same refresh.
-- A failed first fetch is marked **missing**.
-- A failed reconciliation fetch retains its last-known-good appearances and is marked **stale**.
-- A schedule regression, corrupt file, hash mismatch, missing official starter, duplicate appearance, unclassified appearance, or unbalanced team total blocks the snapshot write.
-- A failed refresh does not trigger deployment.
-- A failed build does not replace the last successful Pages artifact.
-- Snapshot diagnostics (complete/partial status, current/stale/missing games, generation time, and API-call count) live in a quiet full-width strip below the content — useful for troubleshooting, not primary UI.
+See [the durable data contract](docs/data-contract.md) for snapshot semantics and [deployment operations](docs/deployment.md) for schedules, workflow boundaries, manual runs, and recovery.
 
 ## Local development
 
 Use Python 3.12 and Node.js 22 to match GitHub Actions.
 
-### Dashboard with the fixture
-
-The committed fixture is intended for fast UI work and CI:
+### Static dashboard with fixtures
 
 ```bash
 cd observable
@@ -119,7 +49,7 @@ npm ci
 npm run dev
 ```
 
-Validation commands:
+The committed fixture keeps UI work fast and independent of the production data branch.
 
 ```bash
 npm run typecheck
@@ -127,16 +57,16 @@ npm test
 OBSERVABLE_TELEMETRY_DISABLE=true npm run build
 ```
 
-### Dashboard with the durable snapshot
+### Static dashboard with validated data
 
-Check out the data branch beside the source repository and provide its absolute path:
+Check out the data branch beside this repository and point the build at its absolute path:
 
 ```bash
 git worktree add ../mlb-pitch-dashboard-data dashboard-data
 DASHBOARD_DATA_DIR="$PWD/../mlb-pitch-dashboard-data" npm --prefix observable run build
 ```
 
-The season defaults to `config/dashboard.json`; use `DASHBOARD_SEASON` only when intentionally building another season.
+The season comes from `config/dashboard.json`. Set `DASHBOARD_SEASON` only when intentionally building another season.
 
 ### Pipeline
 
@@ -147,46 +77,29 @@ python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-To create or update a disposable local snapshot:
+To create a disposable local snapshot:
 
 ```bash
 python -m pipeline.update --season 2026 --data-dir ./tmp-dashboard-data
 python -m pipeline.check --season 2026 --data-dir ./tmp-dashboard-data
 ```
 
-An empty directory performs a full bootstrap. Avoid repeatedly forcing a full-season refresh.
+An empty data directory performs a full bootstrap. Normal refreshes should remain incremental.
 
-## Observable and React integration
+## Important implementation boundary
 
-Observable Framework renders TSX with its self-hosted React runtime. Components using hooks must import React symbols through `npm:react`, not a bare `react` import. Mixing those paths can bundle two React instances: type-checking, tests, and builds may pass while the deployed page crashes with an invalid-hook-call error.
+Observable Framework uses its self-hosted React runtime. Components using hooks must import React symbols from `npm:react`, not bare `react`; mixing the paths can produce a second runtime and a browser-only invalid-hook-call failure. A successful static build is therefore followed by compiled-payload verification and a browser smoke test for UI changes.
 
-`observable/tsconfig.json` maps `npm:react` to installed React declarations for TypeScript only. The Pages workflow also rejects generated output containing a second `_node/react` runtime. UI changes still require a browser smoke test for rendered content, working controls, and console errors.
+## Repository guide
 
-## GitHub Actions
-
-| Workflow | Responsibility | Write access |
-| --- | --- | --- |
-| `CI` | Python pipeline tests and fixture-based Observable checks | None |
-| `Refresh dashboard data` | Incrementally update and validate `dashboard-data` | Repository contents only |
-| `Build and deploy dashboard` | Validate real data, build the static site, and deploy after merge or refresh | Pages deployment only in the deploy job |
-| `Probe GitHub schedule latency` | Temporarily measure dispatch timing at 08:17 UTC for comparison with the production refresh | None |
-
-Pull requests build against the real data branch but do not deploy. Manual refreshes and manual Pages deploys are accepted only from `main`; a selected feature branch is skipped rather than changing `dashboard-data` or publishing. Production refresh handoffs are also accepted only from `main`, and PR validation has a separate concurrency group so it cannot cancel a production deployment.
-
-See [continuous integration](docs/continuous-integration.md), [the data contract](docs/data-contract.md), [data-branch operations](docs/data-branch-workflow.md), and [deployment recovery](docs/deployment.md).
-
-## Repository map
-
-- `pipeline/mlb.py` — MLB API access, request pacing, retries, boxscore parsing, upcoming games, and pitching depth/40-man roster fetch.
-- `pipeline/classify.py` — pure role-classification domain logic.
-- `pipeline/` — snapshot schema, storage, refresh, validation, integrity checking, and export.
-- `pipeline/verify_build.py` — reusable validation for the compiled real-data Pages payload.
-- `observable/` — the static dashboard, fixture, data loader, React components, styles, and tests.
-- `config/dashboard.json` — intentionally selected production season.
-- `config/role_overrides.json` — reviewed per-appearance role overrides.
-- `docs/` — data contract, data-branch operations, CI, and deployment recovery.
-- `.github/workflows/` — CI, data refresh, and Pages deployment automation.
+- `pipeline/` — MLB access, classification, schema, persistence, refresh, validation, checking, and browser export.
+- `observable/` — static site, fixtures, data loaders, components, styles, and presentation tests.
+- `config/dashboard.json` — intentionally selected published season.
+- `config/role_overrides.json` — reviewed per-appearance role exceptions.
+- `.github/workflows/` — read-only CI, the sole automated data writer, and Pages build/deployment.
+- `docs/data-contract.md` — durable snapshot and browser-export semantics.
+- `docs/deployment.md` — operations, permissions, schedules, and recovery.
 
 ## Data and usage note
 
-This is an unofficial personal project. MLB endpoints and response shapes can change without notice. The role-adjusted view is a transparent heuristic, not an MLB designation, and ambiguous appearances remain visible for review.
+This is an unofficial personal project. MLB endpoints and response shapes can change without notice. Role adjustment is a transparent heuristic, not an MLB designation, and Recent strain is workload context rather than medical or readiness guidance.

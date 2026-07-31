@@ -32,15 +32,9 @@ def check_persisted_snapshot(data_dir: Path, season: int) -> dict[str, Any]:
         for directory in (root / "games", root / "appearances")
         for path in directory.glob("*.jsonl")
     }
-    state_path = root / "fetch-state.json"
-    if state_path.exists():
-        actual_files.add("fetch-state.json")
-    next_games_path = root / "next-games.json"
-    if next_games_path.exists():
-        actual_files.add("next-games.json")
-    roster_path = root / "roster-pitchers.json"
-    if roster_path.exists():
-        actual_files.add("roster-pitchers.json")
+    for filename in ("fetch-state.json", "next-games.json", "roster-pitchers.json"):
+        if (root / filename).is_file():
+            actual_files.add(filename)
 
     declared_files = manifest.get("files")
     if not isinstance(declared_files, dict):
@@ -53,10 +47,7 @@ def check_persisted_snapshot(data_dir: Path, season: int) -> dict[str, Any]:
         )
 
     for relative, expected in declared_files.items():
-        relative_path = Path(relative)
-        if relative_path.is_absolute() or ".." in relative_path.parts:
-            raise SnapshotValidationError(f"unsafe manifest path: {relative}")
-        content = (root / relative_path).read_bytes()
+        content = (root / relative).read_bytes()
         actual_hash = hashlib.sha256(content).hexdigest()
         if int(expected.get("bytes", -1)) != len(content):
             raise SnapshotValidationError(f"byte count mismatch for {relative}")

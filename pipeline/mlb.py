@@ -143,31 +143,22 @@ class MLBClient:
                 if status.get("detailedState") in {"Postponed", "Cancelled", "Suspended"}:
                     continue
                 game_pk = int(game["gamePk"])
-                teams = game.get("teams", {})
-                away_team = teams.get("away", {}).get("team", {})
-                home_team = teams.get("home", {}).get("team", {})
+                away_team = game["teams"]["away"]["team"]
+                home_team = game["teams"]["home"]["team"]
                 games[game_pk] = {
                     "game_pk": game_pk,
                     "game_date": official_date,
                     "season": season,
                     "status": status.get("detailedState", "Final"),
-                    "game_datetime": game.get("gameDate"),
-                    "away_team_id": (
-                        int(away_team["id"]) if away_team.get("id") is not None else None
-                    ),
-                    "away_team_name": (
-                        str(away_team["name"]) if away_team.get("name") else None
-                    ),
-                    "home_team_id": (
-                        int(home_team["id"]) if home_team.get("id") is not None else None
-                    ),
-                    "home_team_name": (
-                        str(home_team["name"]) if home_team.get("name") else None
-                    ),
+                    "game_datetime": str(game["gameDate"]),
+                    "away_team_id": int(away_team["id"]),
+                    "away_team_name": str(away_team["name"]),
+                    "home_team_id": int(home_team["id"]),
+                    "home_team_name": str(home_team["name"]),
                 }
         return sorted(
             games.values(),
-            key=lambda item: (item["game_date"], item.get("game_datetime") or "", item["game_pk"]),
+            key=lambda item: (item["game_date"], item["game_datetime"], item["game_pk"]),
         )
 
     async def upcoming_games(self, season: int) -> list[dict[str, Any]]:
@@ -203,9 +194,7 @@ class MLBClient:
                 # games from the "next game" candidate selection.
                 if game_date == schedule_date:
                     for side in ("away", "home"):
-                        team = teams.get(side, {}).get("team", {})
-                        if team.get("id") is not None:
-                            scheduled_today.add(int(team["id"]))
+                        scheduled_today.add(int(teams[side]["team"]["id"]))
 
                 status = game.get("status", {})
                 if status.get("abstractGameState") == "Final":
@@ -213,23 +202,20 @@ class MLBClient:
                 if status.get("detailedState") in {"Postponed", "Cancelled", "Suspended"}:
                     continue
                 game_pk = int(game["gamePk"])
-                game_datetime = game.get("gameDate")
+                game_datetime = str(game["gameDate"])
                 for side, opponent_side in (("away", "home"), ("home", "away")):
-                    team_payload = teams.get(side, {})
-                    opponent_payload = teams.get(opponent_side, {})
-                    team = team_payload.get("team", {})
-                    opponent = opponent_payload.get("team", {})
-                    if not team.get("id") or not opponent.get("id"):
-                        continue
+                    team_payload = teams[side]
+                    team = team_payload["team"]
+                    opponent = teams[opponent_side]["team"]
                     probable = team_payload.get("probablePitcher") or {}
                     candidate = {
                         "team_id": int(team["id"]),
-                        "team_name": str(team.get("name", "Unknown team")),
+                        "team_name": str(team["name"]),
                         "game_pk": game_pk,
                         "game_date": game_date,
                         "game_datetime": game_datetime,
                         "opponent_id": int(opponent["id"]),
-                        "opponent_name": str(opponent.get("name", "Unknown opponent")),
+                        "opponent_name": str(opponent["name"]),
                         "is_home": side == "home",
                         "probable_pitcher_id": (
                             int(probable["id"]) if probable.get("id") is not None else None
@@ -241,11 +227,11 @@ class MLBClient:
                     previous = games_by_team.get(candidate["team_id"])
                     if previous is None or (
                         candidate["game_date"],
-                        candidate["game_datetime"] or "",
+                        candidate["game_datetime"],
                         candidate["game_pk"],
                     ) < (
                         previous["game_date"],
-                        previous["game_datetime"] or "",
+                        previous["game_datetime"],
                         previous["game_pk"],
                     ):
                         games_by_team[candidate["team_id"]] = candidate
@@ -313,8 +299,6 @@ class MLBClient:
                 status_code = str(status.get("code") or "UNK")
                 status_description = str(status.get("description") or status_code)
                 pitcher_name = str(person.get("fullName") or f"Player {pitcher_id}")
-                jersey_raw = str(row.get("jerseyNumber") or "").strip()
-                jersey_number = jersey_raw or None
                 previous = merged.get(pitcher_id)
                 if previous is None:
                     merged[pitcher_id] = {
@@ -326,14 +310,11 @@ class MLBClient:
                         "depth_order": depth_order,
                         "status_code": status_code,
                         "status_description": status_description,
-                        "jersey_number": jersey_number,
                     }
                     return
                 previous["pitcher_name"] = pitcher_name
                 previous["status_code"] = status_code
                 previous["status_description"] = status_description
-                if jersey_number:
-                    previous["jersey_number"] = jersey_number
                 if replace_depth:
                     previous["depth_role"] = depth_role
                     previous["depth_order"] = depth_order

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "observable preview",
+    "prebuild": "rm -rf src/.observablehq/cache/data",
     "build": "observable build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

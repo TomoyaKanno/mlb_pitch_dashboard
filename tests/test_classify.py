@@ -1,5 +1,7 @@
 from datetime import date, timedelta
 
+import pytest
+
 from pipeline.classify import Appearance, classify_appearances
 
 
@@ -66,4 +68,77 @@ def test_manual_override_wins():
     result = classify_appearances([row], {"40:50": {"role": "SP", "note": "spot starter"}})
     assert role(result, row) == "SP"
 
+
+@pytest.mark.parametrize(
+    ("opener_pitches", "follower_pitches", "expected"),
+    [
+        (40, 45, "RP"),
+        (41, 45, "SP"),
+        (40, 44, "SP"),
+    ],
+)
+def test_opener_shape_uses_inclusive_pitch_boundaries(
+    opener_pitches: int,
+    follower_pitches: int,
+    expected: str,
+):
+    opener = appearance(100, 0, 60, opener_pitches, True, 0)
+    follower = appearance(100, 0, 61, follower_pitches, False, 1)
+    relief_history = [appearance(101 + day, -day, 60, 30, False) for day in range(1, 4)]
+
+    result = classify_appearances([opener, follower, *relief_history])
+
+    assert role(result, opener) == expected
+
+
+@pytest.mark.parametrize(("relief_pitches", "expected"), [(35, "RP"), (36, "SP")])
+def test_relief_identity_median_boundary(relief_pitches: int, expected: str):
+    opener = appearance(110, 0, 70, 40, True, 0)
+    follower = appearance(110, 0, 71, 45, False, 1)
+    relief_history = [
+        appearance(111 + day, -day, 70, relief_pitches, False)
+        for day in range(1, 4)
+    ]
+
+    result = classify_appearances([opener, follower, *relief_history])
+
+    assert role(result, opener) == expected
+
+
+@pytest.mark.parametrize(("days_away", "expected"), [(28, "SP"), (29, "RP")])
+def test_starter_identity_window_boundary(days_away: int, expected: str):
+    bulk = appearance(120, 0, 80, 45, False, 1)
+    start = appearance(121, days_away, 80, 80, True)
+
+    result = classify_appearances([bulk, start])
+
+    assert role(result, bulk) == expected
+
+
+@pytest.mark.parametrize(("pitches", "needs_review"), [(54, False), (55, True)])
+def test_long_relief_review_boundary(pitches: int, needs_review: bool):
+    row = appearance(130, 0, 90, pitches, False, 1)
+
+    classification = classify_appearances([row])[(row.game_pk, row.team_id, row.pitcher_id)]
+
+    assert classification.role == "RP"
+    assert classification.needs_review is needs_review
+
+
+def test_string_override_is_case_insensitive():
+    row = appearance(140, 0, 100, 14, False)
+
+    result = classify_appearances([row], {"140:100": "sp"})
+
+    assert role(result, row) == "SP"
+    assert result[(140, 119, 100)].reason == "manual override"
+
+
+def test_invalid_override_falls_back_to_domain_classification():
+    row = appearance(150, 0, 110, 14, False)
+
+    result = classify_appearances([row], {"150:110": {"role": "swingman"}})
+
+    assert role(result, row) == "RP"
+    assert result[(150, 119, 110)].reason == "official reliever"
 

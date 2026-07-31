@@ -78,8 +78,8 @@ def aggregate_pitchers(snapshot: Snapshot, *, limit: int = 30) -> list[dict[str,
 
     Every persisted appearance contributes to one MLB pitcher id, including
     appearances before a trade. The current-season roster snapshot supplies the
-    displayed team and name when available; otherwise the latest appearance is
-    the stable fallback for historical snapshots and departed players.
+    displayed team and name when available; otherwise the latest appearance
+    identifies a departed or otherwise unlisted player.
     """
     totals: dict[int, int] = defaultdict(int)
     latest: dict[int, tuple[str, int, int, str, str]] = {}
@@ -279,15 +279,13 @@ def _latest_team_games(
 ) -> dict[int, tuple[Any, list[Any]]]:
     latest: dict[int, tuple[Any, list[Any]]] = {}
     for (game_pk, team_id), rows in by_game_team.items():
-        game = snapshot.games.get(game_pk)
-        if game is None:
-            continue
+        game = snapshot.games[game_pk]
         previous = latest.get(team_id)
         if previous is None or (
-            game.game_date, game.game_datetime or "", game.game_pk,
+            game.game_date, game.game_datetime, game.game_pk,
         ) > (
             previous[0].game_date,
-            previous[0].game_datetime or "",
+            previous[0].game_datetime,
             previous[0].game_pk,
         ):
             latest[team_id] = (game, rows)
@@ -328,31 +326,13 @@ def aggregate_complete_games(snapshot: Snapshot) -> list[dict[str, Any]]:
 
 
 def aggregate_recent_games(snapshot: Snapshot) -> list[dict[str, Any]]:
-    """One latest completed team-game with its individual pitcher pitch counts.
-
-    MLB scheduled game time makes same-day doubleheaders deterministic. Legacy
-    snapshots without that optional timestamp fall back to game_pk until their
-    next normal refresh rewrites the game records.
-    """
+    """One latest available team-game with its individual pitcher pitch counts."""
     by_game_team = _appearances_by_game_team(snapshot)
     latest = _latest_team_games(snapshot, by_game_team)
 
     result: list[dict[str, Any]] = []
     for team_id, (game, rows) in latest.items():
         ordered = sorted(rows, key=lambda row: (row.appearance_order, row.pitcher_id))
-        matchup = {}
-        if (
-            game.away_team_id is not None
-            and game.away_team_name
-            and game.home_team_id is not None
-            and game.home_team_name
-        ):
-            matchup = {
-                "away_team_id": game.away_team_id,
-                "away_team_name": game.away_team_name,
-                "home_team_id": game.home_team_id,
-                "home_team_name": game.home_team_name,
-            }
         result.append(
             {
                 "team_id": team_id,
@@ -360,7 +340,10 @@ def aggregate_recent_games(snapshot: Snapshot) -> list[dict[str, Any]]:
                 "game_pk": game.game_pk,
                 "date": game.game_date,
                 "game_datetime": game.game_datetime,
-                **matchup,
+                "away_team_id": game.away_team_id,
+                "away_team_name": game.away_team_name,
+                "home_team_id": game.home_team_id,
+                "home_team_name": game.home_team_name,
                 "pitchers": [
                     {
                         "pitcher_id": row.pitcher_id,
@@ -368,11 +351,6 @@ def aggregate_recent_games(snapshot: Snapshot) -> list[dict[str, Any]]:
                         "pitches": row.pitches,
                         "official_started": row.official_started,
                         "appearance_order": row.appearance_order,
-                        "jersey_number": (
-                            snapshot.roster_pitchers[(team_id, row.pitcher_id)].jersey_number
-                            if (team_id, row.pitcher_id) in snapshot.roster_pitchers
-                            else None
-                        ),
                     }
                     for row in ordered
                 ],
@@ -395,10 +373,10 @@ def _roster_availability(status_code: str) -> str | None:
 def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
     """Fourteen calendar days of reliever pitch counts for each team.
 
-    The window ends with the team's latest completed game. Doubleheaders add
+    The window ends with the team's latest available completed game. Doubleheaders add
     both games into the same calendar-day cell, which reflects total workload.
     Depth-chart bullpen arms (``RP`` / ``CP``) are included even with zero
-    pitches so unused call-ups remain visible. IL and Minors arms are kept only
+    pitches so unused call-ups remain visible. Non-active arms are kept only
     when they recorded pitches in the window. Roster availability badges come
     from the persisted depth-chart / 40-man snapshot when present.
     """
@@ -421,8 +399,8 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
         for (game_pk, game_team_id), rows in by_game_team.items():
             if game_team_id != team_id:
                 continue
-            game = snapshot.games.get(game_pk)
-            if game is None or game.game_date not in date_indexes:
+            game = snapshot.games[game_pk]
+            if game.game_date not in date_indexes:
                 continue
             for row in rows:
                 if row.official_started:
@@ -449,8 +427,8 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
                 _roster_availability(roster.status_code) if roster is not None else None
             )
             # Unavailable arms only stay visible when they actually worked in-window:
-            # that preserves "what happened to that guy" without listing idle IL/minors.
-            if availability in {"IL", "Minors"} and sum(pitches) == 0:
+            # that preserves "what happened to that guy" without listing idle rows.
+            if availability is not None and sum(pitches) == 0:
                 continue
             pitchers.append(
                 {
@@ -471,13 +449,13 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
 
         def fatigue_sort_key(row: dict[str, Any]) -> tuple[Any, ...]:
             pitches = row["pitches"]
-            unavailable = row["availability"] in {"IL", "Minors"}
+            unavailable = row["availability"] is not None
             latest_day = pitches[-1]
             trailing_3 = sum(pitches[-3:])
             trailing_5 = sum(pitches[-5:])
             trailing_14 = sum(pitches)
             # Immediate availability is the primary question: a relief appearance
-            # in the team's latest completed game outranks older cumulative usage.
+            # in the team's latest available game outranks older cumulative usage.
             # Unavailable arms remain a separate historical group at the bottom.
             return (
                 unavailable,
@@ -514,8 +492,8 @@ def _baseball_days_rest(last_start_date: str, target_date: str) -> int:
 def aggregate_starter_rest(snapshot: Snapshot) -> list[dict[str, Any]]:
     """Active MLB depth-chart starters and rest since their last official start.
 
-    The target date is the Eastern schedule date captured by refresh, falling
-    back to the team's latest completed game for legacy snapshots. Only active
+    The target date is the Eastern schedule date captured by refresh, or the
+    team's latest available completed game when there is no upcoming game. Only active
     depth-chart ``SP`` rows are current rotation context; injured, reassigned,
     and 40-man-only pitchers are deliberately excluded. Start history follows
     the pitcher across teams and uses MLB's official ``gamesStarted`` flag.
@@ -531,11 +509,7 @@ def aggregate_starter_rest(snapshot: Snapshot) -> list[dict[str, Any]]:
         starts.sort(
             key=lambda row: (
                 row.game_date,
-                (
-                    snapshot.games[row.game_pk].game_datetime or ""
-                    if row.game_pk in snapshot.games
-                    else ""
-                ),
+                snapshot.games[row.game_pk].game_datetime,
                 row.game_pk,
             ),
             reverse=True,
@@ -553,7 +527,7 @@ def aggregate_starter_rest(snapshot: Snapshot) -> list[dict[str, Any]]:
             latest_game.game_date,
             (
                 next_game.schedule_date
-                if next_game is not None and next_game.schedule_date
+                if next_game is not None
                 else latest_game.game_date
             ),
         )
@@ -587,7 +561,6 @@ def aggregate_starter_rest(snapshot: Snapshot) -> list[dict[str, Any]]:
                 {
                     "pitcher_id": roster.pitcher_id,
                     "pitcher_name": roster.pitcher_name,
-                    "jersey_number": roster.jersey_number,
                     "depth_role": roster.depth_role,
                     "depth_order": roster.depth_order,
                     "status_code": roster.status_code,
@@ -621,17 +594,16 @@ def _probable_recent_starts(
     recent official start and the upcoming game, minus one. Role-adjusted
     classification is ignored — only MLB ``gamesStarted`` appearances count.
     """
-    starts: list[tuple[str, int, int, str | None]] = []
+    starts: list[tuple[str, int, int, str]] = []
     for row in snapshot.appearances.values():
         if row.pitcher_id != pitcher_id or not row.official_started:
             continue
-        game = snapshot.games.get(row.game_pk)
-        opponent_name = None
-        if game is not None:
-            if game.away_team_id == row.team_id:
-                opponent_name = game.home_team_name
-            elif game.home_team_id == row.team_id:
-                opponent_name = game.away_team_name
+        game = snapshot.games[row.game_pk]
+        opponent_name = (
+            game.home_team_name
+            if game.away_team_id == row.team_id
+            else game.away_team_name
+        )
         starts.append((row.game_date, row.game_pk, row.pitches, opponent_name))
 
     starts.sort(key=lambda item: (item[0], item[1]), reverse=True)
@@ -664,10 +636,6 @@ def aggregate_next_games(snapshot: Snapshot) -> list[dict[str, Any]]:
             recent_starts, days_rest = _probable_recent_starts(
                 snapshot, row.probable_pitcher_id, row.game_date,
             )
-            roster = snapshot.roster_pitchers.get((row.team_id, row.probable_pitcher_id))
-            probable_jersey = roster.jersey_number if roster is not None else None
-        else:
-            probable_jersey = None
         result.append(
             {
                 "team_id": row.team_id,
@@ -680,7 +648,6 @@ def aggregate_next_games(snapshot: Snapshot) -> list[dict[str, Any]]:
                 "is_home": row.is_home,
                 "probable_pitcher_id": row.probable_pitcher_id,
                 "probable_pitcher_name": row.probable_pitcher_name,
-                "probable_jersey_number": probable_jersey,
                 "probable_recent_starts": recent_starts,
                 "probable_days_rest": days_rest,
                 "is_rest_day_today": row.is_rest_day_today,
@@ -697,11 +664,9 @@ def reconcile_team_timeseries(
     """Require daily increments to reconstruct season team totals exactly."""
     by_team: dict[int, dict[str, int]] = defaultdict(_empty_metrics)
     games: dict[int, int] = defaultdict(int)
-    names: dict[int, str] = {}
 
     for point in points:
         team_id = int(point["team_id"])
-        names[team_id] = str(point["team_name"])
         games[team_id] += int(point["games"])
         for key in METRIC_KEYS:
             by_team[team_id][key] += int(point[key])
@@ -731,7 +696,7 @@ def reconcile_team_timeseries(
             )
 
 
-def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any], dict[str, Any]]:
+def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any]]:
     verified = check_persisted_snapshot(data_dir, season)
     snapshot = load_snapshot(data_dir, season)
     manifest_path = data_dir / "seasons" / str(season) / "manifest.json"
@@ -740,7 +705,6 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
         "schema_version": 1,
         "season": season,
         "generated_at": manifest["generated_at"],
-        "code_commit": os.getenv("DASHBOARD_CODE_SHA") or os.getenv("GITHUB_SHA"),
         "data_commit": os.getenv("DASHBOARD_DATA_SHA"),
         "status": {
             "result": manifest["result"],
@@ -754,11 +718,11 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
             "missing_games": verified["missing_games"],
         },
     }
-    return snapshot, verified, meta
+    return snapshot, meta
 
 
 def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
-    snapshot, _verified, meta = _export_common(data_dir, season)
+    snapshot, meta = _export_common(data_dir, season)
     teams = aggregate_teams(snapshot)
     return {
         **meta,
@@ -773,7 +737,7 @@ def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
 
 
 def export_team_timeseries(data_dir: Path, season: int) -> dict[str, Any]:
-    snapshot, _verified, meta = _export_common(data_dir, season)
+    snapshot, meta = _export_common(data_dir, season)
     teams = aggregate_teams(snapshot)
     points = aggregate_team_timeseries(snapshot)
     reconcile_team_timeseries(teams, points)
@@ -787,14 +751,10 @@ def export_team_timeseries(data_dir: Path, season: int) -> dict[str, Any]:
 def export_player_history(
     data_dir: Path,
     season: int,
-    *,
-    completed_seasons: int = 3,
 ) -> dict[str, Any]:
     """Export the current player leaders against the prior completed seasons."""
-    if completed_seasons < 1:
-        raise ValueError("completed_seasons must be at least one")
-    snapshot, _verified, meta = _export_common(data_dir, season)
-    history_seasons = list(range(season - completed_seasons, season))
+    snapshot, meta = _export_common(data_dir, season)
+    history_seasons = list(range(season - 3, season))
     historical: dict[int, Snapshot] = {season: snapshot}
     for historical_season in history_seasons:
         season_dir = data_dir / "seasons" / str(historical_season)
