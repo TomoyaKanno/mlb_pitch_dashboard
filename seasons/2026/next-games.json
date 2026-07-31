@@ -148,8 +148,8 @@
       "is_rest_day_today": false,
       "opponent_id": 133,
       "opponent_name": "Athletics",
-      "probable_pitcher_id": 663554,
-      "probable_pitcher_name": "Casey Mize",
+      "probable_pitcher_id": null,
+      "probable_pitcher_name": null,
       "schedule_date": "2026-07-31",
       "team_id": 116,
       "team_name": "Detroit Tigers"
@@ -260,8 +260,8 @@
       "is_rest_day_today": false,
       "opponent_id": 146,
       "opponent_name": "Miami Marlins",
-      "probable_pitcher_id": 642547,
-      "probable_pitcher_name": "Freddy Peralta",
+      "probable_pitcher_id": null,
+      "probable_pitcher_name": null,
       "schedule_date": "2026-07-31",
       "team_id": 121,
       "team_name": "New York Mets"
