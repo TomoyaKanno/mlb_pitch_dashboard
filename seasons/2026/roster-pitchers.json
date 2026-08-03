@@ -7383,6 +7383,16 @@
     {
       "depth_order": 8,
       "depth_role": "RP",
+      "pitcher_id": 683000,
+      "pitcher_name": "Riley Cornelio",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 120,
+      "team_name": "Washington Nationals"
+    },
+    {
+      "depth_order": 9,
+      "depth_role": "RP",
       "pitcher_id": 668820,
       "pitcher_name": "Max Kranick",
       "status_code": "A",
@@ -7391,7 +7401,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 9,
+      "depth_order": 10,
       "depth_role": "SP",
       "pitcher_id": 676917,
       "pitcher_name": "Cade Cavalli",
@@ -7401,7 +7411,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 10,
+      "depth_order": 11,
       "depth_role": "SP",
       "pitcher_id": 656492,
       "pitcher_name": "Foster Griffin",
@@ -7411,7 +7421,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 11,
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 663623,
       "pitcher_name": "Jake Irvin",
@@ -7421,7 +7431,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 813349,
       "pitcher_name": "Connelly Early",
@@ -7431,7 +7441,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 641793,
       "pitcher_name": "Zack Littell",
@@ -7441,7 +7451,7 @@
       "team_name": "Washington Nationals"
     },
     {
-      "depth_order": 14,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 571945,
       "pitcher_name": "Miles Mikolas",
@@ -7567,16 +7577,6 @@
       "pitcher_name": "Richard Lovelady",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
-      "team_id": 120,
-      "team_name": "Washington Nationals"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 683000,
-      "pitcher_name": "Riley Cornelio",
-      "status_code": "A",
-      "status_description": "Active",
       "team_id": 120,
       "team_name": "Washington Nationals"
     },
