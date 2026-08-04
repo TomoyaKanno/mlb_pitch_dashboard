@@ -6273,6 +6273,16 @@
     {
       "depth_order": 5,
       "depth_role": "RP",
+      "pitcher_id": 657571,
+      "pitcher_name": "Caleb Ferguson",
+      "status_code": "NYR",
+      "status_description": "Not Yet Reported",
+      "team_id": 138,
+      "team_name": "St. Louis Cardinals"
+    },
+    {
+      "depth_order": 6,
+      "depth_role": "RP",
       "pitcher_id": 700669,
       "pitcher_name": "Gordon Graceffo",
       "status_code": "A",
@@ -6281,7 +6291,7 @@
       "team_name": "St. Louis Cardinals"
     },
     {
-      "depth_order": 6,
+      "depth_order": 7,
       "depth_role": "RP",
       "pitcher_id": 703725,
       "pitcher_name": "Luis Gastelum",
@@ -6291,7 +6301,7 @@
       "team_name": "St. Louis Cardinals"
     },
     {
-      "depth_order": 7,
+      "depth_order": 8,
       "depth_role": "RP",
       "pitcher_id": 657265,
       "pitcher_name": "Peter Strzelecki",
@@ -6301,7 +6311,7 @@
       "team_name": "St. Louis Cardinals"
     },
     {
-      "depth_order": 8,
+      "depth_order": 9,
       "depth_role": "RP",
       "pitcher_id": 687273,
       "pitcher_name": "Quinn Mathews",
@@ -6311,7 +6321,7 @@
       "team_name": "St. Louis Cardinals"
     },
     {
-      "depth_order": 9,
+      "depth_order": 10,
       "depth_role": "SP",
       "pitcher_id": 669461,
       "pitcher_name": "Matthew Liberatore",
@@ -6321,7 +6331,7 @@
       "team_name": "St. Louis Cardinals"
     },
     {
-      "depth_order": 10,
+      "depth_order": 11,
       "depth_role": "SP",
       "pitcher_id": 700241,
       "pitcher_name": "Michael McGreevy",
@@ -6331,7 +6341,7 @@
       "team_name": "St. Louis Cardinals"
     },
     {
-      "depth_order": 11,
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 681517,
       "pitcher_name": "Kyle Leahy",
@@ -6341,10 +6351,20 @@
       "team_name": "St. Louis Cardinals"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 669467,
       "pitcher_name": "Andre Pallante",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 138,
+      "team_name": "St. Louis Cardinals"
+    },
+    {
+      "depth_order": 14,
+      "depth_role": "SP",
+      "pitcher_id": 690928,
+      "pitcher_name": "Hunter Dobbins",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 138,
@@ -6363,30 +6383,10 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 657571,
-      "pitcher_name": "Caleb Ferguson",
-      "status_code": "NYR",
-      "status_description": "Not Yet Reported",
-      "team_id": 138,
-      "team_name": "St. Louis Cardinals"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
       "pitcher_id": 687309,
       "pitcher_name": "Cooper Hjerpe",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
-      "team_id": 138,
-      "team_name": "St. Louis Cardinals"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 690928,
-      "pitcher_name": "Hunter Dobbins",
-      "status_code": "A",
-      "status_description": "Active",
       "team_id": 138,
       "team_name": "St. Louis Cardinals"
     },
