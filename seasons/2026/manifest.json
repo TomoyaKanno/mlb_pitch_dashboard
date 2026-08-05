@@ -1,6 +1,6 @@
 {
   "api_calls": 157,
-  "current_games": 1690,
+  "current_games": 1705,
   "files": {
     "appearances/2026-03.jsonl": {
       "bytes": 200789,
@@ -23,12 +23,12 @@
       "sha256": "e1651958bcb60195ac8d4076e1ddb23ea3571acb6e426542a3c08a6837bf4699"
     },
     "appearances/2026-08.jsonl": {
-      "bytes": 94425,
-      "sha256": "370c567bd33be056f839ff712e8cfba75c7d42b9fb63303ba0f581d92db72f41"
+      "bytes": 130917,
+      "sha256": "8ce226f657f8fbf044d3a1e0b2d0236e272287ab3f1fd73ddda1a1f2d0587d67"
     },
     "fetch-state.json": {
-      "bytes": 412548,
-      "sha256": "3ade9eccec2b49de52a19600f2fa25717f09ea61835bd0a9638aaa1ff5ecd8fc"
+      "bytes": 416208,
+      "sha256": "0e89b9a7cd7ea52fa5600b173fa983fcac8a7f34ba250b1646b09b7fae78c801"
     },
     "games/2026-03.jsonl": {
       "bytes": 17046,
@@ -51,25 +51,25 @@
       "sha256": "3e9cfcaad0a519605d7524513575e8aac43098d52e613c43127c342ba805413c"
     },
     "games/2026-08.jsonl": {
-      "bytes": 8546,
-      "sha256": "05c91701d27b354e93716021180523a0af5a38cc8f179bb887eeecb7a40817f4"
+      "bytes": 11910,
+      "sha256": "c5e7c43f38e2ea5170839cc2d2aa8c61350f611800b1b47fe8e265d513001a9b"
     },
     "next-games.json": {
-      "bytes": 12846,
-      "sha256": "c974fa820decccd8cca00052db4fb99c55a3578f3ef4fe696735749bfcadfb5c"
+      "bytes": 12842,
+      "sha256": "1355b8f6aa0ffb2b3794bdcd79594e194e7a4898af70f95c91df14c979fc4251"
     },
     "roster-pitchers.json": {
-      "bytes": 196877,
-      "sha256": "86690427c5a30b65cc29f35c16b3566b5c631418a5f1a7283397a1d8f164f1b0"
+      "bytes": 197003,
+      "sha256": "17d795ebb35fdb14c5649ec0fef790d16202ed632e9568be411c1d81a59418f6"
     }
   },
   "games_failed": 0,
   "games_fetched": 94,
   "games_requested": 94,
-  "generated_at": "2026-08-04T11:34:10.600348+00:00",
+  "generated_at": "2026-08-05T09:59:36.733378+00:00",
   "missing_games": 0,
   "result": "complete",
-  "scheduled_games": 1690,
+  "scheduled_games": 1705,
   "schema_version": 1,
   "season": 2026,
   "stale_games": 0
