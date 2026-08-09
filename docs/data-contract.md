@@ -30,7 +30,7 @@ The repository supports one current contract. Required files and fields are read
 
 - A team's pitches equal both `official_sp + official_rp` and `adjusted_sp + adjusted_rp`.
 - Official SP/RP is MLB's per-game `gamesStarted` designation. A short or ineffective official start remains SP.
-- Role adjustment is conservative and auditable. Ambiguous long relief remains RP with `needs_review`; reviewed exceptions use `config/role_overrides.json`.
+- Role adjustment is conservative and auditable. A classified relief-dominant opener pairs with its follower, who adjusts to SP as the planned bulk man; other ambiguous long relief remains RP with `needs_review`. `config/role_overrides.json` holds an `overrides` map of reviewed per-appearance exceptions (`game_pk:pitcher_id` → role with a recorded reason) plus a `reviewed_through` date marking the last manual flag review. Refresh records that date in the snapshot manifest, and export reads it from there as `role_reviewed_through`, so the displayed marker always describes the classifications actually persisted — a config edit alone never changes it. Manifests written before the marker existed, including frozen historical seasons, simply have none. A manual override on an opener does not cascade to its follower — reviewers set both halves of an overridden game explicitly.
 - Every scheduled completed game is current, stale, or missing. A snapshot is complete only when all are current.
 - A failed refetch preserves prior appearances as stale. A first-time failure is missing and is retried on the next refresh.
 - A completed-game schedule that loses a previously persisted game is rejected.

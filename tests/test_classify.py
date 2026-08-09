@@ -1,8 +1,9 @@
+import json
 from datetime import date, timedelta
 
 import pytest
 
-from pipeline.classify import Appearance, classify_appearances
+from pipeline.classify import Appearance, classify_appearances, load_role_overrides
 
 
 BASE = date(2026, 6, 1)
@@ -39,12 +40,50 @@ def test_short_failed_start_stays_sp():
     assert role(result, failed) == "SP"
 
 
-def test_relief_dominant_opener_moves_to_rp():
+def test_relief_dominant_opener_moves_to_rp_and_bulk_moves_to_sp():
     opener = appearance(10, 0, 20, 24, True, 0)
     bulk = appearance(10, 0, 21, 72, False, 1)
     relief_history = [appearance(11 + i, -(i + 1) * 3, 20, 18 + i, False) for i in range(4)]
     result = classify_appearances([opener, bulk, *relief_history])
     assert role(result, opener) == "RP"
+    bulk_classification = result[(bulk.game_pk, bulk.team_id, bulk.pitcher_id)]
+    assert bulk_classification.role == "SP"
+    assert bulk_classification.reason == "bulk behind relief-dominant opener"
+    assert bulk_classification.needs_review is False
+
+
+def test_long_relief_behind_a_short_true_starter_stays_flagged():
+    """A real starter hooked early is not an opener; the bulk man stays RP for review."""
+    starter = appearance(160, 0, 120, 36, True, 0)
+    bulk = appearance(160, 0, 121, 77, False, 1)
+    prior_starts = [appearance(161 + i, -(i + 1) * 6, 120, 85, True) for i in range(3)]
+    result = classify_appearances([starter, bulk, *prior_starts])
+    assert role(result, starter) == "SP"
+    bulk_classification = result[(160, 119, 121)]
+    assert bulk_classification.role == "RP"
+    assert bulk_classification.needs_review is True
+
+
+def test_third_pitcher_behind_opener_is_not_the_bulk_man():
+    opener = appearance(170, 0, 130, 24, True, 0)
+    bulk = appearance(170, 0, 131, 50, False, 1)
+    third = appearance(170, 0, 132, 60, False, 2)
+    relief_history = [appearance(171 + i, -(i + 1) * 3, 130, 20, False) for i in range(4)]
+    result = classify_appearances([opener, bulk, third, *relief_history])
+    assert role(result, bulk) == "SP"
+    third_classification = result[(170, 119, 132)]
+    assert third_classification.role == "RP"
+    assert third_classification.needs_review is True
+
+
+def test_manual_override_on_opener_does_not_cascade_to_follower():
+    starter = appearance(180, 0, 140, 30, True, 0)
+    bulk = appearance(180, 0, 141, 72, False, 1)
+    result = classify_appearances([starter, bulk], {"180:140": "RP"})
+    assert role(result, starter) == "RP"
+    bulk_classification = result[(180, 119, 141)]
+    assert bulk_classification.role == "RP"
+    assert bulk_classification.needs_review is True
 
 
 def test_starter_identity_bulk_moves_to_sp():
@@ -141,4 +180,27 @@ def test_invalid_override_falls_back_to_domain_classification():
 
     assert role(result, row) == "RP"
     assert result[(150, 119, 110)].reason == "official reliever"
+
+
+def test_load_role_overrides_reads_map_and_review_marker(tmp_path):
+    path = tmp_path / "role_overrides.json"
+    path.write_text(json.dumps({
+        "reviewed_through": "2026-08-08",
+        "overrides": {"822832:676596": {"role": "RP", "reason": "reviewed"}},
+    }))
+
+    loaded = load_role_overrides(path)
+
+    assert loaded.reviewed_through == "2026-08-08"
+    assert loaded.overrides == {"822832:676596": {"role": "RP", "reason": "reviewed"}}
+
+
+def test_load_role_overrides_handles_missing_and_empty_files(tmp_path):
+    missing = load_role_overrides(tmp_path / "absent.json")
+    assert missing.overrides == {} and missing.reviewed_through is None
+
+    empty_path = tmp_path / "empty.json"
+    empty_path.write_text("{}")
+    empty = load_role_overrides(empty_path)
+    assert empty.overrides == {} and empty.reviewed_through is None
 

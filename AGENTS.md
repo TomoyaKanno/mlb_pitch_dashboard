@@ -30,7 +30,7 @@ Documentation should explain architecture, durable semantics, operational choice
 
 1. Team total pitches equal both `official_sp + official_rp` and `adjusted_sp + adjusted_rp`.
 2. Official SP/RP is MLB's per-game `gamesStarted` value. Never infer it from order, pitch count, duration, or result.
-3. Role adjustment is conservative. Ambiguous long relief remains RP with an auditable review reason; known exceptions use `config/role_overrides.json`.
+3. Role adjustment is conservative. A game's classified relief-dominant opener pairs with its 45+-pitch follower, who adjusts to SP as the planned bulk man; other ambiguous long relief remains RP with an auditable review reason. Reviewed exceptions and the `reviewed_through` review marker use `config/role_overrides.json`.
 4. Failed refetches preserve last-known-good appearances as stale; first-time failures are missing. Neither may be silently reported current.
 5. Reject a completed-game schedule that loses a persisted game.
 6. Validate before writing and after reload. Manifest hashes and coverage counts are part of the contract.

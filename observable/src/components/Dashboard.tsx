@@ -28,6 +28,7 @@ interface DashboardData {
   season: number;
   generated_at: string;
   data_commit: string | null;
+  role_reviewed_through: string | null;
   status: Status;
   teams: Team[];
   player_totals: PlayerTotal[];
@@ -148,13 +149,16 @@ function SnapshotPanel({data}: {data: DashboardData}) {
   );
 }
 
-function LeagueGrid({league}: {league: LeagueTotals}) {
+function LeagueGrid({league, reviewedThrough}: {league: LeagueTotals; reviewedThrough: string | null}) {
   return (
     <section className="league-grid" aria-label="League summary">
       <div><strong>{league.total ? integer.format(league.total) : "—"}</strong><span>Total pitches</span></div>
       <div><strong>{league.total ? `${decimal.format((league.adjusted_sp / league.total) * 100)}%` : "—"}</strong><span>Adjusted SP share</span></div>
       <div><strong>{integer.format(league.bulk_to_sp + league.opener_to_rp)}</strong><span>Reclassified pitches</span></div>
-      <div><strong>{integer.format(league.review_count)}</strong><span>Appearances to review</span></div>
+      <div>
+        <strong>{integer.format(league.review_count)}</strong>
+        <span>Appearances to review{reviewedThrough ? ` · reviewed through ${reviewedThrough}` : ""}</span>
+      </div>
     </section>
   );
 }
@@ -1002,7 +1006,7 @@ export function Dashboard({
       </nav>
       {screen === "leaders" ? (
         <>
-          {view !== "players" ? <LeagueGrid league={league} /> : null}
+          {view !== "players" ? <LeagueGrid league={league} reviewedThrough={data.role_reviewed_through} /> : null}
           <section className="controls" aria-label="Table controls">
             <div className="framing">
               {FRAMINGS.map((item) => <button key={item.view} type="button" className={view === item.view ? "active" : undefined} onClick={() => handleView(item.view)}>{item.label}</button>)}

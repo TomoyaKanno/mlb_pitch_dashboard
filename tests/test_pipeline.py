@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from datetime import datetime, timezone
 
 import pytest
@@ -108,7 +109,11 @@ def test_bootstrap_then_incremental_run_only_loads_schedule(tmp_path):
         update_season(2026, tmp_path, reconcile_days=0, now=NOW, client_factory=factory(schedule, boxes))
     )
     second = asyncio.run(
-        update_season(2026, tmp_path, reconcile_days=0, now=NOW, client_factory=factory(schedule, boxes))
+        update_season(
+            2026, tmp_path, reconcile_days=0, now=NOW,
+            client_factory=factory(schedule, boxes),
+            role_reviewed_through="2026-08-08",
+        )
     )
 
     assert first.api_calls == 5
@@ -119,7 +124,9 @@ def test_bootstrap_then_incremental_run_only_loads_schedule(tmp_path):
     assert len(snapshot.games) == 2
     assert len(snapshot.appearances) == 6
     assert (tmp_path / "seasons/2026/games/2026-06.jsonl").exists()
-    assert (tmp_path / "seasons/2026/manifest.json").exists()
+    manifest = json.loads((tmp_path / "seasons/2026/manifest.json").read_text())
+    # The marker persists with the snapshot whose classifications it describes.
+    assert manifest["role_reviewed_through"] == "2026-08-08"
 
 
 def test_recent_failure_preserves_last_known_good_data_as_stale(tmp_path):

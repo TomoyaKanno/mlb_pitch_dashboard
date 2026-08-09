@@ -151,10 +151,13 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
         "current_games": 1,
         "stale_games": 0,
         "missing_games": 0,
+        "role_reviewed_through": "2026-08-08",
     }
     write_snapshot(snapshot, refresh, tmp_path)
 
     payload = export_dashboard(tmp_path, 2026)
+    # The marker comes from the snapshot manifest, not the source checkout.
+    assert payload["role_reviewed_through"] == "2026-08-08"
     away = next(team for team in payload["teams"] if team["team_id"] == 100)
     assert away["games"] == 1
     assert away["total"] == 100

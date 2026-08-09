@@ -723,6 +723,9 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
         "season": season,
         "generated_at": manifest["generated_at"],
         "data_commit": os.getenv("DASHBOARD_DATA_SHA"),
+        # Absent from manifests written before any review marker existed,
+        # including frozen historical seasons: no marker is the true state.
+        "role_reviewed_through": manifest.get("role_reviewed_through"),
         "status": {
             "result": manifest["result"],
             "api_calls": manifest["api_calls"],

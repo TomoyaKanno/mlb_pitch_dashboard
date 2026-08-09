@@ -1,2 +1,37 @@
-{}
-
+{
+  "reviewed_through": "2026-08-08",
+  "overrides": {
+    "822832:676596": {
+      "role": "RP",
+      "reason": "2026-04-06 TOR: Scherzer hooked after 2 IP (36p) amid an otherwise normal rotation schedule (83/68/74/82 in neighboring starts); Fleming's 77 pitches were unplanned long relief."
+    },
+    "824608:815083": {
+      "role": "RP",
+      "reason": "2026-04-29 LAA: Kikuchi left injured (15-day IL 2026-05-03 retroactive to 04-30, shoulder) after 35 pitches; Farris's 62 pitches were emergency bulk."
+    },
+    "823626:804636": {
+      "role": "SP",
+      "reason": "2026-05-27 NYM: planned bulk start (76p) behind serial opener Brazoban; identical shape to the 2026-06-02 pairing the opener rule catches, missed only because Brazoban's frequent opener starts inflate his start share."
+    },
+    "823626:623211": {
+      "role": "RP",
+      "reason": "2026-05-27 NYM: Brazoban's 19-pitch official start was an opener; his serial opener usage defeats the relief-dominant test's start-share cap. Mirrors his auto-classified 2026-06-02 opener game."
+    },
+    "823849:692030": {
+      "role": "SP",
+      "reason": "2026-06-23 TEX: planned bulk (69p) behind Quantrill's 34-pitch stretch-out start; Quantrill's ramp 34/55/66/79/86 across his next starts shows the short outing was scheduled."
+    },
+    "823678:806960": {
+      "role": "RP",
+      "reason": "2026-07-26 ATH: Springs was shelled (1.1 IP, 5 R, 36p), not an opener; Morales's 87 pitches were emergency long relief."
+    },
+    "824161:689149": {
+      "role": "RP",
+      "reason": "2026-08-04 TOR: Yesavage left injured despite a 2 IP no-hit line at 27 pitches (15-day IL 2026-08-05, left knee); Dallas's 74 pitches were emergency bulk."
+    },
+    "824566:689818": {
+      "role": "SP",
+      "reason": "2026-08-07 CWS: Sandlin is a returning starter (61/80/91-pitch starts May-June plus a starter-identity bulk outing) in a planned tandem with Schultz; the 28-day window missed his starter identity due to a July minors stint."
+    }
+  }
+}
