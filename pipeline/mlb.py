@@ -244,7 +244,6 @@ class MLBClient:
     async def pitching_rosters(self, season: int) -> list[dict[str, Any]]:
         """Return pitching depth-chart order and full 40-man status per MLB team.
 
-        Depth-chart rows carry published ``SP`` / bullpen ``P`` / ``CP`` order.
         The 40-man roster is persisted whole — position players included — so
         absence from these rows means a player left the team's 40-man scope,
         not that an active position player pitched in mop-up relief.

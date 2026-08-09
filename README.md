@@ -13,7 +13,7 @@ The supported product is a static Observable Framework site. A Python pipeline r
 - **Team timelines** — cumulative or daily workload on a shared season date axis, with game-level complete-game notes.
 - **Player history** — the selected season alongside the prior three completed seasons for a current top-30 pitcher.
 
-Official SP/RP comes directly from MLB's per-game `gamesStarted` value. It is never inferred from appearance order, pitch count, outing length, or effectiveness. The separate role-adjusted view conservatively handles opener and bulk-pitcher games: when a game's official starter classifies as a relief-dominant opener, the second pitcher is the planned bulk man and adjusts to SP. Remaining ambiguous long relief outings stay RP and are flagged for review. Reviewed exceptions and the `reviewed_through` marker recording the last manual flag review live in `config/role_overrides.json`.
+Official SP/RP comes directly from MLB's per-game `gamesStarted` value and is never inferred from appearance order, pitch count, outing length, or effectiveness. The separate role-adjusted view conservatively reclassifies opener and bulk-pitcher games, flags ambiguous long relief for review, and applies reviewed per-season exceptions from `config/role_overrides.json`. The full rule and its audit trail are specified in [the durable data contract](docs/data-contract.md).
 
 ## Architecture
 

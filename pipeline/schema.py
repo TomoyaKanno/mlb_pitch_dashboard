@@ -151,11 +151,9 @@ class NextGameRecord:
 class RosterPitcherRecord:
     """Published pitching depth / full 40-man status for Recent strain context.
 
-    ``depth_role`` is set for arms listed on MLB's depth chart (``SP``, ``RP``
-    for bullpen ``P``, or ``CP``). The 40-man roster is captured whole —
-    position players included, with a null depth role — so a windowed pitcher
-    absent from these rows verifiably left the team's 40-man scope. Status
-    codes come from MLB (``A``, ``D15``, ``RM``, …).
+    ``depth_role`` is set for depth-chart arms (``SP``, ``RP`` for bullpen
+    ``P``, or ``CP``); 40-man-only rows — position players included — keep a
+    null depth role. Status codes come from MLB (``A``, ``D15``, ``RM``, …).
     """
 
     team_id: int
