@@ -155,6 +155,9 @@ def test_export_matches_runtime_team_aggregation(tmp_path):
     write_snapshot(snapshot, refresh, tmp_path)
 
     payload = export_dashboard(tmp_path, 2026)
+    assert payload["role_reviewed_through"] is None
+    marked = export_dashboard(tmp_path, 2026, role_reviewed_through="2026-08-08")
+    assert marked["role_reviewed_through"] == "2026-08-08"
     away = next(team for team in payload["teams"] if team["team_id"] == 100)
     assert away["games"] == 1
     assert away["total"] == 100

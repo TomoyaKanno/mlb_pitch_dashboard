@@ -8,7 +8,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-from .classify import Appearance, classify_appearances
+from .classify import Appearance, classify_appearances, load_role_overrides
 from .mlb import MLBClient, fetch_game_batch
 from .schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, RosterPitcherRecord, Snapshot
 from .storage import load_snapshot, write_snapshot
@@ -219,7 +219,7 @@ def _parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = _parser().parse_args()
-    overrides = json.loads(args.overrides.read_text()) if args.overrides.exists() else {}
+    overrides = load_role_overrides(args.overrides).overrides
     summary = asyncio.run(
         update_season(
             args.season,

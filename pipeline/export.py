@@ -738,11 +738,17 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
     return snapshot, meta
 
 
-def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
+def export_dashboard(
+    data_dir: Path,
+    season: int,
+    *,
+    role_reviewed_through: str | None = None,
+) -> dict[str, Any]:
     snapshot, meta = _export_common(data_dir, season)
     teams = aggregate_teams(snapshot)
     return {
         **meta,
+        "role_reviewed_through": role_reviewed_through,
         "teams": teams,
         "player_totals": aggregate_pitchers(snapshot),
         "team_pitcher_usage": aggregate_team_pitcher_usage(snapshot),
