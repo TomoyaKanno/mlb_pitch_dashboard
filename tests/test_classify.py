@@ -173,34 +173,94 @@ def test_string_override_is_case_insensitive():
     assert result[(140, 119, 100)].reason == "manual override"
 
 
-def test_invalid_override_falls_back_to_domain_classification():
-    row = appearance(150, 0, 110, 14, False)
-
-    result = classify_appearances([row], {"150:110": {"role": "swingman"}})
-
-    assert role(result, row) == "RP"
-    assert result[(150, 119, 110)].reason == "official reliever"
-
-
-def test_load_role_overrides_reads_map_and_review_marker(tmp_path):
+def test_load_role_overrides_reads_the_requested_season(tmp_path):
     path = tmp_path / "role_overrides.json"
     path.write_text(json.dumps({
-        "reviewed_through": "2026-08-08",
-        "overrides": {"822832:676596": {"role": "RP", "reason": "reviewed"}},
+        "seasons": {
+            "2026": {
+                "reviewed_through": "2026-08-08",
+                "overrides": {"822832:676596": {"role": "RP", "reason": "reviewed"}},
+            },
+            "2025": {
+                "overrides": {"700001:600001": {"role": "SP", "reason": "prior season"}},
+            },
+        },
     }))
 
-    loaded = load_role_overrides(path)
+    loaded = load_role_overrides(path, 2026)
 
     assert loaded.reviewed_through == "2026-08-08"
     assert loaded.overrides == {"822832:676596": {"role": "RP", "reason": "reviewed"}}
 
+    other = load_role_overrides(path, 2025)
+    assert other.reviewed_through is None
+    assert other.overrides == {"700001:600001": {"role": "SP", "reason": "prior season"}}
+
+    unlisted = load_role_overrides(path, 2024)
+    assert unlisted.overrides == {} and unlisted.reviewed_through is None
+
 
 def test_load_role_overrides_handles_missing_and_empty_files(tmp_path):
-    missing = load_role_overrides(tmp_path / "absent.json")
+    missing = load_role_overrides(tmp_path / "absent.json", 2026)
     assert missing.overrides == {} and missing.reviewed_through is None
 
     empty_path = tmp_path / "empty.json"
     empty_path.write_text("{}")
-    empty = load_role_overrides(empty_path)
+    empty = load_role_overrides(empty_path, 2026)
     assert empty.overrides == {} and empty.reviewed_through is None
+
+
+@pytest.mark.parametrize(
+    ("payload", "message"),
+    [
+        pytest.param(
+            {"season": {"2026": {"overrides": {}}}},
+            "top-level 'seasons'",
+            id="misspelled-seasons-key",
+        ),
+        pytest.param(
+            {"seasons": {"26": {"overrides": {}}}},
+            "four-digit year",
+            id="short-season-key",
+        ),
+        pytest.param(
+            {"seasons": {"2026": {"override": {}}}},
+            "allows only 'overrides' and 'reviewed_through'",
+            id="misspelled-overrides-key",
+        ),
+        pytest.param(
+            {"seasons": {"2026": {"reviewed_through": "August 8"}}},
+            "invalid reviewed_through",
+            id="non-iso-marker",
+        ),
+        pytest.param(
+            {"seasons": {"2026": {"overrides": {"abc:1": {"role": "SP", "reason": "x"}}}}},
+            "not 'game_pk:pitcher_id'",
+            id="malformed-key",
+        ),
+        pytest.param(
+            {"seasons": {"2026": {"overrides": {"1:2": {"role": "swingman", "reason": "x"}}}}},
+            "role must be 'SP' or 'RP'",
+            id="invalid-role",
+        ),
+        pytest.param(
+            {"seasons": {"2026": {"overrides": {"1:2": {"role": "SP"}}}}},
+            "exactly 'role' and 'reason'",
+            id="missing-reason",
+        ),
+        pytest.param(
+            {"seasons": {"2026": {"overrides": {"1:2": {"role": "SP", "reason": "  "}}}}},
+            "nonempty reason",
+            id="blank-reason",
+        ),
+    ],
+)
+def test_load_role_overrides_rejects_malformed_config(tmp_path, payload, message):
+    """The config is the audited review record: malformed entries must fail the
+    refresh loudly instead of silently reverting to the heuristic."""
+    path = tmp_path / "role_overrides.json"
+    path.write_text(json.dumps(payload))
+
+    with pytest.raises(ValueError, match=message):
+        load_role_overrides(path, 2026)
 

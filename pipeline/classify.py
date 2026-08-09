@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date
@@ -27,35 +28,70 @@ class Classification:
     needs_review: bool = False
 
 
+_OVERRIDE_KEY = re.compile(r"[0-9]+:[0-9]+")
+
+
 @dataclass(frozen=True)
 class RoleOverridesFile:
-    """Parsed config/role_overrides.json: reviewed exceptions plus review marker."""
+    """One season's reviewed exceptions plus its review marker."""
 
     overrides: dict[str, Any]
     reviewed_through: str | None
 
 
-def load_role_overrides(path: Path) -> RoleOverridesFile:
-    """Read the overrides config: an ``overrides`` map keyed ``game_pk:pitcher_id``
-    and a ``reviewed_through`` date recording the last manual flag review."""
+def load_role_overrides(path: Path, season: int) -> RoleOverridesFile:
+    """Read one season's overrides from the season-keyed config.
+
+    The whole file is validated strictly on every load: this is the audited
+    record of manual review decisions, so a malformed entry must fail the
+    refresh rather than silently reverting to the heuristic classification.
+    """
     if not path.exists():
         return RoleOverridesFile({}, None)
     payload = json.loads(path.read_text())
-    reviewed = payload.get("reviewed_through")
+    if not isinstance(payload, dict) or set(payload) - {"seasons"}:
+        raise ValueError(f"{path}: expected a single top-level 'seasons' object")
+    seasons = payload.get("seasons", {})
+    if not isinstance(seasons, dict):
+        raise ValueError(f"{path}: 'seasons' must be an object keyed by year")
+    for season_key, entry in seasons.items():
+        context = f"{path}: season {season_key!r}"
+        if not re.fullmatch(r"[0-9]{4}", season_key):
+            raise ValueError(f"{context} is not a four-digit year")
+        if not isinstance(entry, dict) or set(entry) - {"overrides", "reviewed_through"}:
+            raise ValueError(f"{context} allows only 'overrides' and 'reviewed_through'")
+        reviewed = entry.get("reviewed_through")
+        if reviewed is not None:
+            try:
+                date.fromisoformat(str(reviewed))
+            except ValueError as exc:
+                raise ValueError(f"{context} has an invalid reviewed_through date") from exc
+        overrides = entry.get("overrides", {})
+        if not isinstance(overrides, dict):
+            raise ValueError(f"{context} overrides must be an object")
+        for key, value in overrides.items():
+            if not _OVERRIDE_KEY.fullmatch(key):
+                raise ValueError(f"{context} override key {key!r} is not 'game_pk:pitcher_id'")
+            if not isinstance(value, dict) or set(value) != {"role", "reason"}:
+                raise ValueError(f"{context} override {key} must have exactly 'role' and 'reason'")
+            if value["role"] not in {"SP", "RP"}:
+                raise ValueError(f"{context} override {key} role must be 'SP' or 'RP'")
+            if not isinstance(value["reason"], str) or not value["reason"].strip():
+                raise ValueError(f"{context} override {key} needs a nonempty reason")
+    entry = seasons.get(str(season), {})
+    reviewed = entry.get("reviewed_through")
     return RoleOverridesFile(
-        dict(payload.get("overrides", {})),
+        dict(entry.get("overrides", {})),
         str(reviewed) if reviewed is not None else None,
     )
 
 
-def _override_role(value: Any) -> str | None:
-    if isinstance(value, str):
-        role = value.upper()
-    elif isinstance(value, dict):
-        role = str(value.get("role", "")).upper()
-    else:
+def _overridden(overrides: dict[str, Any], row: Appearance) -> Classification | None:
+    value = overrides.get(f"{row.game_pk}:{row.pitcher_id}")
+    if value is None:
         return None
-    return role if role in {"SP", "RP"} else None
+    role = str(value["role"] if isinstance(value, dict) else value).upper()
+    return Classification(role, "manual override")
 
 
 def classify_appearances(
@@ -98,9 +134,9 @@ def classify_appearances(
         if not row.official_started:
             continue
         result_key = (row.game_pk, row.team_id, row.pitcher_id)
-        override = _override_role(overrides.get(f"{row.game_pk}:{row.pitcher_id}"))
-        if override:
-            result[result_key] = Classification(override, "manual override")
+        override = _overridden(overrides, row)
+        if override is not None:
+            result[result_key] = override
             continue
 
         surrounding = surrounding_for(row)
@@ -123,9 +159,9 @@ def classify_appearances(
         if row.official_started:
             continue
         result_key = (row.game_pk, row.team_id, row.pitcher_id)
-        override = _override_role(overrides.get(f"{row.game_pk}:{row.pitcher_id}"))
-        if override:
-            result[result_key] = Classification(override, "manual override")
+        override = _overridden(overrides, row)
+        if override is not None:
+            result[result_key] = override
             continue
 
         # An opener only classifies relief-dominant when its follower threw 45+,
