@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from .check import check_persisted_snapshot
-from .schema import Snapshot
+from .schema import SCHEMA_VERSION, Snapshot
 from .storage import load_snapshot
 
 METRIC_KEYS = (
@@ -373,15 +373,10 @@ def _roster_availability(status_code: str) -> str | None:
 def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
     """Fourteen calendar days of reliever pitch counts for each team.
 
-    The window ends with the team's latest available completed game. Doubleheaders add
-    both games into the same calendar-day cell, which reflects total workload.
-    Depth-chart bullpen arms (``RP`` / ``CP``) are included even with zero
-    pitches so unused call-ups remain visible. Non-active arms are kept only
-    when they recorded pitches in the window. Roster availability badges come
-    from the persisted depth-chart / 40-man snapshot when present. A windowed
-    arm absent from the team's roster rows left its 40-man scope entirely
-    (waivers, trade, outright, release) and is badged ``Gone``; historical
-    seasons persist an empty roster snapshot, so they carry no badges at all.
+    The window ends with the team's latest available completed game, and
+    doubleheaders sum into one calendar-day cell. Full inclusion and
+    availability-badge semantics (``Gone``, historical seasons carrying no
+    badges) are specified in docs/data-contract.md.
     """
     by_game_team = _appearances_by_game_team(snapshot)
     latest = _latest_team_games(snapshot, by_game_team)
@@ -719,7 +714,7 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
     manifest_path = data_dir / "seasons" / str(season) / "manifest.json"
     manifest = json.loads(manifest_path.read_text())
     meta = {
-        "schema_version": 1,
+        "schema_version": SCHEMA_VERSION,
         "season": season,
         "generated_at": manifest["generated_at"],
         "data_commit": os.getenv("DASHBOARD_DATA_SHA"),
