@@ -152,6 +152,16 @@
     },
     {
       "depth_order": 15,
+      "depth_role": "RP",
+      "pitcher_id": 691769,
+      "pitcher_name": "Philip Abner",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 109,
+      "team_name": "Arizona Diamondbacks"
+    },
+    {
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 668678,
       "pitcher_name": "Zac Gallen",
@@ -161,7 +171,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 16,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 593958,
       "pitcher_name": "Eduardo Rodriguez",
@@ -171,7 +181,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 17,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 518876,
       "pitcher_name": "Merrill Kelly",
@@ -181,7 +191,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 18,
+      "depth_order": 19,
       "depth_role": "SP",
       "pitcher_id": 694297,
       "pitcher_name": "Brandon Pfaadt",
@@ -191,7 +201,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 19,
+      "depth_order": 20,
       "depth_role": "SP",
       "pitcher_id": 647336,
       "pitcher_name": "Michael Soroka",
@@ -201,7 +211,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 20,
+      "depth_order": 21,
       "depth_role": "SP",
       "pitcher_id": 669194,
       "pitcher_name": "Ryne Nelson",
@@ -211,7 +221,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 21,
+      "depth_order": 22,
       "depth_role": "SP",
       "pitcher_id": 669203,
       "pitcher_name": "Corbin Burnes",
@@ -221,7 +231,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 22,
+      "depth_order": 23,
       "depth_role": "SP",
       "pitcher_id": 683352,
       "pitcher_name": "Mitch Bratt",
@@ -425,16 +435,6 @@
       "depth_role": null,
       "pitcher_id": 571448,
       "pitcher_name": "Nolan Arenado",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 109,
-      "team_name": "Arizona Diamondbacks"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 691769,
-      "pitcher_name": "Philip Abner",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 109,
