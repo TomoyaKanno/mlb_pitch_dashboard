@@ -24,9 +24,9 @@ The build reloads the snapshot, exports the three browser payloads, compiles Obs
 
 Refresh runs at 07:17 and 09:17 UTC each day from March through November. During the regular season those are 3:17 and 5:17 a.m. Eastern. Both runs use the same serialized incremental path; the early pass improves practical freshness and the later pass catches unusually late games.
 
-GitHub schedules are best-effort. July 2026 observations placed the common two-to-three-hour delay before runner pickup, consistent with [GitHub's warning that scheduled workflows may be delayed or dropped under load](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule). Do not treat either cron expression as a freshness SLA or diagnose normal dispatch delay as a runner/workflow failure.
+GitHub schedules are best-effort. July 2026 observations placed the common two-to-three-hour delay before runner pickup, consistent with [GitHub's warning that scheduled workflows may be delayed or dropped under load](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule). Run creation itself is late while runner pickup takes seconds, locating the delay upstream of the workflow. A timezone-aware `timezone:` cron key was once suspected; `"17 5"` America/New_York and `"17 9"` UTC denote the same instant, so that theory is ruled out. Do not treat either cron expression as a freshness SLA or diagnose normal dispatch delay as a runner/workflow failure.
 
-The published season is selected in `config/dashboard.json`, not inferred from the calendar. Change it only after the new regular season has begun and its initial validated snapshot is ready; this prevents an empty January rollover.
+The published season is selected in `config/dashboard.json`, not inferred from the calendar. Change it only after the new regular season has begun and its initial validated snapshot is ready; this prevents an empty January rollover. In practice that means after all 30 teams have completed at least one game: the build verifier requires full 30-team coverage in every dashboard section, so an international-series opening window in which only two clubs have played cannot publish yet.
 
 ## Manual operations
 

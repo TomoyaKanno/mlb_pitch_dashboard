@@ -10,6 +10,10 @@ import {
 import {
   RecentStrain, type BullpenUsage, type NextTeamGame, type RecentTeamGame, type StarterRest,
 } from "./RecentStrain.js";
+import {
+  playerCurve, playerValueAt, priorSeasonEnvelope,
+  type PlayerCurvePoint, type PlayerHistory, type PlayerHistoryData,
+} from "./playerHistory.js";
 
 interface Status {
   result: "complete" | "partial" | "failed";
@@ -45,32 +49,6 @@ interface PlayerTotal {
   team_id: number;
   team_name: string;
   total: number;
-}
-
-interface PlayerHistoryPoint {
-  day: number;
-  pitches: number;
-}
-
-interface PlayerHistorySeason {
-  season: number;
-  season_days: number;
-  total: number;
-  appearances: number;
-  points: PlayerHistoryPoint[];
-}
-
-interface PlayerHistory {
-  pitcher_id: number;
-  pitcher_name: string;
-  seasons: PlayerHistorySeason[];
-}
-
-interface PlayerHistoryData {
-  schema_version: number;
-  season: number;
-  historical_seasons: number[];
-  players: PlayerHistory[];
 }
 
 interface PitcherUsage {
@@ -250,31 +228,6 @@ function formatAxisValue(value: number, view: View): string {
   return integer.format(Math.round(value));
 }
 
-interface PlayerCurvePoint { day: number; value: number }
-
-function playerCurve(season: PlayerHistorySeason): PlayerCurvePoint[] {
-  const curve: PlayerCurvePoint[] = [{day: 0, value: 0}];
-  let total = 0;
-  for (const point of season.points) {
-    curve.push({day: point.day, value: total});
-    total += point.pitches;
-    curve.push({day: point.day, value: total});
-  }
-  if (curve[curve.length - 1].day !== season.season_days) {
-    curve.push({day: season.season_days, value: total});
-  }
-  return curve;
-}
-
-function playerValueAt(season: PlayerHistorySeason, day: number): number {
-  let total = 0;
-  for (const point of season.points) {
-    if (point.day > day) break;
-    total += point.pitches;
-  }
-  return total;
-}
-
 function numericPath(
   series: PlayerCurvePoint[],
   maxDay: number,
@@ -304,22 +257,7 @@ function PlayerHistoryPanel({
   const maxDay = Math.max(...history.seasons.map((season) => season.season_days), 1);
   const currentDay = current.season_days;
   const priorMlbSeasons = prior.filter((season) => season.total > 0).length;
-  const bandDays = Array.from(new Set([
-    0,
-    maxDay,
-    ...prior.flatMap((season) => [season.season_days, ...season.points.map((point) => point.day)]),
-  ])).sort((a, b) => a - b);
-  const band = bandDays.flatMap((day) => {
-    // Retain both sides of each game date so the envelope changes vertically,
-    // like the individual cumulative pitch curves, rather than ramping before
-    // a pitcher has actually thrown the pitches.
-    const before = prior.map((season) => playerValueAt(season, day - 1));
-    const after = prior.map((season) => playerValueAt(season, day));
-    return [
-      {day, low: Math.min(...before), high: Math.max(...before)},
-      {day, low: Math.min(...after), high: Math.max(...after)},
-    ];
-  });
+  const band = priorSeasonEnvelope(prior, maxDay);
   const valueMax = niceCeil(Math.max(
     pitcher.total,
     ...history.seasons.map((season) => season.total),

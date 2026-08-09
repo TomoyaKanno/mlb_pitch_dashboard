@@ -178,6 +178,15 @@ async def update_season(
         api_calls = int(client.api_calls)
 
     _classify(snapshot, overrides or {})
+    # Overrides are the audited record of manual review; a key that matches no
+    # persisted appearance is a typo or a wrong-season entry, never a no-op.
+    unmatched = set(overrides or {}) - {
+        f"{game_pk}:{pitcher_id}" for game_pk, _team_id, pitcher_id in snapshot.appearances
+    }
+    if unmatched:
+        raise SnapshotValidationError(
+            "role overrides reference no persisted appearance: " + ", ".join(sorted(unmatched))
+        )
     validate_snapshot(snapshot)
 
     scheduled_pks = set(scheduled_by_pk)
@@ -224,7 +233,7 @@ def _parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = _parser().parse_args()
-    overrides_file = load_role_overrides(args.overrides)
+    overrides_file = load_role_overrides(args.overrides, args.season)
     summary = asyncio.run(
         update_season(
             args.season,

@@ -366,6 +366,31 @@ def test_refresh_rejects_duplicate_appearance_from_boxscore(tmp_path):
         )
 
 
+def test_refresh_applies_matched_override_and_rejects_unmatched_keys(tmp_path):
+    schedule = [game(1, "2026-06-01")]
+    boxes = {1: boxscore(1)}
+
+    asyncio.run(
+        update_season(
+            2026, tmp_path, reconcile_days=0, now=NOW,
+            client_factory=factory(schedule, boxes),
+            overrides={"1:11": {"role": "RP", "reason": "reviewed opener"}},
+        )
+    )
+    snapshot = load_snapshot(tmp_path, 2026)
+    assert snapshot.appearances[(1, 100, 11)].adjusted_role == "RP"
+    assert snapshot.appearances[(1, 100, 11)].classification_reason == "manual override"
+
+    with pytest.raises(SnapshotValidationError, match=r"no persisted appearance: 999:999"):
+        asyncio.run(
+            update_season(
+                2026, tmp_path, reconcile_days=0, now=NOW,
+                client_factory=factory(schedule, boxes),
+                overrides={"999:999": {"role": "SP", "reason": "typo'd id"}},
+            )
+        )
+
+
 def test_schedule_regression_is_rejected_before_writing(tmp_path):
     schedule = [game(1, "2026-06-01")]
     boxes = {1: boxscore(1)}
