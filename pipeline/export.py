@@ -723,6 +723,9 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
         "season": season,
         "generated_at": manifest["generated_at"],
         "data_commit": os.getenv("DASHBOARD_DATA_SHA"),
+        # Absent from manifests written before any review marker existed,
+        # including frozen historical seasons: no marker is the true state.
+        "role_reviewed_through": manifest.get("role_reviewed_through"),
         "status": {
             "result": manifest["result"],
             "api_calls": manifest["api_calls"],
@@ -738,17 +741,11 @@ def _export_common(data_dir: Path, season: int) -> tuple[Snapshot, dict[str, Any
     return snapshot, meta
 
 
-def export_dashboard(
-    data_dir: Path,
-    season: int,
-    *,
-    role_reviewed_through: str | None = None,
-) -> dict[str, Any]:
+def export_dashboard(data_dir: Path, season: int) -> dict[str, Any]:
     snapshot, meta = _export_common(data_dir, season)
     teams = aggregate_teams(snapshot)
     return {
         **meta,
-        "role_reviewed_through": role_reviewed_through,
         "teams": teams,
         "player_totals": aggregate_pitchers(snapshot),
         "team_pitcher_usage": aggregate_team_pitcher_usage(snapshot),

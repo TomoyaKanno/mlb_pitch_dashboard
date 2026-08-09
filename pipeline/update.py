@@ -28,6 +28,9 @@ class RefreshSummary:
     current_games: int
     stale_games: int
     missing_games: int
+    # Recorded with the snapshot so the marker always describes the
+    # classifications actually persisted, not the source checkout's config.
+    role_reviewed_through: str | None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -84,6 +87,7 @@ async def update_season(
     force: bool = False,
     reconcile_days: int = 7,
     overrides: dict[str, Any] | None = None,
+    role_reviewed_through: str | None = None,
     now: datetime | None = None,
     client_factory: Callable[[], Any] = MLBClient,
 ) -> RefreshSummary:
@@ -202,6 +206,7 @@ async def update_season(
         current_games=len(current),
         stale_games=len(stale),
         missing_games=len(missing),
+        role_reviewed_through=role_reviewed_through,
     )
     write_snapshot(snapshot, summary.to_dict(), data_dir)
     return summary
@@ -219,14 +224,15 @@ def _parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = _parser().parse_args()
-    overrides = load_role_overrides(args.overrides).overrides
+    overrides_file = load_role_overrides(args.overrides)
     summary = asyncio.run(
         update_season(
             args.season,
             args.data_dir,
             force=args.force,
             reconcile_days=args.reconcile_days,
-            overrides=overrides,
+            overrides=overrides_file.overrides,
+            role_reviewed_through=overrides_file.reviewed_through,
         )
     )
     print(json.dumps(summary.to_dict(), indent=2, sort_keys=True))
