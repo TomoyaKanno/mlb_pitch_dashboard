@@ -70,6 +70,8 @@ The next-game export is the earliest non-final regular-season game in the schedu
 
 Each team gets 14 ordered calendar dates ending with its latest available completed game. Pitch arrays align positionally with those dates and include official reliever pitches only; doubleheaders sum within a date. Active depth-chart relievers appear even with zero pitches. Non-active pitchers remain only when they worked during the window, retain their status badge and history, and sort below active arms.
 
+A windowed reliever absent from the team's depth-chart and 40-man rows left that scope entirely — waivers, trade, outright, or release — and is badged `Gone` rather than shown as active. The badge asserts only 40-man absence as of the latest refresh; export never consults transaction history. When the pitcher surfaces on another team's roster snapshot, the description names the new organization. Historical seasons persist an empty roster snapshot and therefore carry no availability badges of any kind.
+
 Within each availability group, sorting prioritizes latest-game relief pitches, then 3-, 5-, and 14-day totals, then name and id.
 
 Starter rest contains active depth-chart SPs in MLB's published order. The last start follows `pitcher_id` across trades and counts only official starts. Days of rest are complete off-days between the start and as-of dates: `(as_of_date - last_start_date) - 1`, floored at zero. History stays null when the pitcher has no official start in the published season; export does not infer one or reach into an unvalidated season.

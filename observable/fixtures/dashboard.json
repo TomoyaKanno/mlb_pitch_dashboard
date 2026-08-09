@@ -469,6 +469,31 @@
           "on_depth_chart": true,
           "availability": null,
           "status_description": "Active"
+        },
+        {
+          "pitcher_id": 656212,
+          "pitcher_name": "Charlie Barnes",
+          "pitches": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            20,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "depth_role": null,
+          "depth_order": null,
+          "on_depth_chart": false,
+          "availability": "Gone",
+          "status_description": "Not on the team's 40-man roster at the latest refresh"
         }
       ]
     },
