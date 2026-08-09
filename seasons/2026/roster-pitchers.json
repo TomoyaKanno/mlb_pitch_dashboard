@@ -2303,36 +2303,6 @@
     {
       "depth_order": 0,
       "depth_role": "RP",
-      "pitcher_id": 664208,
-      "pitcher_name": "Phil Maton",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 1,
-      "depth_role": "RP",
-      "pitcher_id": 573204,
-      "pitcher_name": "Caleb Thielbar",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 2,
-      "depth_role": "RP",
-      "pitcher_id": 640451,
-      "pitcher_name": "Hunter Harvey",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 3,
-      "depth_role": "RP",
       "pitcher_id": 657097,
       "pitcher_name": "Jacob Webb",
       "status_code": "A",
@@ -2341,97 +2311,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 4,
-      "depth_role": "RP",
-      "pitcher_id": 571948,
-      "pitcher_name": "Hoby Milner",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 5,
-      "depth_role": "RP",
-      "pitcher_id": 650644,
-      "pitcher_name": "Aaron Civale",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 6,
-      "depth_role": "RP",
-      "pitcher_id": 687863,
-      "pitcher_name": "Porter Hodge",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 7,
-      "depth_role": "RP",
-      "pitcher_id": 702303,
-      "pitcher_name": "Riley Martin",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 8,
-      "depth_role": "RP",
-      "pitcher_id": 663423,
-      "pitcher_name": "Trent Thornton",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 9,
-      "depth_role": "RP",
-      "pitcher_id": 669020,
-      "pitcher_name": "Ryan Rolison",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 10,
-      "depth_role": "RP",
-      "pitcher_id": 681799,
-      "pitcher_name": "Ethan Roberts",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 11,
-      "depth_role": "RP",
-      "pitcher_id": 666129,
-      "pitcher_name": "Braxton Garrett",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 12,
-      "depth_role": "RP",
-      "pitcher_id": 668970,
-      "pitcher_name": "Gavin Hollowell",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 13,
+      "depth_order": 1,
       "depth_role": "RP",
       "pitcher_id": 666171,
       "pitcher_name": "Ryan Zeferjahn",
@@ -2441,32 +2321,142 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 14,
-      "depth_role": "CP",
-      "pitcher_id": 694037,
-      "pitcher_name": "Daniel Palencia",
+      "depth_order": 2,
+      "depth_role": "RP",
+      "pitcher_id": 573204,
+      "pitcher_name": "Caleb Thielbar",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 3,
+      "depth_role": "RP",
+      "pitcher_id": 669020,
+      "pitcher_name": "Ryan Rolison",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 4,
+      "depth_role": "RP",
+      "pitcher_id": 663423,
+      "pitcher_name": "Trent Thornton",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 5,
+      "depth_role": "RP",
+      "pitcher_id": 607067,
+      "pitcher_name": "Colin Rea",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 6,
+      "depth_role": "RP",
+      "pitcher_id": 665871,
+      "pitcher_name": "Javier Assad",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 7,
+      "depth_role": "RP",
+      "pitcher_id": 650644,
+      "pitcher_name": "Aaron Civale",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 8,
+      "depth_role": "RP",
+      "pitcher_id": 664208,
+      "pitcher_name": "Phil Maton",
       "status_code": "D15",
       "status_description": "Injured 15-Day",
       "team_id": 112,
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 15,
-      "depth_role": "SP",
-      "pitcher_id": 571510,
-      "pitcher_name": "Matthew Boyd",
-      "status_code": "A",
-      "status_description": "Active",
+      "depth_order": 9,
+      "depth_role": "RP",
+      "pitcher_id": 640451,
+      "pitcher_name": "Hunter Harvey",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 10,
+      "depth_role": "RP",
+      "pitcher_id": 571948,
+      "pitcher_name": "Hoby Milner",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 11,
+      "depth_role": "RP",
+      "pitcher_id": 687863,
+      "pitcher_name": "Porter Hodge",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 12,
+      "depth_role": "RP",
+      "pitcher_id": 702303,
+      "pitcher_name": "Riley Martin",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 13,
+      "depth_role": "RP",
+      "pitcher_id": 681799,
+      "pitcher_name": "Ethan Roberts",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 14,
+      "depth_role": "RP",
+      "pitcher_id": 668970,
+      "pitcher_name": "Gavin Hollowell",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 112,
       "team_name": "Chicago Cubs"
     },
     {
       "depth_order": 16,
-      "depth_role": "SP",
-      "pitcher_id": 684007,
-      "pitcher_name": "Shota Imanaga",
-      "status_code": "A",
-      "status_description": "Active",
+      "depth_role": "CP",
+      "pitcher_id": 694037,
+      "pitcher_name": "Daniel Palencia",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 112,
       "team_name": "Chicago Cubs"
     },
@@ -2483,8 +2473,8 @@
     {
       "depth_order": 18,
       "depth_role": "SP",
-      "pitcher_id": 656849,
-      "pitcher_name": "David Peterson",
+      "pitcher_id": 605280,
+      "pitcher_name": "Clay Holmes",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 112,
@@ -2493,8 +2483,8 @@
     {
       "depth_order": 19,
       "depth_role": "SP",
-      "pitcher_id": 607067,
-      "pitcher_name": "Colin Rea",
+      "pitcher_id": 571510,
+      "pitcher_name": "Matthew Boyd",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 112,
@@ -2503,8 +2493,8 @@
     {
       "depth_order": 20,
       "depth_role": "SP",
-      "pitcher_id": 665871,
-      "pitcher_name": "Javier Assad",
+      "pitcher_id": 684007,
+      "pitcher_name": "Shota Imanaga",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 112,
@@ -2512,6 +2502,16 @@
     },
     {
       "depth_order": 21,
+      "depth_role": "SP",
+      "pitcher_id": 656849,
+      "pitcher_name": "David Peterson",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 22,
       "depth_role": "SP",
       "pitcher_id": 665795,
       "pitcher_name": "Edward Cabrera",
@@ -2521,20 +2521,10 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 22,
+      "depth_order": 23,
       "depth_role": "SP",
       "pitcher_id": 676962,
       "pitcher_name": "Ben Brown",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 23,
-      "depth_role": "SP",
-      "pitcher_id": 690990,
-      "pitcher_name": "Cade Horton",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
       "team_id": 112,
@@ -2545,6 +2535,16 @@
       "depth_role": "SP",
       "pitcher_id": 657006,
       "pitcher_name": "Justin Steele",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": 25,
+      "depth_role": "SP",
+      "pitcher_id": 690990,
+      "pitcher_name": "Cade Horton",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
       "team_id": 112,
@@ -2573,18 +2573,18 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 608348,
-      "pitcher_name": "Carson Kelly",
-      "status_code": "A",
-      "status_description": "Active",
+      "pitcher_id": 666129,
+      "pitcher_name": "Braxton Garrett",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 112,
       "team_name": "Chicago Cubs"
     },
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 605280,
-      "pitcher_name": "Clay Holmes",
+      "pitcher_id": 608348,
+      "pitcher_name": "Carson Kelly",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 112,
@@ -7323,16 +7323,6 @@
     {
       "depth_order": 6,
       "depth_role": "RP",
-      "pitcher_id": 669060,
-      "pitcher_name": "Bryse Wilson",
-      "status_code": "DES",
-      "status_description": "Designated for Assignment",
-      "team_id": 158,
-      "team_name": "Milwaukee Brewers"
-    },
-    {
-      "depth_order": 7,
-      "depth_role": "RP",
       "pitcher_id": 669270,
       "pitcher_name": "Joel Kuhnel",
       "status_code": "D15",
@@ -7341,12 +7331,22 @@
       "team_name": "Milwaukee Brewers"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "pitcher_id": 668831,
       "pitcher_name": "Garrett Stallings",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
+      "team_id": 158,
+      "team_name": "Milwaukee Brewers"
+    },
+    {
+      "depth_order": 8,
+      "depth_role": "RP",
+      "pitcher_id": 680689,
+      "pitcher_name": "Lyon Richardson",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 158,
       "team_name": "Milwaukee Brewers"
     },
@@ -7665,16 +7665,6 @@
       "depth_role": null,
       "pitcher_id": 800325,
       "pitcher_name": "Luis Lara",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 158,
-      "team_name": "Milwaukee Brewers"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 680689,
-      "pitcher_name": "Lyon Richardson",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 158,
@@ -12203,26 +12193,6 @@
     {
       "depth_order": 17,
       "depth_role": "SP",
-      "pitcher_id": 615698,
-      "pitcher_name": "Cal Quantrill",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 140,
-      "team_name": "Texas Rangers"
-    },
-    {
-      "depth_order": 18,
-      "depth_role": "SP",
-      "pitcher_id": 656756,
-      "pitcher_name": "Jordan Montgomery",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 140,
-      "team_name": "Texas Rangers"
-    },
-    {
-      "depth_order": 19,
-      "depth_role": "SP",
       "pitcher_id": 674003,
       "pitcher_name": "Cody Bradford",
       "status_code": "A",
@@ -12265,6 +12235,16 @@
       "depth_role": null,
       "pitcher_id": 607043,
       "pitcher_name": "Brandon Nimmo",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 140,
+      "team_name": "Texas Rangers"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 615698,
+      "pitcher_name": "Cal Quantrill",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 140,
@@ -12385,6 +12365,16 @@
       "depth_role": null,
       "pitcher_id": 592626,
       "pitcher_name": "Joc Pederson",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 140,
+      "team_name": "Texas Rangers"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 656756,
+      "pitcher_name": "Jordan Montgomery",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 140,
