@@ -36,7 +36,7 @@ The repository supports one current contract. Required files and fields are read
 - A completed-game schedule that loses a previously persisted game is rejected.
 - In-memory validation runs before writing; persisted reload then verifies structure, coverage, arithmetic, and manifest hashes before commit.
 
-For the current calendar season, `roster-pitchers.json` combines MLB pitching depth-chart order with 40-man status. Depth roles are `SP`, `RP`, or closer `CP`. Status `A` is active; every other status becomes a compact availability badge for bullpen context. Historical seasons keep the required roster file empty and skip live roster/upcoming-game fetches.
+For the current calendar season, `roster-pitchers.json` combines MLB pitching depth-chart order with each team's full 40-man roster — position players included, since any of them can be pressed into mop-up relief. Depth roles are `SP`, `RP`, or closer `CP`; 40-man-only rows keep a null depth role. Status `A` is active; every other status becomes a compact availability badge for bullpen context. Historical seasons keep the required roster file empty and skip live roster/upcoming-game fetches.
 
 ## Browser exports
 
@@ -69,6 +69,8 @@ The next-game export is the earliest non-final regular-season game in the schedu
 ### Bullpen and starter context
 
 Each team gets 14 ordered calendar dates ending with its latest available completed game. Pitch arrays align positionally with those dates and include official reliever pitches only; doubleheaders sum within a date. Active depth-chart relievers appear even with zero pitches. Non-active pitchers remain only when they worked during the window, retain their status badge and history, and sort below active arms.
+
+A windowed reliever absent from the team's depth-chart and full-40-man rows left that scope entirely — waivers, trade, outright, or release — and is badged `Gone` rather than shown as active. The badge asserts only 40-man absence as of the latest refresh; export never consults transaction history, and active position players pitching in blowouts resolve to their 40-man row rather than a badge. When the pitcher surfaces on another team's roster snapshot, the description names the new organization. Historical seasons persist an empty roster snapshot and therefore carry no availability badges of any kind.
 
 Within each availability group, sorting prioritizes latest-game relief pitches, then 3-, 5-, and 14-day totals, then name and id.
 

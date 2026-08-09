@@ -488,6 +488,62 @@ def test_bullpen_usage_includes_unused_depth_arms_and_roster_badges() -> None:
     assert all(row["pitcher_id"] != 99 for row in usage["pitchers"])
 
 
+def test_bullpen_usage_marks_departed_windowed_arms_gone() -> None:
+    """Windowed relievers who left the team's 40-man scope get a Gone badge.
+
+    A waiver claim surfaces on another team's roster snapshot and names the
+    new organization; an outright to a minor-league deal vanishes entirely and
+    gets the generic description. Both sort below active arms. An active
+    position player pressed into mop-up relief has a full-40-man roster row,
+    so they stay unbadged in the active group.
+    """
+    snapshot = Snapshot(season=2026)
+    snapshot.games[1] = _game_record(1, "2026-07-20")
+    for pitcher_id, pitcher_name, pitches in (
+        (8, "Claimed Reliever", 53),
+        (9, "Outrighted Reliever", 20),
+        (10, "Active Reliever", 11),
+        (12, "Emergency Catcher", 9),
+    ):
+        snapshot.appearances[(1, 17, pitcher_id)] = AppearanceRecord(
+            1, "2026-07-20", 2026, 17, "Test Team", pitcher_id, pitcher_name,
+            pitches, False, 1, "RP", "official reliever",
+        )
+    snapshot.roster_pitchers[(17, 10)] = RosterPitcherRecord(
+        17, "Test Team", 10, "Active Reliever", "RP", 0, "A", "Active",
+    )
+    snapshot.roster_pitchers[(17, 12)] = RosterPitcherRecord(
+        17, "Test Team", 12, "Emergency Catcher", None, None, "A", "Active",
+    )
+    snapshot.roster_pitchers[(30, 8)] = RosterPitcherRecord(
+        30, "Other Team", 8, "Claimed Reliever", None, None, "RM",
+        "Reassigned to Minors",
+    )
+
+    pitchers = aggregate_bullpen_usage(snapshot)[0]["pitchers"]
+
+    assert [row["pitcher_name"] for row in pitchers] == [
+        "Active Reliever",
+        "Emergency Catcher",
+        "Claimed Reliever",
+        "Outrighted Reliever",
+    ]
+    catcher = pitchers[1]
+    assert catcher["availability"] is None
+    assert catcher["on_depth_chart"] is False
+    assert catcher["status_description"] == "Active"
+    claimed, outrighted = pitchers[2], pitchers[3]
+    assert claimed["availability"] == "Gone"
+    assert claimed["status_description"] == "Now in the Other Team organization"
+    assert claimed["on_depth_chart"] is False
+    assert claimed["depth_role"] is None
+    assert outrighted["availability"] == "Gone"
+    assert (
+        outrighted["status_description"]
+        == "Not on the team's 40-man roster at the latest refresh"
+    )
+
+
 def test_bullpen_usage_prioritizes_latest_game_then_rolling_workload() -> None:
     snapshot = Snapshot(season=2026)
     games = (

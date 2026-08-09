@@ -378,13 +378,19 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
     Depth-chart bullpen arms (``RP`` / ``CP``) are included even with zero
     pitches so unused call-ups remain visible. Non-active arms are kept only
     when they recorded pitches in the window. Roster availability badges come
-    from the persisted depth-chart / 40-man snapshot when present.
+    from the persisted depth-chart / 40-man snapshot when present. A windowed
+    arm absent from the team's roster rows left its 40-man scope entirely
+    (waivers, trade, outright, release) and is badged ``Gone``; historical
+    seasons persist an empty roster snapshot, so they carry no badges at all.
     """
     by_game_team = _appearances_by_game_team(snapshot)
     latest = _latest_team_games(snapshot, by_game_team)
     roster_by_team: dict[int, list[Any]] = defaultdict(list)
     for row in snapshot.roster_pitchers.values():
         roster_by_team[row.team_id].append(row)
+    league_roster = {
+        row.pitcher_id: row for row in snapshot.roster_pitchers.values()
+    }
 
     result: list[dict[str, Any]] = []
     for team_id, (latest_game, latest_rows) in latest.items():
@@ -423,9 +429,22 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
             roster = roster_rows.get(pitcher_id)
             pitches = [pitch_counts[(pitcher_id, offset)] for offset in range(14)]
             on_depth_chart = roster is not None and roster.depth_role in {"RP", "CP"}
-            availability = (
-                _roster_availability(roster.status_code) if roster is not None else None
-            )
+            if roster is not None:
+                availability = _roster_availability(roster.status_code)
+                status_description = roster.status_description
+            elif league_roster:
+                # Pitched in the window but not on this team's depth chart or
+                # 40-man: departed via waivers, trade, outright, or release.
+                elsewhere = league_roster.get(pitcher_id)
+                availability = "Gone"
+                status_description = (
+                    f"Now in the {elsewhere.team_name} organization"
+                    if elsewhere is not None
+                    else "Not on the team's 40-man roster at the latest refresh"
+                )
+            else:
+                availability = None
+                status_description = None
             # Unavailable arms only stay visible when they actually worked in-window:
             # that preserves "what happened to that guy" without listing idle rows.
             if availability is not None and sum(pitches) == 0:
@@ -441,9 +460,7 @@ def aggregate_bullpen_usage(snapshot: Snapshot) -> list[dict[str, Any]]:
                     "depth_order": roster.depth_order if on_depth_chart else None,
                     "on_depth_chart": on_depth_chart,
                     "availability": availability,
-                    "status_description": (
-                        roster.status_description if roster is not None else None
-                    ),
+                    "status_description": status_description,
                 }
             )
 

@@ -242,11 +242,12 @@ class MLBClient:
         return sorted(games_by_team.values(), key=lambda item: item["team_name"])
 
     async def pitching_rosters(self, season: int) -> list[dict[str, Any]]:
-        """Return depth-chart and 40-man pitching status for each MLB team.
+        """Return pitching depth-chart order and full 40-man status per MLB team.
 
         Depth-chart rows carry published ``SP`` / bullpen ``P`` / ``CP`` order.
-        The 40-man roster supplies broader status such as minors reassignment
-        for arms who appeared recently but are no longer on the depth chart.
+        The 40-man roster is persisted whole — position players included — so
+        absence from these rows means a player left the team's 40-man scope,
+        not that an active position player pitched in mop-up relief.
         Historical seasons return an empty list, matching upcoming-game behavior.
         """
         today = eastern_today()
@@ -335,11 +336,6 @@ class MLBClient:
                 depth_order += 1
 
             for row in forty_payload.get("roster", []):
-                position = row.get("position") or {}
-                if position.get("type") != "Pitcher" and str(position.get("abbreviation") or "") not in {
-                    "P", "SP", "CP", "TWP",
-                }:
-                    continue
                 upsert(row, depth_role=None, depth_order=None, replace_depth=False)
 
             return sorted(
