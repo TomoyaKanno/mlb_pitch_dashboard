@@ -493,7 +493,9 @@ def test_bullpen_usage_marks_departed_windowed_arms_gone() -> None:
 
     A waiver claim surfaces on another team's roster snapshot and names the
     new organization; an outright to a minor-league deal vanishes entirely and
-    gets the generic description. Both sort below active arms.
+    gets the generic description. Both sort below active arms. An active
+    position player pressed into mop-up relief has a full-40-man roster row,
+    so they stay unbadged in the active group.
     """
     snapshot = Snapshot(season=2026)
     snapshot.games[1] = _game_record(1, "2026-07-20")
@@ -501,6 +503,7 @@ def test_bullpen_usage_marks_departed_windowed_arms_gone() -> None:
         (8, "Claimed Reliever", 53),
         (9, "Outrighted Reliever", 20),
         (10, "Active Reliever", 11),
+        (12, "Emergency Catcher", 9),
     ):
         snapshot.appearances[(1, 17, pitcher_id)] = AppearanceRecord(
             1, "2026-07-20", 2026, 17, "Test Team", pitcher_id, pitcher_name,
@@ -508,6 +511,9 @@ def test_bullpen_usage_marks_departed_windowed_arms_gone() -> None:
         )
     snapshot.roster_pitchers[(17, 10)] = RosterPitcherRecord(
         17, "Test Team", 10, "Active Reliever", "RP", 0, "A", "Active",
+    )
+    snapshot.roster_pitchers[(17, 12)] = RosterPitcherRecord(
+        17, "Test Team", 12, "Emergency Catcher", None, None, "A", "Active",
     )
     snapshot.roster_pitchers[(30, 8)] = RosterPitcherRecord(
         30, "Other Team", 8, "Claimed Reliever", None, None, "RM",
@@ -518,10 +524,15 @@ def test_bullpen_usage_marks_departed_windowed_arms_gone() -> None:
 
     assert [row["pitcher_name"] for row in pitchers] == [
         "Active Reliever",
+        "Emergency Catcher",
         "Claimed Reliever",
         "Outrighted Reliever",
     ]
-    claimed, outrighted = pitchers[1], pitchers[2]
+    catcher = pitchers[1]
+    assert catcher["availability"] is None
+    assert catcher["on_depth_chart"] is False
+    assert catcher["status_description"] == "Active"
+    claimed, outrighted = pitchers[2], pitchers[3]
     assert claimed["availability"] == "Gone"
     assert claimed["status_description"] == "Now in the Other Team organization"
     assert claimed["on_depth_chart"] is False

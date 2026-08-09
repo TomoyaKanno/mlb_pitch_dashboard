@@ -277,7 +277,7 @@ def test_pitching_rosters_merge_depth_order_with_latest_40_man_status(monkeypatc
     rows = asyncio.run(mlb.MLBClient.pitching_rosters(client, 2026))
     by_id = {row["pitcher_id"]: row for row in rows}
 
-    assert [row["pitcher_id"] for row in rows] == [1, 2, 3, 5, 4]
+    assert [row["pitcher_id"] for row in rows] == [1, 2, 3, 98, 5, 4]
     assert by_id[1]["depth_role"] == "SP"
     assert by_id[1]["depth_order"] == 0
     assert by_id[1]["status_code"] == "D15"
@@ -285,7 +285,10 @@ def test_pitching_rosters_merge_depth_order_with_latest_40_man_status(monkeypatc
     assert by_id[3]["depth_role"] == "CP"
     assert by_id[4]["depth_role"] is None
     assert by_id[5]["status_description"] == "Reassigned"
-    assert 98 not in by_id
+    # The 40-man is captured whole: an active catcher pressed into mop-up
+    # relief must resolve to a roster row, never to a departed-arm state.
+    assert by_id[98]["depth_role"] is None
+    assert by_id[98]["status_code"] == "A"
     assert 99 not in by_id
 
 
