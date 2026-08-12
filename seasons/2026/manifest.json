@@ -1,6 +1,6 @@
 {
   "api_calls": 159,
-  "current_games": 1786,
+  "current_games": 1801,
   "files": {
     "appearances/2026-03.jsonl": {
       "bytes": 200791,
@@ -23,12 +23,12 @@
       "sha256": "d628c9fd3f9afb032b6bad654b0e884e92c1c9a5d6614dfa1eef3a4a03f170ab"
     },
     "appearances/2026-08.jsonl": {
-      "bytes": 346454,
-      "sha256": "da54eb3df348616f458fde38e4a5c324836eb7c2b2e91ffe98f83bb5d1d7efe4"
+      "bytes": 381715,
+      "sha256": "8c190da87c53f48aa3b15f0d2adf94ee37b10ef6929e2655896e38c5165efa47"
     },
     "fetch-state.json": {
-      "bytes": 436081,
-      "sha256": "a27af99098a65791eb78e7acc2990d7a5d1d6620ac1d0167a84181cee4247004"
+      "bytes": 439744,
+      "sha256": "0f0cf1f5329f5d4f7c78c240d87754991e5c082067b4cc8eb620653ce9a9a06e"
     },
     "games/2026-03.jsonl": {
       "bytes": 17046,
@@ -51,26 +51,26 @@
       "sha256": "3e9cfcaad0a519605d7524513575e8aac43098d52e613c43127c342ba805413c"
     },
     "games/2026-08.jsonl": {
-      "bytes": 30075,
-      "sha256": "41fa02aaf95f644f9f4fe0f3e0114c50e21b3287c2c0e960a2adcf0c83c09d7b"
+      "bytes": 33439,
+      "sha256": "748c8c83973022726972bd522ebca53718759df8b43205e01bed3efe1718a677"
     },
     "next-games.json": {
-      "bytes": 12843,
-      "sha256": "11958cd11b4fbbddd5eadb1582856de6932675f6138f719126d05952fd711239"
+      "bytes": 12835,
+      "sha256": "bd9d8a19143aa602c6f484d950136ac42bfbabfc4208a8b599dfe177f0a33f83"
     },
     "roster-pitchers.json": {
-      "bytes": 353700,
-      "sha256": "8adb2542ee55265baa75189e8dfc6f983cdb4f4fb68251d6b1344d4420cf2230"
+      "bytes": 354214,
+      "sha256": "80e889f899a8be1f9b4edb87c40f5f74e7a09f4246150a859237ac9a9fee7403"
     }
   },
   "games_failed": 0,
   "games_fetched": 96,
   "games_requested": 96,
-  "generated_at": "2026-08-11T10:11:55.178013+00:00",
+  "generated_at": "2026-08-12T08:41:43.678855+00:00",
   "missing_games": 0,
   "result": "complete",
   "role_reviewed_through": "2026-08-08",
-  "scheduled_games": 1786,
+  "scheduled_games": 1801,
   "schema_version": 1,
   "season": 2026,
   "stale_games": 0

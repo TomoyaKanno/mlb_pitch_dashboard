@@ -743,6 +743,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 680723,
+      "pitcher_name": "Drew Rom",
+      "status_code": "NYR",
+      "status_description": "Not Yet Reported",
+      "team_id": 133,
+      "team_name": "Athletics"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 680684,
       "pitcher_name": "Gunnar Hoglund",
       "status_code": "D60",
@@ -1995,8 +2005,8 @@
       "depth_role": null,
       "pitcher_id": 668939,
       "pitcher_name": "Adley Rutschman",
-      "status_code": "D10",
-      "status_description": "Injured 10-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 111,
       "team_name": "Boston Red Sox"
     },
@@ -2115,8 +2125,8 @@
       "depth_role": null,
       "pitcher_id": 643396,
       "pitcher_name": "Isiah Kiner-Falefa",
-      "status_code": "D10",
-      "status_description": "Injured 10-Day",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
       "team_id": 111,
       "team_name": "Boston Red Sox"
     },
@@ -2125,16 +2135,6 @@
       "depth_role": null,
       "pitcher_id": 663330,
       "pitcher_name": "Jahmai Jones",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 111,
-      "team_name": "Boston Red Sox"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 668670,
-      "pitcher_name": "Jake Rogers",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 111,
@@ -2443,16 +2443,6 @@
     {
       "depth_order": 13,
       "depth_role": "RP",
-      "pitcher_id": 681799,
-      "pitcher_name": "Ethan Roberts",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 112,
-      "team_name": "Chicago Cubs"
-    },
-    {
-      "depth_order": 14,
-      "depth_role": "RP",
       "pitcher_id": 668970,
       "pitcher_name": "Gavin Hollowell",
       "status_code": "D15",
@@ -2461,7 +2451,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "CP",
       "pitcher_id": 694037,
       "pitcher_name": "Daniel Palencia",
@@ -2471,7 +2461,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 592332,
       "pitcher_name": "Kevin Gausman",
@@ -2481,7 +2471,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 18,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 605280,
       "pitcher_name": "Clay Holmes",
@@ -2491,7 +2481,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 19,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 571510,
       "pitcher_name": "Matthew Boyd",
@@ -2501,7 +2491,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 20,
+      "depth_order": 19,
       "depth_role": "SP",
       "pitcher_id": 684007,
       "pitcher_name": "Shota Imanaga",
@@ -2511,7 +2501,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 21,
+      "depth_order": 20,
       "depth_role": "SP",
       "pitcher_id": 656849,
       "pitcher_name": "David Peterson",
@@ -2521,7 +2511,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 22,
+      "depth_order": 21,
       "depth_role": "SP",
       "pitcher_id": 665795,
       "pitcher_name": "Edward Cabrera",
@@ -2531,7 +2521,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 23,
+      "depth_order": 22,
       "depth_role": "SP",
       "pitcher_id": 676962,
       "pitcher_name": "Ben Brown",
@@ -2541,7 +2531,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 24,
+      "depth_order": 23,
       "depth_role": "SP",
       "pitcher_id": 657006,
       "pitcher_name": "Justin Steele",
@@ -2551,7 +2541,7 @@
       "team_name": "Chicago Cubs"
     },
     {
-      "depth_order": 25,
+      "depth_order": 24,
       "depth_role": "SP",
       "pitcher_id": 690990,
       "pitcher_name": "Cade Horton",
@@ -2607,6 +2597,16 @@
       "pitcher_name": "Dansby Swanson",
       "status_code": "A",
       "status_description": "Active",
+      "team_id": 112,
+      "team_name": "Chicago Cubs"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 681799,
+      "pitcher_name": "Ethan Roberts",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 112,
       "team_name": "Chicago Cubs"
     },
@@ -3333,16 +3333,6 @@
     {
       "depth_order": 7,
       "depth_role": "RP",
-      "pitcher_id": 685112,
-      "pitcher_name": "Zach McCambley",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 113,
-      "team_name": "Cincinnati Reds"
-    },
-    {
-      "depth_order": 8,
-      "depth_role": "RP",
       "pitcher_id": 676760,
       "pitcher_name": "Ron Marinaccio",
       "status_code": "A",
@@ -3351,7 +3341,7 @@
       "team_name": "Cincinnati Reds"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
       "pitcher_id": 682825,
       "pitcher_name": "Luis Mey",
@@ -3361,7 +3351,7 @@
       "team_name": "Cincinnati Reds"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "CP",
       "pitcher_id": 641941,
       "pitcher_name": "Emilio Pag\u00e1n",
@@ -3371,17 +3361,17 @@
       "team_name": "Cincinnati Reds"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "SP",
       "pitcher_id": 668881,
       "pitcher_name": "Hunter Greene",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
       "team_id": 113,
       "team_name": "Cincinnati Reds"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "SP",
       "pitcher_id": 671096,
       "pitcher_name": "Andrew Abbott",
@@ -3391,7 +3381,7 @@
       "team_name": "Cincinnati Reds"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 663903,
       "pitcher_name": "Brady Singer",
@@ -3401,7 +3391,7 @@
       "team_name": "Cincinnati Reds"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 695076,
       "pitcher_name": "Rhett Lowder",
@@ -3411,7 +3401,7 @@
       "team_name": "Cincinnati Reds"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 695505,
       "pitcher_name": "Chase Burns",
@@ -3421,17 +3411,17 @@
       "team_name": "Cincinnati Reds"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 666157,
       "pitcher_name": "Nick Lodolo",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 113,
       "team_name": "Cincinnati Reds"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 682227,
       "pitcher_name": "Brandon Williamson",
@@ -3623,6 +3613,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 669911,
+      "pitcher_name": "Michael Toglia",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 113,
+      "team_name": "Cincinnati Reds"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 682622,
       "pitcher_name": "Noelvi Marte",
       "status_code": "A",
@@ -3685,6 +3685,16 @@
       "depth_role": null,
       "pitcher_id": 687209,
       "pitcher_name": "Zach Maxwell",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 113,
+      "team_name": "Cincinnati Reds"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 685112,
+      "pitcher_name": "Zach McCambley",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 113,
@@ -4343,16 +4353,6 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 666397,
-      "pitcher_name": "Edouard Julien",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 115,
-      "team_name": "Colorado Rockies"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
       "pitcher_id": 682769,
       "pitcher_name": "Eiberson Castellano",
       "status_code": "RM",
@@ -4535,8 +4535,8 @@
       "depth_role": null,
       "pitcher_id": 691728,
       "pitcher_name": "Zac Veen",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 115,
       "team_name": "Colorado Rockies"
     },
@@ -4615,13 +4615,23 @@
       "depth_role": "RP",
       "pitcher_id": 646241,
       "pitcher_name": "Enmanuel De Jesus",
+      "status_code": "PL",
+      "status_description": "Paternity List",
+      "team_id": 116,
+      "team_name": "Detroit Tigers"
+    },
+    {
+      "depth_order": 8,
+      "depth_role": "RP",
+      "pitcher_id": 663432,
+      "pitcher_name": "Tanner Rainey",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 116,
       "team_name": "Detroit Tigers"
     },
     {
-      "depth_order": 8,
+      "depth_order": 9,
       "depth_role": "RP",
       "pitcher_id": 700270,
       "pitcher_name": "Yilber D\u00edaz",
@@ -4631,7 +4641,7 @@
       "team_name": "Detroit Tigers"
     },
     {
-      "depth_order": 9,
+      "depth_order": 10,
       "depth_role": "RP",
       "pitcher_id": 805427,
       "pitcher_name": "Drew Sommers",
@@ -4641,7 +4651,7 @@
       "team_name": "Detroit Tigers"
     },
     {
-      "depth_order": 10,
+      "depth_order": 11,
       "depth_role": "SP",
       "pitcher_id": 664285,
       "pitcher_name": "Framber Valdez",
@@ -4651,7 +4661,7 @@
       "team_name": "Detroit Tigers"
     },
     {
-      "depth_order": 11,
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 623454,
       "pitcher_name": "Drew Anderson",
@@ -4661,7 +4671,7 @@
       "team_name": "Detroit Tigers"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 656427,
       "pitcher_name": "Jack Flaherty",
@@ -4671,7 +4681,7 @@
       "team_name": "Detroit Tigers"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 675512,
       "pitcher_name": "Troy Melton",
@@ -4681,7 +4691,7 @@
       "team_name": "Detroit Tigers"
     },
     {
-      "depth_order": 14,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 672456,
       "pitcher_name": "Keider Montero",
@@ -4691,7 +4701,7 @@
       "team_name": "Detroit Tigers"
     },
     {
-      "depth_order": 15,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 695549,
       "pitcher_name": "Jackson Jobe",
@@ -5265,8 +5275,8 @@
       "depth_role": null,
       "pitcher_id": 676694,
       "pitcher_name": "Jake Meyers",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 117,
       "team_name": "Houston Astros"
     },
@@ -5365,8 +5375,8 @@
       "depth_role": null,
       "pitcher_id": 676369,
       "pitcher_name": "Nelson Vel\u00e1zquez",
-      "status_code": "NYR",
-      "status_description": "Not Yet Reported",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 117,
       "team_name": "Houston Astros"
     },
@@ -6431,17 +6441,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 6,
-      "depth_role": "RP",
-      "pitcher_id": 669165,
-      "pitcher_name": "Kyle Hurt",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 119,
-      "team_name": "Los Angeles Dodgers"
-    },
-    {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "pitcher_id": 642546,
       "pitcher_name": "Jonathan Hern\u00e1ndez",
@@ -6451,7 +6451,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
       "pitcher_id": 592779,
       "pitcher_name": "Brock Stewart",
@@ -6461,17 +6461,17 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "RP",
       "pitcher_id": 595014,
       "pitcher_name": "Blake Treinen",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
       "team_id": 119,
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "RP",
       "pitcher_id": 676508,
       "pitcher_name": "Ben Casparius",
@@ -6481,7 +6481,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "RP",
       "pitcher_id": 660813,
       "pitcher_name": "Brusdar Graterol",
@@ -6491,7 +6491,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "RP",
       "pitcher_id": 664776,
       "pitcher_name": "Jake Cousins",
@@ -6501,7 +6501,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "RP",
       "pitcher_id": 663460,
       "pitcher_name": "Kris Bubic",
@@ -6511,7 +6511,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "CP",
       "pitcher_id": 621242,
       "pitcher_name": "Edwin D\u00edaz",
@@ -6521,7 +6521,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 808967,
       "pitcher_name": "Yoshinobu Yamamoto",
@@ -6531,10 +6531,20 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 669373,
       "pitcher_name": "Tarik Skubal",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers"
+    },
+    {
+      "depth_order": 17,
+      "depth_role": "SP",
+      "pitcher_id": 605483,
+      "pitcher_name": "Blake Snell",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 119,
@@ -6583,16 +6593,6 @@
     {
       "depth_order": 22,
       "depth_role": "SP",
-      "pitcher_id": 605483,
-      "pitcher_name": "Blake Snell",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 119,
-      "team_name": "Los Angeles Dodgers"
-    },
-    {
-      "depth_order": 23,
-      "depth_role": "SP",
       "pitcher_id": 607192,
       "pitcher_name": "Tyler Glasnow",
       "status_code": "D60",
@@ -6601,7 +6601,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 24,
+      "depth_order": 23,
       "depth_role": "SP",
       "pitcher_id": 694813,
       "pitcher_name": "Gavin Stone",
@@ -6675,8 +6675,8 @@
       "depth_role": null,
       "pitcher_id": 656212,
       "pitcher_name": "Charlie Barnes",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 119,
       "team_name": "Los Angeles Dodgers"
     },
@@ -6745,6 +6745,16 @@
       "depth_role": null,
       "pitcher_id": 808975,
       "pitcher_name": "Hyeseong Kim",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 669165,
+      "pitcher_name": "Kyle Hurt",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 119,
@@ -7145,8 +7155,8 @@
       "depth_role": null,
       "pitcher_id": 688363,
       "pitcher_name": "Graham Pauley",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 146,
       "team_name": "Miami Marlins"
     },
@@ -7235,8 +7245,8 @@
       "depth_role": null,
       "pitcher_id": 669065,
       "pitcher_name": "Kyle Stowers",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D10",
+      "status_description": "Injured 10-Day",
       "team_id": 146,
       "team_name": "Miami Marlins"
     },
@@ -7395,8 +7405,8 @@
       "depth_role": "RP",
       "pitcher_id": 680689,
       "pitcher_name": "Lyon Richardson",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "DES",
+      "status_description": "Designated for Assignment",
       "team_id": 158,
       "team_name": "Milwaukee Brewers"
     },
@@ -7585,6 +7595,16 @@
       "depth_role": null,
       "pitcher_id": 668930,
       "pitcher_name": "Brice Turang",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 158,
+      "team_name": "Milwaukee Brewers"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 669060,
+      "pitcher_name": "Bryse Wilson",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 158,
@@ -8705,13 +8725,23 @@
       "depth_role": "RP",
       "pitcher_id": 665645,
       "pitcher_name": "Kervin Castro",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
+      "team_id": 147,
+      "team_name": "New York Yankees"
+    },
+    {
+      "depth_order": 6,
+      "depth_role": "RP",
+      "pitcher_id": 690440,
+      "pitcher_name": "Bradley Hanner",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 147,
       "team_name": "New York Yankees"
     },
     {
-      "depth_order": 6,
+      "depth_order": 7,
       "depth_role": "RP",
       "pitcher_id": 687396,
       "pitcher_name": "Brent Headrick",
@@ -8721,7 +8751,7 @@
       "team_name": "New York Yankees"
     },
     {
-      "depth_order": 7,
+      "depth_order": 8,
       "depth_role": "CP",
       "pitcher_id": 670280,
       "pitcher_name": "David Bednar",
@@ -8731,7 +8761,7 @@
       "team_name": "New York Yankees"
     },
     {
-      "depth_order": 8,
+      "depth_order": 9,
       "depth_role": "SP",
       "pitcher_id": 608331,
       "pitcher_name": "Max Fried",
@@ -8741,7 +8771,7 @@
       "team_name": "New York Yankees"
     },
     {
-      "depth_order": 9,
+      "depth_order": 10,
       "depth_role": "SP",
       "pitcher_id": 693645,
       "pitcher_name": "Cam Schlittler",
@@ -8751,7 +8781,7 @@
       "team_name": "New York Yankees"
     },
     {
-      "depth_order": 10,
+      "depth_order": 11,
       "depth_role": "SP",
       "pitcher_id": 701542,
       "pitcher_name": "Will Warren",
@@ -8761,7 +8791,7 @@
       "team_name": "New York Yankees"
     },
     {
-      "depth_order": 11,
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 677960,
       "pitcher_name": "Ryan Weathers",
@@ -8771,7 +8801,7 @@
       "team_name": "New York Yankees"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 607074,
       "pitcher_name": "Carlos Rod\u00f3n",
@@ -8781,7 +8811,7 @@
       "team_name": "New York Yankees"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 543037,
       "pitcher_name": "Gerrit Cole",
@@ -8791,7 +8821,7 @@
       "team_name": "New York Yankees"
     },
     {
-      "depth_order": 14,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 657376,
       "pitcher_name": "Clarke Schmidt",
@@ -8867,16 +8897,6 @@
       "pitcher_name": "Ben Rice",
       "status_code": "A",
       "status_description": "Active",
-      "team_id": 147,
-      "team_name": "New York Yankees"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 690440,
-      "pitcher_name": "Bradley Hanner",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
       "team_id": 147,
       "team_name": "New York Yankees"
     },
@@ -9143,16 +9163,6 @@
     {
       "depth_order": 7,
       "depth_role": "RP",
-      "pitcher_id": 660604,
-      "pitcher_name": "Alan Rangel",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 143,
-      "team_name": "Philadelphia Phillies"
-    },
-    {
-      "depth_order": 8,
-      "depth_role": "RP",
       "pitcher_id": 641745,
       "pitcher_name": "Brad Keller",
       "status_code": "D60",
@@ -9161,10 +9171,20 @@
       "team_name": "Philadelphia Phillies"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
       "pitcher_id": 663767,
       "pitcher_name": "Chase Shugart",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 143,
+      "team_name": "Philadelphia Phillies"
+    },
+    {
+      "depth_order": 9,
+      "depth_role": "RP",
+      "pitcher_id": 686934,
+      "pitcher_name": "Alex McFarlane",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 143,
@@ -9243,20 +9263,20 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 664761,
-      "pitcher_name": "Alec Bohm",
-      "status_code": "A",
-      "status_description": "Active",
+      "pitcher_id": 660604,
+      "pitcher_name": "Alan Rangel",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 143,
       "team_name": "Philadelphia Phillies"
     },
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 686934,
-      "pitcher_name": "Alex McFarlane",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "pitcher_id": 664761,
+      "pitcher_name": "Alec Bohm",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 143,
       "team_name": "Philadelphia Phillies"
     },
@@ -10573,6 +10593,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 668800,
+      "pitcher_name": "Andrew Knizner",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 137,
+      "team_name": "San Francisco Giants"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 683627,
       "pitcher_name": "Anthony Molina",
       "status_code": "RM",
@@ -10645,16 +10675,6 @@
       "depth_role": null,
       "pitcher_id": 687551,
       "pitcher_name": "Drew Gilbert",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 137,
-      "team_name": "San Francisco Giants"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 678760,
-      "pitcher_name": "Eddys Leonard",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 137,
@@ -10815,8 +10835,8 @@
       "depth_role": null,
       "pitcher_id": 682674,
       "pitcher_name": "Victor Bericoto",
-      "status_code": "D10",
-      "status_description": "Injured 10-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 137,
       "team_name": "San Francisco Giants"
     },
@@ -10835,8 +10855,8 @@
       "depth_role": null,
       "pitcher_id": 681439,
       "pitcher_name": "Zach Morgan",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 137,
       "team_name": "San Francisco Giants"
     },
@@ -10875,8 +10895,8 @@
       "depth_role": "RP",
       "pitcher_id": 642100,
       "pitcher_name": "Gabe Speier",
-      "status_code": "SU",
-      "status_description": "Suspended # days",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 136,
       "team_name": "Seattle Mariners"
     },
@@ -10922,6 +10942,16 @@
     },
     {
       "depth_order": 8,
+      "depth_role": "RP",
+      "pitcher_id": 677961,
+      "pitcher_name": "Cole Wilcox",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
+      "team_id": 136,
+      "team_name": "Seattle Mariners"
+    },
+    {
+      "depth_order": 9,
       "depth_role": "CP",
       "pitcher_id": 662253,
       "pitcher_name": "Andr\u00e9s Mu\u00f1oz",
@@ -10931,7 +10961,7 @@
       "team_name": "Seattle Mariners"
     },
     {
-      "depth_order": 9,
+      "depth_order": 10,
       "depth_role": "SP",
       "pitcher_id": 669302,
       "pitcher_name": "Logan Gilbert",
@@ -10941,7 +10971,7 @@
       "team_name": "Seattle Mariners"
     },
     {
-      "depth_order": 10,
+      "depth_order": 11,
       "depth_role": "SP",
       "pitcher_id": 693433,
       "pitcher_name": "Bryan Woo",
@@ -10951,7 +10981,7 @@
       "team_name": "Seattle Mariners"
     },
     {
-      "depth_order": 11,
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 669923,
       "pitcher_name": "George Kirby",
@@ -10961,7 +10991,7 @@
       "team_name": "Seattle Mariners"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 676106,
       "pitcher_name": "Emerson Hancock",
@@ -10971,7 +11001,7 @@
       "team_name": "Seattle Mariners"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 682243,
       "pitcher_name": "Bryce Miller",
@@ -11017,16 +11047,6 @@
       "pitcher_name": "Carlos Vargas",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
-      "team_id": 136,
-      "team_name": "Seattle Mariners"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 677961,
-      "pitcher_name": "Cole Wilcox",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
       "team_id": 136,
       "team_name": "Seattle Mariners"
     },
@@ -12463,8 +12483,8 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 592626,
-      "pitcher_name": "Joc Pederson",
+      "pitcher_id": 672284,
+      "pitcher_name": "Jarred Kelenic",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 140,
@@ -12473,8 +12493,8 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 681146,
-      "pitcher_name": "Jonah Bride",
+      "pitcher_id": 592626,
+      "pitcher_name": "Joc Pederson",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 140,
@@ -12692,6 +12712,16 @@
     },
     {
       "depth_order": 11,
+      "depth_role": "RP",
+      "pitcher_id": 695445,
+      "pitcher_name": "Chase Lee",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 141,
+      "team_name": "Toronto Blue Jays"
+    },
+    {
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 656302,
       "pitcher_name": "Dylan Cease",
@@ -12701,7 +12731,7 @@
       "team_name": "Toronto Blue Jays"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 702056,
       "pitcher_name": "Trey Yesavage",
@@ -12711,7 +12741,7 @@
       "team_name": "Toronto Blue Jays"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 667755,
       "pitcher_name": "Jos\u00e9 Soriano",
@@ -12721,7 +12751,7 @@
       "team_name": "Toronto Blue Jays"
     },
     {
-      "depth_order": 14,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 453286,
       "pitcher_name": "Max Scherzer",
@@ -12731,7 +12761,7 @@
       "team_name": "Toronto Blue Jays"
     },
     {
-      "depth_order": 15,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 669456,
       "pitcher_name": "Shane Bieber",
@@ -12741,17 +12771,17 @@
       "team_name": "Toronto Blue Jays"
     },
     {
-      "depth_order": 16,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 592791,
       "pitcher_name": "Jameson Taillon",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 141,
       "team_name": "Toronto Blue Jays"
     },
     {
-      "depth_order": 17,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 621244,
       "pitcher_name": "Jos\u00e9 Berr\u00edos",
@@ -12761,7 +12791,7 @@
       "team_name": "Toronto Blue Jays"
     },
     {
-      "depth_order": 18,
+      "depth_order": 19,
       "depth_role": "SP",
       "pitcher_id": 664074,
       "pitcher_name": "Cody Ponce",
@@ -12867,16 +12897,6 @@
       "pitcher_name": "Charles McAdoo",
       "status_code": "A",
       "status_description": "Active",
-      "team_id": 141,
-      "team_name": "Toronto Blue Jays"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 695445,
-      "pitcher_name": "Chase Lee",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
       "team_id": 141,
       "team_name": "Toronto Blue Jays"
     },
