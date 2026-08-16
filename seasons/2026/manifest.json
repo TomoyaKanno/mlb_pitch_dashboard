@@ -1,6 +1,6 @@
 {
   "api_calls": 156,
-  "current_games": 1839,
+  "current_games": 1854,
   "files": {
     "appearances/2026-03.jsonl": {
       "bytes": 200791,
@@ -23,12 +23,12 @@
       "sha256": "35341058ec2c42259ff5fc025c32ba8a65cf08918ee630a957161d288d4cca71"
     },
     "appearances/2026-08.jsonl": {
-      "bytes": 479427,
-      "sha256": "4a6b8f5589264b0750c94e1c88c69eabde3efeed5d62ccc3e97d595fb0c58d3e"
+      "bytes": 514772,
+      "sha256": "35f265fd13f117e34e6c93a782c07612e7e8f3087d128b87f31799016dd99d32"
     },
     "fetch-state.json": {
-      "bytes": 449053,
-      "sha256": "4e5414b1881c0be5b6eebd00060b44f19876a6cda010aa38092214b3e6d483c7"
+      "bytes": 452713,
+      "sha256": "80cf4f7f396d38ef4fef4c885d696fc40db8b4ca0043be7a51ce1508ade0d4f6"
     },
     "games/2026-03.jsonl": {
       "bytes": 17046,
@@ -51,26 +51,26 @@
       "sha256": "3e9cfcaad0a519605d7524513575e8aac43098d52e613c43127c342ba805413c"
     },
     "games/2026-08.jsonl": {
-      "bytes": 41961,
-      "sha256": "6f9113f885f6ec4aeb050259acd18e7d01022e3723dfe68c7bc63304c9ef302c"
+      "bytes": 45325,
+      "sha256": "9988913ee73cc01c94b5d2afc6f0bb442420db85890c0d761af87b8eae0cf521"
     },
     "next-games.json": {
       "bytes": 12849,
-      "sha256": "6866b49c6d913a6238f064d9e40b0ae5175d99195bcc42dfe0e95d51c376cc72"
+      "sha256": "af42c94df56c185c74a2b9da1c36342b94e9abf627956e107c3087d19f4d8957"
     },
     "roster-pitchers.json": {
-      "bytes": 354455,
-      "sha256": "f44128a78002d106204bcfce0097a33de1153006bd01537d1a31f4cc0759a325"
+      "bytes": 354995,
+      "sha256": "626892a96eb4cec6e7100fe33440c23898254cd7b11760da232e23cf02ab9604"
     }
   },
   "games_failed": 0,
   "games_fetched": 93,
   "games_requested": 93,
-  "generated_at": "2026-08-15T09:42:12.242855+00:00",
+  "generated_at": "2026-08-16T07:48:21.504873+00:00",
   "missing_games": 0,
   "result": "complete",
   "role_reviewed_through": "2026-08-08",
-  "scheduled_games": 1839,
+  "scheduled_games": 1854,
   "schema_version": 1,
   "season": 2026,
   "stale_games": 0

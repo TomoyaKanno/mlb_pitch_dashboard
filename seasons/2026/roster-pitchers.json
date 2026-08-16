@@ -3045,8 +3045,8 @@
       "depth_role": null,
       "pitcher_id": 700337,
       "pitcher_name": "Edgar Quero",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 145,
       "team_name": "Chicago White Sox"
     },
@@ -3055,8 +3055,8 @@
       "depth_role": null,
       "pitcher_id": 668670,
       "pitcher_name": "Jake Rogers",
-      "status_code": "NYR",
-      "status_description": "Not Yet Reported",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 145,
       "team_name": "Chicago White Sox"
     },
@@ -3693,8 +3693,8 @@
     {
       "depth_order": 0,
       "depth_role": "RP",
-      "pitcher_id": 681870,
-      "pitcher_name": "Erik Sabrowski",
+      "pitcher_id": 683769,
+      "pitcher_name": "Hunter Gaddis",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 114,
@@ -3703,8 +3703,8 @@
     {
       "depth_order": 1,
       "depth_role": "RP",
-      "pitcher_id": 683769,
-      "pitcher_name": "Hunter Gaddis",
+      "pitcher_id": 681870,
+      "pitcher_name": "Erik Sabrowski",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 114,
@@ -3763,8 +3763,8 @@
     {
       "depth_order": 7,
       "depth_role": "RP",
-      "pitcher_id": 680916,
-      "pitcher_name": "Franco Aleman",
+      "pitcher_id": 671106,
+      "pitcher_name": "Logan Allen",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 114,
@@ -3973,6 +3973,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 680916,
+      "pitcher_name": "Franco Aleman",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 114,
+      "team_name": "Cleveland Guardians"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 666176,
       "pitcher_name": "Jo Adell",
       "status_code": "A",
@@ -4005,16 +4015,6 @@
       "depth_role": null,
       "pitcher_id": 700932,
       "pitcher_name": "Kyle Manzardo",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 114,
-      "team_name": "Cleveland Guardians"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 671106,
-      "pitcher_name": "Logan Allen",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 114,
@@ -6023,8 +6023,8 @@
     {
       "depth_order": 10,
       "depth_role": "RP",
-      "pitcher_id": 671111,
-      "pitcher_name": "Sammy Peralta",
+      "pitcher_id": 605242,
+      "pitcher_name": "Michael Fulmer",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 108,
@@ -6303,10 +6303,20 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 671111,
+      "pitcher_name": "Sammy Peralta",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 108,
+      "team_name": "Los Angeles Angels"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 665861,
       "pitcher_name": "Sebasti\u00e1n Rivero",
-      "status_code": "D10",
-      "status_description": "Injured 10-Day",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
       "team_id": 108,
       "team_name": "Los Angeles Angels"
     },
@@ -6317,6 +6327,16 @@
       "pitcher_name": "Travis d'Arnaud",
       "status_code": "A",
       "status_description": "Active",
+      "team_id": 108,
+      "team_name": "Los Angeles Angels"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 694680,
+      "pitcher_name": "Trevor Martin",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 108,
       "team_name": "Los Angeles Angels"
     },
@@ -7683,8 +7703,8 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 678225,
-      "pitcher_name": "Jihwan Bae",
+      "pitcher_id": 687401,
+      "pitcher_name": "Joey Ortiz",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 158,
@@ -7693,8 +7713,8 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 687401,
-      "pitcher_name": "Joey Ortiz",
+      "pitcher_id": 680716,
+      "pitcher_name": "Jonathan Ornelas",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 158,
@@ -11233,6 +11253,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 681890,
+      "pitcher_name": "Troy Watson",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 136,
+      "team_name": "Seattle Mariners"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 645302,
       "pitcher_name": "Victor Robles",
       "status_code": "A",
@@ -11525,8 +11555,8 @@
       "depth_role": null,
       "pitcher_id": 695491,
       "pitcher_name": "Joshua B\u00e1ez",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 138,
       "team_name": "St. Louis Cardinals"
     },
@@ -11743,16 +11773,6 @@
     {
       "depth_order": 7,
       "depth_role": "RP",
-      "pitcher_id": 688297,
-      "pitcher_name": "Chris Roycroft",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 139,
-      "team_name": "Tampa Bay Rays"
-    },
-    {
-      "depth_order": 8,
-      "depth_role": "RP",
       "pitcher_id": 655889,
       "pitcher_name": "Manuel Rodr\u00edguez",
       "status_code": "D60",
@@ -11761,12 +11781,22 @@
       "team_name": "Tampa Bay Rays"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
       "pitcher_id": 670955,
       "pitcher_name": "Edwin Uceta",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
+      "team_id": 139,
+      "team_name": "Tampa Bay Rays"
+    },
+    {
+      "depth_order": 9,
+      "depth_role": "RP",
+      "pitcher_id": 671212,
+      "pitcher_name": "Joe Boyle",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 139,
       "team_name": "Tampa Bay Rays"
     },
@@ -11893,6 +11923,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 688297,
+      "pitcher_name": "Chris Roycroft",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 139,
+      "team_name": "Tampa Bay Rays"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 642121,
       "pitcher_name": "Cole Sulser",
       "status_code": "D15",
@@ -11947,16 +11987,6 @@
       "pitcher_name": "Jake Fraley",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
-      "team_id": 139,
-      "team_name": "Tampa Bay Rays"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 671212,
-      "pitcher_name": "Joe Boyle",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
       "team_id": 139,
       "team_name": "Tampa Bay Rays"
     },
@@ -12215,8 +12245,8 @@
       "depth_role": "RP",
       "pitcher_id": 596001,
       "pitcher_name": "Jakob Junis",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 140,
       "team_name": "Texas Rangers"
     },
@@ -12303,16 +12333,6 @@
     {
       "depth_order": 17,
       "depth_role": "SP",
-      "pitcher_id": 594835,
-      "pitcher_name": "Marco Gonzales",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 140,
-      "team_name": "Texas Rangers"
-    },
-    {
-      "depth_order": 18,
-      "depth_role": "SP",
       "pitcher_id": 683004,
       "pitcher_name": "Jack Leiter",
       "status_code": "D60",
@@ -12321,7 +12341,7 @@
       "team_name": "Texas Rangers"
     },
     {
-      "depth_order": 19,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 543135,
       "pitcher_name": "Nathan Eovaldi",
@@ -12715,8 +12735,8 @@
       "depth_role": "RP",
       "pitcher_id": 695445,
       "pitcher_name": "Chase Lee",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 141,
       "team_name": "Toronto Blue Jays"
     },
@@ -12913,6 +12933,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 663662,
+      "pitcher_name": "Daz Cameron",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 141,
+      "team_name": "Toronto Blue Jays"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 676391,
       "pitcher_name": "Ernie Clement",
       "status_code": "A",
@@ -12993,16 +13023,6 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 681751,
-      "pitcher_name": "Lazaro Estrada",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 141,
-      "team_name": "Toronto Blue Jays"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
       "pitcher_id": 672820,
       "pitcher_name": "Lenyn Sosa",
       "status_code": "D60",
@@ -13055,8 +13075,8 @@
       "depth_role": null,
       "pitcher_id": 694357,
       "pitcher_name": "Ricky Tiedemann",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 141,
       "team_name": "Toronto Blue Jays"
     },
@@ -13085,8 +13105,8 @@
       "depth_role": null,
       "pitcher_id": 665489,
       "pitcher_name": "Vladimir Guerrero Jr.",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D7",
+      "status_description": "Injured 7-Day",
       "team_id": 141,
       "team_name": "Toronto Blue Jays"
     },
