@@ -1,6 +1,6 @@
 {
-  "api_calls": 156,
-  "current_games": 1869,
+  "api_calls": 157,
+  "current_games": 1880,
   "files": {
     "appearances/2026-03.jsonl": {
       "bytes": 200791,
@@ -19,16 +19,16 @@
       "sha256": "081fc3e675b6b97df546abea8e3a12d8d133034f4744455645d595fca7217820"
     },
     "appearances/2026-07.jsonl": {
-      "bytes": 952123,
-      "sha256": "35341058ec2c42259ff5fc025c32ba8a65cf08918ee630a957161d288d4cca71"
+      "bytes": 952109,
+      "sha256": "b339fe8e52b6b223b457447b0987c6a4960ae0432433f4dec50e6cce9dc88586"
     },
     "appearances/2026-08.jsonl": {
-      "bytes": 553276,
-      "sha256": "9264acbaf1a6af7cc4e429dd017d2eefeb1d71d3b0379bad1a8fc6123f765430"
+      "bytes": 582833,
+      "sha256": "d5dabf4b0308f8e183a7e4b89a672f96a5d51f51451d9eb1023187b006b759b2"
     },
     "fetch-state.json": {
-      "bytes": 456403,
-      "sha256": "32687e152437bc59f9472eca22caf69936d2aac2e508b8f7380a67b8ec390997"
+      "bytes": 459087,
+      "sha256": "7e198fb5d4163d60dafd72d206c0a438b3f065744c7a814dfdd89c9cd51c4b8b"
     },
     "games/2026-03.jsonl": {
       "bytes": 17046,
@@ -51,26 +51,26 @@
       "sha256": "3e9cfcaad0a519605d7524513575e8aac43098d52e613c43127c342ba805413c"
     },
     "games/2026-08.jsonl": {
-      "bytes": 48689,
-      "sha256": "bec6bf890586b0ff7b8f6dd22e91a8aeee2756f3eeccda64c8b56e97bb1a1100"
+      "bytes": 51149,
+      "sha256": "97323bf6dd526179826435b3a344e75bfb5f8afe8ed08e3220be0682a8ba5d25"
     },
     "next-games.json": {
-      "bytes": 12828,
-      "sha256": "6b80862e0c75b03ff9903fdf5246ff8bbb85ffe5055c7c918dd48658afc54b21"
+      "bytes": 12836,
+      "sha256": "4ec2587a599a6658af8ccc229f693588ab76c904608c61808ad5eb8d870b5843"
     },
     "roster-pitchers.json": {
-      "bytes": 355526,
-      "sha256": "473dd4779d01886d9fc660a044791cd1c9896d0d98b85196d389a5c6b5a1dfea"
+      "bytes": 354692,
+      "sha256": "026344ba8326aee9a6d6e819a93201db5468f6fb91a80c6cae5e7bfb23efbd7a"
     }
   },
   "games_failed": 0,
-  "games_fetched": 93,
-  "games_requested": 93,
-  "generated_at": "2026-08-17T09:58:26.666645+00:00",
+  "games_fetched": 94,
+  "games_requested": 94,
+  "generated_at": "2026-08-18T07:57:03.218162+00:00",
   "missing_games": 0,
   "result": "complete",
   "role_reviewed_through": "2026-08-08",
-  "scheduled_games": 1869,
+  "scheduled_games": 1880,
   "schema_version": 1,
   "season": 2026,
   "stale_games": 0
