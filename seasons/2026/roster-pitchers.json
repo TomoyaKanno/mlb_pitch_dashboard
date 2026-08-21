@@ -363,6 +363,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 606466,
+      "pitcher_name": "Ketel Marte",
+      "status_code": "D10",
+      "status_description": "Injured 10-Day",
+      "team_id": 109,
+      "team_name": "Arizona Diamondbacks"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 684442,
       "pitcher_name": "Kohl Drake",
       "status_code": "RM",
@@ -5353,16 +5363,6 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 676369,
-      "pitcher_name": "Nelson Vel\u00e1zquez",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 117,
-      "team_name": "Houston Astros"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
       "pitcher_id": 669397,
       "pitcher_name": "Nick Allen",
       "status_code": "A",
@@ -5375,8 +5375,8 @@
       "depth_role": null,
       "pitcher_id": 669384,
       "pitcher_name": "Raynel Delgado",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 117,
       "team_name": "Houston Astros"
     },
@@ -5975,8 +5975,8 @@
       "depth_role": "RP",
       "pitcher_id": 696519,
       "pitcher_name": "Samy Natera Jr.",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 108,
       "team_name": "Los Angeles Angels"
     },
@@ -6022,6 +6022,16 @@
     },
     {
       "depth_order": 11,
+      "depth_role": "RP",
+      "pitcher_id": 671111,
+      "pitcher_name": "Sammy Peralta",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 108,
+      "team_name": "Los Angeles Angels"
+    },
+    {
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 672282,
       "pitcher_name": "Reid Detmers",
@@ -6031,7 +6041,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 680570,
       "pitcher_name": "Grayson Rodriguez",
@@ -6041,7 +6051,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 700712,
       "pitcher_name": "Walbert Ure\u00f1a",
@@ -6051,7 +6061,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 14,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 696270,
       "pitcher_name": "Ryan Johnson",
@@ -6061,7 +6071,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 15,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 579328,
       "pitcher_name": "Yusei Kikuchi",
@@ -6071,7 +6081,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 16,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 686799,
       "pitcher_name": "Jack Kochanowicz",
@@ -6081,7 +6091,7 @@
       "team_name": "Los Angeles Angels"
     },
     {
-      "depth_order": 17,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 691946,
       "pitcher_name": "George Klassen",
@@ -6285,16 +6295,6 @@
       "depth_role": null,
       "pitcher_id": 691951,
       "pitcher_name": "Sam Aldegheri",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 108,
-      "team_name": "Los Angeles Angels"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 671111,
-      "pitcher_name": "Sammy Peralta",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 108,
@@ -9263,6 +9263,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 694851,
+      "pitcher_name": "Andrew Hoffmann",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 143,
+      "team_name": "Philadelphia Phillies"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 669016,
       "pitcher_name": "Brandon Marsh",
       "status_code": "A",
@@ -9345,8 +9355,8 @@
       "depth_role": null,
       "pitcher_id": 694025,
       "pitcher_name": "Felix Reyes",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "D60",
+      "status_description": "Injured 60-Day",
       "team_id": 143,
       "team_name": "Philadelphia Phillies"
     },
@@ -10405,8 +10415,8 @@
       "depth_role": "RP",
       "pitcher_id": 676775,
       "pitcher_name": "Keaton Winn",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D15",
+      "status_description": "Injured 15-Day",
       "team_id": 137,
       "team_name": "San Francisco Giants"
     },
@@ -10455,8 +10465,8 @@
       "depth_role": "RP",
       "pitcher_id": 665665,
       "pitcher_name": "Reiver Sanmartin",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 137,
       "team_name": "San Francisco Giants"
     },
