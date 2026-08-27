@@ -5543,6 +5543,16 @@
     {
       "depth_order": 5,
       "depth_role": "RP",
+      "pitcher_id": 543238,
+      "pitcher_name": "Anthony Gose",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 118,
+      "team_name": "Kansas City Royals"
+    },
+    {
+      "depth_order": 6,
+      "depth_role": "RP",
       "pitcher_id": 671162,
       "pitcher_name": "Connor Thomas",
       "status_code": "A",
@@ -5551,7 +5561,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 6,
+      "depth_order": 7,
       "depth_role": "RP",
       "pitcher_id": 518886,
       "pitcher_name": "Craig Kimbrel",
@@ -5561,20 +5571,10 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 7,
+      "depth_order": 8,
       "depth_role": "RP",
       "pitcher_id": 656638,
       "pitcher_name": "Alex Lange",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 118,
-      "team_name": "Kansas City Royals"
-    },
-    {
-      "depth_order": 8,
-      "depth_role": "RP",
-      "pitcher_id": 696131,
-      "pitcher_name": "Mason Black",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 118,
@@ -5815,8 +5815,8 @@
       "depth_role": null,
       "pitcher_id": 668942,
       "pitcher_name": "Josh Rojas",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 118,
       "team_name": "Kansas City Royals"
     },
@@ -5873,6 +5873,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 696131,
+      "pitcher_name": "Mason Black",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 118,
+      "team_name": "Kansas City Royals"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 683090,
       "pitcher_name": "Matthew Lugo",
       "status_code": "A",
@@ -5885,8 +5895,8 @@
       "depth_role": null,
       "pitcher_id": 686681,
       "pitcher_name": "Michael Massey",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D7",
+      "status_description": "Injured 7-Day",
       "team_id": 118,
       "team_name": "Kansas City Royals"
     },
@@ -8303,16 +8313,6 @@
     {
       "depth_order": 5,
       "depth_role": "RP",
-      "pitcher_id": 694646,
-      "pitcher_name": "Chayce McDermott",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 121,
-      "team_name": "New York Mets"
-    },
-    {
-      "depth_order": 6,
-      "depth_role": "RP",
       "pitcher_id": 681320,
       "pitcher_name": "Nate Lavender",
       "status_code": "A",
@@ -8321,7 +8321,7 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 7,
+      "depth_order": 6,
       "depth_role": "RP",
       "pitcher_id": 673380,
       "pitcher_name": "Dedniel N\u00fa\u00f1ez",
@@ -8331,12 +8331,22 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "pitcher_id": 674073,
       "pitcher_name": "Jack Weisenburger",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
+      "team_id": 121,
+      "team_name": "New York Mets"
+    },
+    {
+      "depth_order": 8,
+      "depth_role": "RP",
+      "pitcher_id": 675540,
+      "pitcher_name": "Xzavion Curry",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 121,
       "team_name": "New York Mets"
     },
@@ -8447,6 +8457,16 @@
       "pitcher_name": "Carson Benge",
       "status_code": "A",
       "status_description": "Active",
+      "team_id": 121,
+      "team_name": "New York Mets"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 694646,
+      "pitcher_name": "Chayce McDermott",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 121,
       "team_name": "New York Mets"
     },
@@ -8667,16 +8687,6 @@
       "pitcher_name": "Tylor Megill",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
-      "team_id": 121,
-      "team_name": "New York Mets"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 675540,
-      "pitcher_name": "Xzavion Curry",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
       "team_id": 121,
       "team_name": "New York Mets"
     },
