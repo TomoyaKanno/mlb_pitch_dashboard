@@ -8323,16 +8323,6 @@
     {
       "depth_order": 6,
       "depth_role": "RP",
-      "pitcher_id": 606965,
-      "pitcher_name": "Chris Devenski",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 121,
-      "team_name": "New York Mets"
-    },
-    {
-      "depth_order": 7,
-      "depth_role": "RP",
       "pitcher_id": 673380,
       "pitcher_name": "Dedniel N\u00fa\u00f1ez",
       "status_code": "A",
@@ -8341,10 +8331,20 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "pitcher_id": 674073,
       "pitcher_name": "Jack Weisenburger",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 121,
+      "team_name": "New York Mets"
+    },
+    {
+      "depth_order": 8,
+      "depth_role": "RP",
+      "pitcher_id": 675540,
+      "pitcher_name": "Xzavion Curry",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 121,
@@ -8467,6 +8467,16 @@
       "pitcher_name": "Chayce McDermott",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
+      "team_id": 121,
+      "team_name": "New York Mets"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 606965,
+      "pitcher_name": "Chris Devenski",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 121,
       "team_name": "New York Mets"
     },
@@ -8687,16 +8697,6 @@
       "pitcher_name": "Tylor Megill",
       "status_code": "D60",
       "status_description": "Injured 60-Day",
-      "team_id": 121,
-      "team_name": "New York Mets"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 675540,
-      "pitcher_name": "Xzavion Curry",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
       "team_id": 121,
       "team_name": "New York Mets"
     },
@@ -11595,8 +11595,8 @@
       "depth_role": null,
       "pitcher_id": 691458,
       "pitcher_name": "Blaze Jordan",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "D10",
+      "status_description": "Injured 10-Day",
       "team_id": 138,
       "team_name": "St. Louis Cardinals"
     },
@@ -11805,8 +11805,8 @@
       "depth_role": null,
       "pitcher_id": 695336,
       "pitcher_name": "Thomas Saggese",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 138,
       "team_name": "St. Louis Cardinals"
     },
@@ -12383,6 +12383,16 @@
     {
       "depth_order": 11,
       "depth_role": "RP",
+      "pitcher_id": 671936,
+      "pitcher_name": "Adam Macko",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 140,
+      "team_name": "Texas Rangers"
+    },
+    {
+      "depth_order": 12,
+      "depth_role": "RP",
       "pitcher_id": 692030,
       "pitcher_name": "Jose Corniell",
       "status_code": "D60",
@@ -12391,7 +12401,7 @@
       "team_name": "Texas Rangers"
     },
     {
-      "depth_order": 12,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 594798,
       "pitcher_name": "Jacob deGrom",
@@ -12401,7 +12411,7 @@
       "team_name": "Texas Rangers"
     },
     {
-      "depth_order": 13,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 669022,
       "pitcher_name": "MacKenzie Gore",
@@ -12411,7 +12421,7 @@
       "team_name": "Texas Rangers"
     },
     {
-      "depth_order": 14,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 677958,
       "pitcher_name": "Kumar Rocker",
@@ -12421,7 +12431,7 @@
       "team_name": "Texas Rangers"
     },
     {
-      "depth_order": 15,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 674003,
       "pitcher_name": "Cody Bradford",
@@ -12431,7 +12441,7 @@
       "team_name": "Texas Rangers"
     },
     {
-      "depth_order": 16,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 683004,
       "pitcher_name": "Jack Leiter",
@@ -12441,22 +12451,12 @@
       "team_name": "Texas Rangers"
     },
     {
-      "depth_order": 17,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 543135,
       "pitcher_name": "Nathan Eovaldi",
       "status_code": "D15",
       "status_description": "Injured 15-Day",
-      "team_id": 140,
-      "team_name": "Texas Rangers"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 671936,
-      "pitcher_name": "Adam Macko",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
       "team_id": 140,
       "team_name": "Texas Rangers"
     },
