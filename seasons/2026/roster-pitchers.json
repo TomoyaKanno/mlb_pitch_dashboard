@@ -1865,8 +1865,8 @@
       "depth_role": "RP",
       "pitcher_id": 676477,
       "pitcher_name": "Garrett Whitlock",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 111,
       "team_name": "Boston Red Sox"
     },
@@ -1935,8 +1935,8 @@
       "depth_role": "RP",
       "pitcher_id": 681544,
       "pitcher_name": "Wyatt Olds",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 111,
       "team_name": "Boston Red Sox"
     },
@@ -2235,8 +2235,8 @@
       "depth_role": null,
       "pitcher_id": 670103,
       "pitcher_name": "Raymond Burgos",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 111,
       "team_name": "Boston Red Sox"
     },
@@ -8965,8 +8965,8 @@
       "depth_role": null,
       "pitcher_id": 694341,
       "pitcher_name": "Brendan Beck",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 147,
       "team_name": "New York Yankees"
     },
