@@ -27,8 +27,8 @@
       "sha256": "884e24b4a11c2e81d485ff8c64569da1f7eac8c49f1c7d553dd9060fb2ffda0c"
     },
     "fetch-state.json": {
-      "bytes": 505391,
-      "sha256": "be1333acaf49acd3677add1b96a8c121f198901655365609a0e806c83c06e619"
+      "bytes": 505398,
+      "sha256": "3a73538b5ce515cb5ee9cefde8241137e78ebfa16e62ecc59e075172031d44c6"
     },
     "games/2026-03.jsonl": {
       "bytes": 17046,
@@ -55,8 +55,8 @@
       "sha256": "ba16ba580e6c287d54a5ad6bbabd396b07f763106730210382b42f5b5cacb7ca"
     },
     "next-games.json": {
-      "bytes": 12853,
-      "sha256": "22a7f1d4d9cddcc3e557b43784d1c424f063b669fd9d01a159057e8a90287f7d"
+      "bytes": 12848,
+      "sha256": "97b99ca4b942318576b5cd8d44c93eccd5645e3f30d987e085a2266afadf710c"
     },
     "roster-pitchers.json": {
       "bytes": 357113,
@@ -66,7 +66,7 @@
   "games_failed": 0,
   "games_fetched": 95,
   "games_requested": 95,
-  "generated_at": "2026-09-01T12:36:47.288702+00:00",
+  "generated_at": "2026-09-01T14:09:49.424169+00:00",
   "missing_games": 0,
   "result": "complete",
   "role_reviewed_through": "2026-08-08",
