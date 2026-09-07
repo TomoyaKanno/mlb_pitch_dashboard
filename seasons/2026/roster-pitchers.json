@@ -7483,6 +7483,16 @@
     {
       "depth_order": 16,
       "depth_role": "SP",
+      "pitcher_id": 687075,
+      "pitcher_name": "Brandon Sproat",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 158,
+      "team_name": "Milwaukee Brewers"
+    },
+    {
+      "depth_order": 17,
+      "depth_role": "SP",
       "pitcher_id": 605540,
       "pitcher_name": "Brandon Woodruff",
       "status_code": "D60",
@@ -7491,7 +7501,7 @@
       "team_name": "Milwaukee Brewers"
     },
     {
-      "depth_order": 17,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 682990,
       "pitcher_name": "Quinn Priester",
@@ -7535,16 +7545,6 @@
       "depth_role": null,
       "pitcher_id": 663604,
       "pitcher_name": "Brandon Lockridge",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 158,
-      "team_name": "Milwaukee Brewers"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 687075,
-      "pitcher_name": "Brandon Sproat",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 158,
@@ -7853,16 +7853,6 @@
     {
       "depth_order": 10,
       "depth_role": "RP",
-      "pitcher_id": 670183,
-      "pitcher_name": "Garrett Acton",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 142,
-      "team_name": "Minnesota Twins"
-    },
-    {
-      "depth_order": 11,
-      "depth_role": "RP",
       "pitcher_id": 702474,
       "pitcher_name": "Mike Paredes",
       "status_code": "D60",
@@ -7871,7 +7861,7 @@
       "team_name": "Minnesota Twins"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "SP",
       "pitcher_id": 671737,
       "pitcher_name": "Taj Bradley",
@@ -7881,7 +7871,7 @@
       "team_name": "Minnesota Twins"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 805673,
       "pitcher_name": "Zebby Matthews",
@@ -7891,7 +7881,7 @@
       "team_name": "Minnesota Twins"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 665152,
       "pitcher_name": "Dean Kremer",
@@ -7901,17 +7891,17 @@
       "team_name": "Minnesota Twins"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 657746,
       "pitcher_name": "Joe Ryan",
-      "status_code": "D15",
-      "status_description": "Injured 15-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 142,
       "team_name": "Minnesota Twins"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 641927,
       "pitcher_name": "Bailey Ober",
@@ -7921,7 +7911,7 @@
       "team_name": "Minnesota Twins"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 687570,
       "pitcher_name": "Connor Prielipp",
@@ -7931,7 +7921,7 @@
       "team_name": "Minnesota Twins"
     },
     {
-      "depth_order": 18,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 690953,
       "pitcher_name": "Mick Abel",
@@ -8037,6 +8027,16 @@
       "pitcher_name": "Gabriel Gonzalez",
       "status_code": "A",
       "status_description": "Active",
+      "team_id": 142,
+      "team_name": "Minnesota Twins"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 670183,
+      "pitcher_name": "Garrett Acton",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 142,
       "team_name": "Minnesota Twins"
     },
@@ -8273,16 +8273,6 @@
     {
       "depth_order": 6,
       "depth_role": "RP",
-      "pitcher_id": 663795,
-      "pitcher_name": "Justin Hagenman",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 121,
-      "team_name": "New York Mets"
-    },
-    {
-      "depth_order": 7,
-      "depth_role": "RP",
       "pitcher_id": 668964,
       "pitcher_name": "Tobias Myers",
       "status_code": "A",
@@ -8291,7 +8281,7 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 8,
+      "depth_order": 7,
       "depth_role": "RP",
       "pitcher_id": 673380,
       "pitcher_name": "Dedniel N\u00fa\u00f1ez",
@@ -8301,7 +8291,7 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 9,
+      "depth_order": 8,
       "depth_role": "RP",
       "pitcher_id": 702752,
       "pitcher_name": "Jonathan Pintaro",
@@ -8311,7 +8301,7 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 10,
+      "depth_order": 9,
       "depth_role": "CP",
       "pitcher_id": 642207,
       "pitcher_name": "Devin Williams",
@@ -8321,7 +8311,7 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "SP",
       "pitcher_id": 690997,
       "pitcher_name": "Nolan McLean",
@@ -8331,7 +8321,7 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "SP",
       "pitcher_id": 681035,
       "pitcher_name": "Christian Scott",
@@ -8341,7 +8331,7 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 804267,
       "pitcher_name": "Zac Thornton",
@@ -8351,7 +8341,7 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 640455,
       "pitcher_name": "Sean Manaea",
@@ -8361,10 +8351,20 @@
       "team_name": "New York Mets"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 476594,
       "pitcher_name": "Robert Stock",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 121,
+      "team_name": "New York Mets"
+    },
+    {
+      "depth_order": 15,
+      "depth_role": "SP",
+      "pitcher_id": 804636,
+      "pitcher_name": "Jonah Tong",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 121,
@@ -8533,16 +8533,6 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 804636,
-      "pitcher_name": "Jonah Tong",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 121,
-      "team_name": "New York Mets"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
       "pitcher_id": 593871,
       "pitcher_name": "Jorge Polanco",
       "status_code": "D60",
@@ -8557,6 +8547,16 @@
       "pitcher_name": "Juan Soto",
       "status_code": "A",
       "status_description": "Active",
+      "team_id": 121,
+      "team_name": "New York Mets"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 663795,
+      "pitcher_name": "Justin Hagenman",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 121,
       "team_name": "New York Mets"
     },

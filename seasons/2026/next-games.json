@@ -64,8 +64,8 @@
       "is_rest_day_today": false,
       "opponent_id": 108,
       "opponent_name": "Los Angeles Angels",
-      "probable_pitcher_id": null,
-      "probable_pitcher_name": null,
+      "probable_pitcher_id": 678394,
+      "probable_pitcher_name": "Brayan Bello",
       "schedule_date": "2026-09-07",
       "team_id": 111,
       "team_name": "Boston Red Sox"
@@ -246,8 +246,8 @@
       "is_rest_day_today": false,
       "opponent_id": 116,
       "opponent_name": "Detroit Tigers",
-      "probable_pitcher_id": null,
-      "probable_pitcher_name": null,
+      "probable_pitcher_id": 657746,
+      "probable_pitcher_name": "Joe Ryan",
       "schedule_date": "2026-09-07",
       "team_id": 142,
       "team_name": "Minnesota Twins"
