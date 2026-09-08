@@ -31,8 +31,8 @@
       "sha256": "b19693a3812c1af6cdb196175030ec4cf9061bd175b8fd2bbbaf4d1a20e07c80"
     },
     "fetch-state.json": {
-      "bytes": 528910,
-      "sha256": "2f508d32a8779eb425117b0a461c7b99bd892bee35c5b6efd245309b6ab93fb0"
+      "bytes": 528919,
+      "sha256": "cb37aa1ffa2641449c7f5e97890cae20e4d552650489b987f7e0658f24881ba1"
     },
     "games/2026-03.jsonl": {
       "bytes": 17046,
@@ -74,7 +74,7 @@
   "games_failed": 0,
   "games_fetched": 96,
   "games_requested": 96,
-  "generated_at": "2026-09-08T12:10:30.422945+00:00",
+  "generated_at": "2026-09-08T13:39:06.586598+00:00",
   "missing_games": 0,
   "result": "complete",
   "role_reviewed_through": "2026-08-08",
