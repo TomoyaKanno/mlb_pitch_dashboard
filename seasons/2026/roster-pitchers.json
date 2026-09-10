@@ -1023,10 +1023,10 @@
     {
       "depth_order": 7,
       "depth_role": "RP",
-      "pitcher_id": 622694,
-      "pitcher_name": "Elieser Hern\u00e1ndez",
-      "status_code": "DES",
-      "status_description": "Designated for Assignment",
+      "pitcher_id": 663559,
+      "pitcher_name": "Bailey Falter",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 144,
       "team_name": "Atlanta Braves"
     },
@@ -1145,16 +1145,6 @@
       "depth_role": null,
       "pitcher_id": 663586,
       "pitcher_name": "Austin Riley",
-      "status_code": "A",
-      "status_description": "Active",
-      "team_id": 144,
-      "team_name": "Atlanta Braves"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
-      "pitcher_id": 663559,
-      "pitcher_name": "Bailey Falter",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 144,
