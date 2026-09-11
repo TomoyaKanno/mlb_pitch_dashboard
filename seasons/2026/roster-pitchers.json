@@ -112,26 +112,6 @@
     },
     {
       "depth_order": 11,
-      "depth_role": "RP",
-      "pitcher_id": 686796,
-      "pitcher_name": "Blake Walston",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 109,
-      "team_name": "Arizona Diamondbacks"
-    },
-    {
-      "depth_order": 12,
-      "depth_role": "RP",
-      "pitcher_id": 672629,
-      "pitcher_name": "Gerardo Carrillo",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 109,
-      "team_name": "Arizona Diamondbacks"
-    },
-    {
-      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 668678,
       "pitcher_name": "Zac Gallen",
@@ -141,7 +121,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 14,
+      "depth_order": 12,
       "depth_role": "SP",
       "pitcher_id": 593958,
       "pitcher_name": "Eduardo Rodriguez",
@@ -151,7 +131,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 15,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 518876,
       "pitcher_name": "Merrill Kelly",
@@ -161,7 +141,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 16,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 694297,
       "pitcher_name": "Brandon Pfaadt",
@@ -171,7 +151,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 17,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 647336,
       "pitcher_name": "Michael Soroka",
@@ -181,7 +161,7 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 18,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 669194,
       "pitcher_name": "Ryne Nelson",
@@ -191,22 +171,12 @@
       "team_name": "Arizona Diamondbacks"
     },
     {
-      "depth_order": 19,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 669203,
       "pitcher_name": "Corbin Burnes",
       "status_code": "A",
       "status_description": "Active",
-      "team_id": 109,
-      "team_name": "Arizona Diamondbacks"
-    },
-    {
-      "depth_order": 20,
-      "depth_role": "SP",
-      "pitcher_id": 703615,
-      "pitcher_name": "Jose Cabrera",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
       "team_id": 109,
       "team_name": "Arizona Diamondbacks"
     },
@@ -217,6 +187,16 @@
       "pitcher_name": "Adrian Del Castillo",
       "status_code": "A",
       "status_description": "Active",
+      "team_id": 109,
+      "team_name": "Arizona Diamondbacks"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 686796,
+      "pitcher_name": "Blake Walston",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 109,
       "team_name": "Arizona Diamondbacks"
     },
@@ -293,6 +273,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 672629,
+      "pitcher_name": "Gerardo Carrillo",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 109,
+      "team_name": "Arizona Diamondbacks"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 545121,
       "pitcher_name": "Ildemaro Vargas",
       "status_code": "A",
@@ -317,6 +307,16 @@
       "pitcher_name": "Jordan Lawlar",
       "status_code": "A",
       "status_description": "Active",
+      "team_id": 109,
+      "team_name": "Arizona Diamondbacks"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 703615,
+      "pitcher_name": "Jose Cabrera",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 109,
       "team_name": "Arizona Diamondbacks"
     },
@@ -10513,16 +10513,6 @@
     {
       "depth_order": 12,
       "depth_role": "RP",
-      "pitcher_id": 694820,
-      "pitcher_name": "Braxton Roxby",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 137,
-      "team_name": "San Francisco Giants"
-    },
-    {
-      "depth_order": 13,
-      "depth_role": "RP",
       "pitcher_id": 702885,
       "pitcher_name": "Cesar Perdomo",
       "status_code": "A",
@@ -10531,7 +10521,7 @@
       "team_name": "San Francisco Giants"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "RP",
       "pitcher_id": 669270,
       "pitcher_name": "Joel Kuhnel",
@@ -10541,7 +10531,7 @@
       "team_name": "San Francisco Giants"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "RP",
       "pitcher_id": 691769,
       "pitcher_name": "Philip Abner",
@@ -10551,7 +10541,7 @@
       "team_name": "San Francisco Giants"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 657277,
       "pitcher_name": "Logan Webb",
@@ -10561,7 +10551,7 @@
       "team_name": "San Francisco Giants"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 694738,
       "pitcher_name": "Landen Roupp",
@@ -10571,7 +10561,7 @@
       "team_name": "San Francisco Giants"
     },
     {
-      "depth_order": 18,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 694918,
       "pitcher_name": "Blade Tidwell",
@@ -10581,7 +10571,7 @@
       "team_name": "San Francisco Giants"
     },
     {
-      "depth_order": 19,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 683363,
       "pitcher_name": "Matt Wilkinson",
@@ -10591,7 +10581,7 @@
       "team_name": "San Francisco Giants"
     },
     {
-      "depth_order": 20,
+      "depth_order": 19,
       "depth_role": "SP",
       "pitcher_id": 686790,
       "pitcher_name": "Trevor McDonald",
@@ -10601,7 +10591,7 @@
       "team_name": "San Francisco Giants"
     },
     {
-      "depth_order": 21,
+      "depth_order": 20,
       "depth_role": "SP",
       "pitcher_id": 687931,
       "pitcher_name": "Carson Whisenhunt",
@@ -10611,7 +10601,7 @@
       "team_name": "San Francisco Giants"
     },
     {
-      "depth_order": 22,
+      "depth_order": 21,
       "depth_role": "SP",
       "pitcher_id": 683627,
       "pitcher_name": "Anthony Molina",
@@ -10627,6 +10617,16 @@
       "pitcher_name": "Andrew Knizner",
       "status_code": "A",
       "status_description": "Active",
+      "team_id": 137,
+      "team_name": "San Francisco Giants"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 694820,
+      "pitcher_name": "Braxton Roxby",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 137,
       "team_name": "San Francisco Giants"
     },
