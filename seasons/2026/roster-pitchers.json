@@ -1313,6 +1313,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 675627,
+      "pitcher_name": "Michael Grove",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 144,
+      "team_name": "Atlanta Braves"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 671739,
       "pitcher_name": "Michael Harris II",
       "status_code": "A",
