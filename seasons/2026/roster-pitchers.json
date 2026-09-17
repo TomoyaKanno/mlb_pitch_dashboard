@@ -12195,8 +12195,8 @@
       "depth_role": null,
       "pitcher_id": 663611,
       "pitcher_name": "Nick Madrigal",
-      "status_code": "A",
-      "status_description": "Active",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 139,
       "team_name": "Tampa Bay Rays"
     },
@@ -12235,8 +12235,8 @@
       "depth_role": null,
       "pitcher_id": 670764,
       "pitcher_name": "Taylor Walls",
-      "status_code": "D10",
-      "status_description": "Injured 10-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 139,
       "team_name": "Tampa Bay Rays"
     },
