@@ -5592,16 +5592,6 @@
     },
     {
       "depth_order": 11,
-      "depth_role": "RP",
-      "pitcher_id": 702352,
-      "pitcher_name": "Spencer Bivens",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 118,
-      "team_name": "Kansas City Royals"
-    },
-    {
-      "depth_order": 12,
       "depth_role": "CP",
       "pitcher_id": 608032,
       "pitcher_name": "Carlos Est\u00e9vez",
@@ -5611,7 +5601,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "CP",
       "pitcher_id": 674444,
       "pitcher_name": "Steven Cruz",
@@ -5621,7 +5611,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "SP",
       "pitcher_id": 666142,
       "pitcher_name": "Cole Ragans",
@@ -5631,7 +5621,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "SP",
       "pitcher_id": 607625,
       "pitcher_name": "Seth Lugo",
@@ -5641,7 +5631,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 608379,
       "pitcher_name": "Michael Wacha",
@@ -5651,7 +5641,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 702070,
       "pitcher_name": "Noah Cameron",
@@ -5661,7 +5651,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 18,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 663568,
       "pitcher_name": "Stephen Kolek",
@@ -5671,7 +5661,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 19,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 679883,
       "pitcher_name": "Luinder Avila",
@@ -5681,7 +5671,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 20,
+      "depth_order": 19,
       "depth_role": "SP",
       "pitcher_id": 663738,
       "pitcher_name": "Daniel Lynch IV",
@@ -5691,7 +5681,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 21,
+      "depth_order": 20,
       "depth_role": "SP",
       "pitcher_id": 677976,
       "pitcher_name": "Randy Dobnak",
@@ -5701,7 +5691,7 @@
       "team_name": "Kansas City Royals"
     },
     {
-      "depth_order": 22,
+      "depth_order": 21,
       "depth_role": "SP",
       "pitcher_id": 664062,
       "pitcher_name": "Tony Gonsolin",
@@ -5937,6 +5927,16 @@
       "pitcher_name": "Salvador Perez",
       "status_code": "A",
       "status_description": "Active",
+      "team_id": 118,
+      "team_name": "Kansas City Royals"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 702352,
+      "pitcher_name": "Spencer Bivens",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
       "team_id": 118,
       "team_name": "Kansas City Royals"
     },
@@ -6503,16 +6503,6 @@
     {
       "depth_order": 9,
       "depth_role": "RP",
-      "pitcher_id": 686218,
-      "pitcher_name": "Emmet Sheehan",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
-      "team_id": 119,
-      "team_name": "Los Angeles Dodgers"
-    },
-    {
-      "depth_order": 10,
-      "depth_role": "RP",
       "pitcher_id": 669165,
       "pitcher_name": "Kyle Hurt",
       "status_code": "A",
@@ -6521,7 +6511,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 11,
+      "depth_order": 10,
       "depth_role": "RP",
       "pitcher_id": 694361,
       "pitcher_name": "Will Klein",
@@ -6531,7 +6521,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 12,
+      "depth_order": 11,
       "depth_role": "RP",
       "pitcher_id": 683618,
       "pitcher_name": "Edgardo Henriquez",
@@ -6541,7 +6531,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 13,
+      "depth_order": 12,
       "depth_role": "RP",
       "pitcher_id": 660813,
       "pitcher_name": "Brusdar Graterol",
@@ -6551,7 +6541,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 14,
+      "depth_order": 13,
       "depth_role": "RP",
       "pitcher_id": 676508,
       "pitcher_name": "Ben Casparius",
@@ -6561,7 +6551,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 15,
+      "depth_order": 14,
       "depth_role": "RP",
       "pitcher_id": 664776,
       "pitcher_name": "Jake Cousins",
@@ -6571,7 +6561,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 16,
+      "depth_order": 15,
       "depth_role": "SP",
       "pitcher_id": 808967,
       "pitcher_name": "Yoshinobu Yamamoto",
@@ -6581,7 +6571,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 17,
+      "depth_order": 16,
       "depth_role": "SP",
       "pitcher_id": 669373,
       "pitcher_name": "Tarik Skubal",
@@ -6591,7 +6581,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 18,
+      "depth_order": 17,
       "depth_role": "SP",
       "pitcher_id": 605483,
       "pitcher_name": "Blake Snell",
@@ -6601,7 +6591,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 19,
+      "depth_order": 18,
       "depth_role": "SP",
       "pitcher_id": 808963,
       "pitcher_name": "Roki Sasaki",
@@ -6611,7 +6601,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 20,
+      "depth_order": 19,
       "depth_role": "SP",
       "pitcher_id": 607192,
       "pitcher_name": "Tyler Glasnow",
@@ -6621,7 +6611,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 21,
+      "depth_order": 20,
       "depth_role": "SP",
       "pitcher_id": 660271,
       "pitcher_name": "Shohei Ohtani",
@@ -6631,7 +6621,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 22,
+      "depth_order": 21,
       "depth_role": "SP",
       "pitcher_id": 641778,
       "pitcher_name": "Eric Lauer",
@@ -6641,7 +6631,7 @@
       "team_name": "Los Angeles Dodgers"
     },
     {
-      "depth_order": 23,
+      "depth_order": 22,
       "depth_role": "SP",
       "pitcher_id": 694813,
       "pitcher_name": "Gavin Stone",
@@ -6705,6 +6695,16 @@
       "depth_role": null,
       "pitcher_id": 672613,
       "pitcher_name": "Eliezer Alfonzo",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 119,
+      "team_name": "Los Angeles Dodgers"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 686218,
+      "pitcher_name": "Emmet Sheehan",
       "status_code": "RM",
       "status_description": "Reassigned to Minors",
       "team_id": 119,
