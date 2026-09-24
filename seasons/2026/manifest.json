@@ -1,6 +1,6 @@
 {
-  "api_calls": 150,
-  "current_games": 2357,
+  "api_calls": 151,
+  "current_games": 2373,
   "files": {
     "appearances/2026-03.jsonl": {
       "bytes": 200791,
@@ -27,12 +27,12 @@
       "sha256": "4b81bbeec89f7065f5ca6de4ecb4031f1815043e7917639e4cebb8158c8b0814"
     },
     "appearances/2026-09.jsonl": {
-      "bytes": 767281,
-      "sha256": "21cc12d09b8a86d7efcd40e9dda70fff62b19af7be7414ea977d3bd1c6daed98"
+      "bytes": 812433,
+      "sha256": "7ec82ae314fbaf074e3048469b09f8ed708cf4b80f866ad0342046beda28b198"
     },
     "fetch-state.json": {
-      "bytes": 575968,
-      "sha256": "8f71b4cc6fd4654c552d891416217c3f36645c9698cb9ddc3b83a4919fc1342a"
+      "bytes": 579872,
+      "sha256": "30a10d117fbbdb9f04a23fb9b867239e070968879241f1e03d4d43eeb94b99f8"
     },
     "games/2026-03.jsonl": {
       "bytes": 17046,
@@ -59,26 +59,26 @@
       "sha256": "ba16ba580e6c287d54a5ad6bbabd396b07f763106730210382b42f5b5cacb7ca"
     },
     "games/2026-09.jsonl": {
-      "bytes": 64584,
-      "sha256": "e1f99dcb0326bf5c806edcabd5f0e649a6a3dbfdce6fe86d65784ff2698edf3f"
+      "bytes": 68174,
+      "sha256": "274154dbe9c5b725f49fc3654c0bffefe8992c92b20161e54eda7d4380f24201"
     },
     "next-games.json": {
-      "bytes": 12831,
-      "sha256": "2bfdd0fe2fe0688083b4d1cb10ae841f16573310bebfa04038ad9aad653babdd"
+      "bytes": 12806,
+      "sha256": "95279071b23d51cf54f5460f8c9262a8c90273c14b9a2df71c5ec39482d68cd4"
     },
     "roster-pitchers.json": {
-      "bytes": 355433,
-      "sha256": "d45b6f8da48f2f8b8b4b7f06c203cdf99adc7d52763583f63205b85ffd659e0f"
+      "bytes": 355721,
+      "sha256": "1efc8ba3ffe8a5937a51cf541a200324ff69c2bc15dd660a3132b8ea68d05e82"
     }
   },
   "games_failed": 0,
-  "games_fetched": 87,
-  "games_requested": 87,
-  "generated_at": "2026-09-23T14:14:50.321361+00:00",
+  "games_fetched": 88,
+  "games_requested": 88,
+  "generated_at": "2026-09-24T12:45:37.379041+00:00",
   "missing_games": 0,
   "result": "complete",
   "role_reviewed_through": "2026-08-08",
-  "scheduled_games": 2357,
+  "scheduled_games": 2373,
   "schema_version": 1,
   "season": 2026,
   "stale_games": 0
