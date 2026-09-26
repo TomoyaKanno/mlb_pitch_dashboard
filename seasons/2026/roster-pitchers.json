@@ -4853,6 +4853,16 @@
     {
       "depth_order": null,
       "depth_role": null,
+      "pitcher_id": 646241,
+      "pitcher_name": "Enmanuel De Jesus",
+      "status_code": "RM",
+      "status_description": "Reassigned to Minors",
+      "team_id": 116,
+      "team_name": "Detroit Tigers"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
       "pitcher_id": 650402,
       "pitcher_name": "Gleyber Torres",
       "status_code": "A",
