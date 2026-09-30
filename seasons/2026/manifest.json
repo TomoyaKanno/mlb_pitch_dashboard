@@ -1,5 +1,5 @@
 {
-  "api_calls": 150,
+  "api_calls": 135,
   "current_games": 2429,
   "files": {
     "appearances/2026-03.jsonl": {
@@ -32,7 +32,7 @@
     },
     "fetch-state.json": {
       "bytes": 593612,
-      "sha256": "1acba17f8d81e78044c86e55739de9b37aab89e0e49a9250eb1bc35b717bece0"
+      "sha256": "b26a2097600897630c6e4103423cc660b5d80b28338409c8ae86d858301d9bd9"
     },
     "games/2026-03.jsonl": {
       "bytes": 17046,
@@ -67,14 +67,14 @@
       "sha256": "422a5e4ad3091a4e44275777a68b7f65ea3971d627681d7aa0ccde9f0fbafc41"
     },
     "roster-pitchers.json": {
-      "bytes": 353856,
-      "sha256": "f307599b899c43b96d9d064595b74cefb1714c9f6bc318ab2c785147f1fcc260"
+      "bytes": 351749,
+      "sha256": "175563a6859cfcf673e984001fc43228f20ab15d4bdfbf75ba877a4b37de30c7"
     }
   },
   "games_failed": 0,
-  "games_fetched": 87,
-  "games_requested": 87,
-  "generated_at": "2026-09-29T15:54:05.524405+00:00",
+  "games_fetched": 72,
+  "games_requested": 72,
+  "generated_at": "2026-09-30T13:51:07.776952+00:00",
   "missing_games": 0,
   "result": "complete",
   "role_reviewed_through": "2026-08-08",
