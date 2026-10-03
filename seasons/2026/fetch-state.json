@@ -1,20 +1,20 @@
 {
   "games": [
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 822678,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 822679,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -649,12 +649,12 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 822759,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -665,12 +665,12 @@
       "last_success_at": "2026-10-02T15:50:28.655663+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 822761,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -3241,20 +3241,20 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 823083,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 823084,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -3889,20 +3889,20 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 823164,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 823165,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -4537,20 +4537,20 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 823245,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 823246,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -5833,20 +5833,20 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 823407,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 823408,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -7761,12 +7761,12 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 823650,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 1,
@@ -7785,12 +7785,12 @@
       "last_success_at": "2026-10-02T15:50:28.655663+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 823653,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -8409,12 +8409,12 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 823731,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 1,
@@ -8425,12 +8425,12 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 823733,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -9065,20 +9065,20 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 823813,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 823814,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -11001,12 +11001,12 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 824055,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 1,
@@ -11017,12 +11017,12 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 824057,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -12297,12 +12297,12 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 824217,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 1,
@@ -12313,12 +12313,12 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 824219,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -14897,20 +14897,20 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 824542,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 824543,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -16201,12 +16201,12 @@
       "last_success_at": "2026-07-20T16:58:44.964992+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 824705,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,
@@ -18145,20 +18145,20 @@
       "last_success_at": "2026-10-02T15:50:28.655663+00:00"
     },
     {
-      "attempt_count": 10,
+      "attempt_count": 11,
       "fetch_status": "success",
       "game_pk": 824948,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
-      "attempt_count": 12,
+      "attempt_count": 13,
       "fetch_status": "success",
       "game_pk": 824949,
-      "last_attempt_at": "2026-10-02T15:50:28.655663+00:00",
+      "last_attempt_at": "2026-10-03T12:36:43.800737+00:00",
       "last_error": null,
-      "last_success_at": "2026-10-02T15:50:28.655663+00:00"
+      "last_success_at": "2026-10-03T12:36:43.800737+00:00"
     },
     {
       "attempt_count": 14,

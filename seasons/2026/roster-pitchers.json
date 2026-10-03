@@ -3633,16 +3633,6 @@
     {
       "depth_order": null,
       "depth_role": null,
-      "pitcher_id": 669911,
-      "pitcher_name": "Michael Toglia",
-      "status_code": "D60",
-      "status_description": "Injured 60-Day",
-      "team_id": 113,
-      "team_name": "Cincinnati Reds"
-    },
-    {
-      "depth_order": null,
-      "depth_role": null,
       "pitcher_id": 682622,
       "pitcher_name": "Noelvi Marte",
       "status_code": "A",
@@ -7505,8 +7495,8 @@
       "depth_role": null,
       "pitcher_id": 683734,
       "pitcher_name": "Andrew Vaughn",
-      "status_code": "D10",
-      "status_description": "Injured 10-Day",
+      "status_code": "A",
+      "status_description": "Active",
       "team_id": 158,
       "team_name": "Milwaukee Brewers"
     },
@@ -9385,8 +9375,8 @@
       "depth_role": null,
       "pitcher_id": 679775,
       "pitcher_name": "Kyle Backhus",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "40M",
+      "status_description": "Forty Man",
       "team_id": 143,
       "team_name": "Philadelphia Phillies"
     },
@@ -9445,8 +9435,8 @@
       "depth_role": null,
       "pitcher_id": 689147,
       "pitcher_name": "Orion Kerkering",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "40M",
+      "status_description": "Forty Man",
       "team_id": 143,
       "team_name": "Philadelphia Phillies"
     },
@@ -11265,6 +11255,16 @@
       "depth_role": null,
       "pitcher_id": 703197,
       "pitcher_name": "Michael Arroyo",
+      "status_code": "A",
+      "status_description": "Active",
+      "team_id": 136,
+      "team_name": "Seattle Mariners"
+    },
+    {
+      "depth_order": null,
+      "depth_role": null,
+      "pitcher_id": 669911,
+      "pitcher_name": "Michael Toglia",
       "status_code": "A",
       "status_description": "Active",
       "team_id": 136,
