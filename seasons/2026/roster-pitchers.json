@@ -7605,8 +7605,8 @@
       "depth_role": null,
       "pitcher_id": 668831,
       "pitcher_name": "Garrett Stallings",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "40M",
+      "status_description": "Forty Man",
       "team_id": 158,
       "team_name": "Milwaukee Brewers"
     },
@@ -8955,8 +8955,8 @@
       "depth_role": null,
       "pitcher_id": 680474,
       "pitcher_name": "Max Schuemann",
-      "status_code": "RM",
-      "status_description": "Reassigned to Minors",
+      "status_code": "40M",
+      "status_description": "Forty Man",
       "team_id": 147,
       "team_name": "New York Yankees"
     },
