@@ -1,5 +1,5 @@
 {
-  "api_calls": 77,
+  "api_calls": 63,
   "current_games": 2429,
   "files": {
     "appearances/2026-03.jsonl": {
@@ -72,9 +72,9 @@
     }
   },
   "games_failed": 0,
-  "games_fetched": 14,
-  "games_requested": 14,
-  "generated_at": "2026-10-04T14:47:46.534593+00:00",
+  "games_fetched": 0,
+  "games_requested": 0,
+  "generated_at": "2026-10-05T16:08:24.795370+00:00",
   "missing_games": 0,
   "result": "complete",
   "role_reviewed_through": "2026-08-08",
