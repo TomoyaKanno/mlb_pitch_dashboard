@@ -67,14 +67,14 @@
       "sha256": "422a5e4ad3091a4e44275777a68b7f65ea3971d627681d7aa0ccde9f0fbafc41"
     },
     "roster-pitchers.json": {
-      "bytes": 351189,
-      "sha256": "78873d41ac56159260be675671f2f3b185c12e50cda9d86b636e19035122b869"
+      "bytes": 351191,
+      "sha256": "08b34173c7d03d8e7e12745b5f2eeeb0768adbf4c5883b7834d4bd9da0a1e0f9"
     }
   },
   "games_failed": 0,
   "games_fetched": 0,
   "games_requested": 0,
-  "generated_at": "2026-10-06T14:15:22.868967+00:00",
+  "generated_at": "2026-10-06T15:58:04.688277+00:00",
   "missing_games": 0,
   "result": "complete",
   "role_reviewed_through": "2026-08-08",
