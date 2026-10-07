@@ -1,0 +1,14 @@
+[Unit]
+Description=Nightly MLB dashboard refresh, March through November
+
+[Timer]
+# Eastern wall-clock times, so DST needs no adjustment. The early pass serves
+# morning freshness; the later pass catches unusually late games. The 04:00
+# unattended-upgrade reboot falls between them, and Persistent catches up any
+# run missed while the machine was down.
+OnCalendar=*-03..11-* 03:17:00 America/New_York
+OnCalendar=*-03..11-* 05:17:00 America/New_York
+Persistent=true
+
+[Install]
+WantedBy=timers.target

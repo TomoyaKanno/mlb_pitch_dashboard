@@ -1,0 +1,12 @@
+[Unit]
+Description=Dispatch the MLB dashboard refresh workflow
+StartLimitIntervalSec=30min
+StartLimitBurst=5
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/mlb-refresh-dispatch
+# A catch-up run fires at boot, possibly before the network is up; retry
+# instead of losing the night.
+Restart=on-failure
+RestartSec=2min

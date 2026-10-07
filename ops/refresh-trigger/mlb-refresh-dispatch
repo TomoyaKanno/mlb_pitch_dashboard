@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Dispatch the nightly dashboard refresh on main. Run by mlb-refresh.timer.
+# The token is a fine-grained PAT limited to this repository with only
+# Actions: read and write, so it can start runs but never write data or code.
+set -euo pipefail
+
+GH_TOKEN="$(<"$HOME/.config/mlb-refresh/token")" exec gh workflow run refresh-data.yml \
+  --repo TomoyaKanno/mlb_pitch_dashboard \
+  --ref main \
+  -f only_when_due=true

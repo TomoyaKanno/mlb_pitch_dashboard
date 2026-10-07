@@ -1,16 +1,9 @@
 name: Refresh dashboard data
 
 on:
-  schedule:
-    # Run the same incremental refresh twice nightly: 07:17/09:17 UTC are
-    # 03:17/05:17 Eastern during EDT, which covers the whole 2026 regular
-    # season. The early pass improves morning freshness; the later pass catches
-    # unusually late games. Revisit the UTC conversion before next season;
-    # under EST these are 02:17 and 04:17. Both schedules dispatch hours late
-    # under GitHub load — measured history and ruled-out theories are recorded
-    # in docs/deployment.md; do not diagnose the delay as a workflow defect.
-    - cron: "17 7 * 3-11 *"
-    - cron: "17 9 * 3-11 *"
+  # No GitHub cron: its dispatches ran hours late under load. A systemd
+  # timer on the operator's server dispatches this workflow nightly with
+  # only_when_due=true (ops/refresh-trigger/, docs/deployment.md).
   workflow_dispatch:
     inputs:
       season:
@@ -27,6 +20,11 @@ on:
         required: true
         default: "7"
         type: string
+      only_when_due:
+        description: "Skip outside MLB's regular season once its final reconciliation is complete (set by the nightly trigger)"
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -37,7 +35,7 @@ concurrency:
 
 jobs:
   refresh:
-    # Scheduled runs use the default branch; never let a manually selected ref write dashboard-data.
+    # The nightly trigger dispatches main; never let another selected ref write dashboard-data.
     if: github.ref == 'refs/heads/main'
     name: Validate and persist snapshot
     runs-on: ubuntu-latest
@@ -96,6 +94,7 @@ jobs:
         working-directory: source
         env:
           FORCE_REFRESH: ${{ inputs.force }}
+          ONLY_WHEN_DUE: ${{ inputs.only_when_due }}
         run: |
           args=(
             --season "$SEASON"
@@ -104,6 +103,11 @@ jobs:
           )
           if [[ "$FORCE_REFRESH" == "true" ]]; then
             args+=(--force)
+          fi
+          # The nightly trigger idles outside MLB's official regular season once
+          # its final reconciliation is complete; ad hoc runs always refresh.
+          if [[ "$ONLY_WHEN_DUE" == "true" ]]; then
+            args+=(--only-when-due)
           fi
           python -m pipeline.update "${args[@]}" | tee "$RUNNER_TEMP/refresh-summary.json"
 

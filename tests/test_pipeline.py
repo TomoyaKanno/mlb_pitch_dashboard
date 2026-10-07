@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import asyncio
 import json
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import pytest
 
 from pipeline.schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, Snapshot
 from pipeline.storage import load_snapshot
-from pipeline.update import games_to_refresh, update_season
+from pipeline.update import games_to_refresh, refresh_skip_reason, scheduled_skip_reason, update_season
 from pipeline.validation import SnapshotValidationError
 
 
@@ -506,3 +506,85 @@ def test_refresh_persists_pitching_roster_depth_and_status(tmp_path):
     assert snapshot.roster_pitchers[(100, 21)].depth_role == "RP"
     assert snapshot.roster_pitchers[(100, 22)].status_code == "D15"
     assert (tmp_path / "seasons/2026/roster-pitchers.json").exists()
+
+
+SEASON_START = date(2026, 3, 25)
+SEASON_END = date(2026, 9, 27)
+
+
+def skip_reason(today: date, manifest: dict | None, reconcile_days: int = 7) -> str | None:
+    return refresh_skip_reason(
+        today=today,
+        season_start=SEASON_START,
+        season_end=SEASON_END,
+        reconcile_days=reconcile_days,
+        manifest=manifest,
+    )
+
+
+def manifest(result: str, generated_at: str) -> dict:
+    return {"result": result, "generated_at": generated_at}
+
+
+def test_refresh_is_due_every_regular_season_day_and_idle_before_it():
+    complete = manifest("complete", "2026-10-06T15:58:04+00:00")
+
+    assert skip_reason(date(2026, 3, 24), None) == "regular season starts 2026-03-25"
+    assert skip_reason(SEASON_START, None) is None
+    assert skip_reason(SEASON_END, complete) is None
+
+
+def test_refresh_continues_after_season_until_final_reconciliation_completes():
+    final_window_day = "2026-10-04T09:30:00+00:00"
+
+    # The final games remain inside the 7-day window through October 4 UTC.
+    assert skip_reason(date(2026, 10, 1), manifest("complete", "2026-10-01T09:30:00+00:00")) is None
+    assert skip_reason(date(2026, 10, 4), manifest("complete", "2026-10-03T09:30:00+00:00")) is None
+    assert skip_reason(date(2026, 10, 5), manifest("complete", final_window_day)) == (
+        "regular season ended 2026-09-27; complete snapshot reconciled on 2026-10-04"
+    )
+    assert skip_reason(date(2026, 10, 5), manifest("complete", "2026-10-04T09:30:00+00:00"), reconcile_days=0)
+
+
+def test_refresh_catches_up_when_the_post_season_window_was_missed_or_incomplete():
+    # A scheduler outage leaves the last complete snapshot inside the window.
+    assert skip_reason(date(2026, 11, 2), manifest("complete", "2026-09-29T09:30:00+00:00")) is None
+    # A later run that retained stale or missing games is not a finished season.
+    assert skip_reason(date(2026, 11, 2), manifest("partial", "2026-10-20T09:30:00+00:00")) is None
+    assert skip_reason(date(2026, 11, 2), manifest("failed", "2026-10-20T09:30:00+00:00")) is None
+    assert skip_reason(date(2026, 11, 2), None) is None
+
+
+class SeasonDatesClient:
+    def __init__(self):
+        self.api_calls = 0
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *_):
+        return None
+
+    async def regular_season_dates(self, season):
+        self.api_calls += 1
+        return SEASON_START, SEASON_END
+
+
+def test_scheduled_skip_reason_reads_persisted_manifest(tmp_path):
+    schedule = [game(1, "2026-09-27")]
+    finished = datetime(2026, 10, 4, 9, 30, tzinfo=timezone.utc)
+    asyncio.run(
+        update_season(2026, tmp_path, reconcile_days=7, now=finished, client_factory=factory(schedule, {1: boxscore(1)}))
+    )
+
+    def check(now: datetime) -> str | None:
+        return asyncio.run(
+            scheduled_skip_reason(2026, tmp_path, reconcile_days=7, now=now, client_factory=SeasonDatesClient)
+        )
+
+    assert check(datetime(2026, 10, 6, 11, tzinfo=timezone.utc)) is not None
+    # 02:00 UTC on September 28 is still the final regular-season day in Eastern time.
+    assert check(datetime(2026, 9, 28, 2, tzinfo=timezone.utc)) is None
+    assert asyncio.run(
+        scheduled_skip_reason(2026, tmp_path / "empty", reconcile_days=7, now=finished, client_factory=SeasonDatesClient)
+    ) is None

@@ -292,6 +292,26 @@ def test_pitching_rosters_merge_depth_order_with_latest_40_man_status(monkeypatc
     assert 99 not in by_id
 
 
+def test_regular_season_dates_reads_official_season_boundaries() -> None:
+    client = _RoutingClient({
+        "/seasons/2026": {
+            "seasons": [{
+                "seasonId": "2026",
+                "springStartDate": "2026-02-20",
+                "regularSeasonStartDate": "2026-03-25",
+                "regularSeasonEndDate": "2026-09-27",
+                "postSeasonEndDate": "2026-10-31",
+            }]
+        }
+    })
+
+    assert asyncio.run(mlb.MLBClient.regular_season_dates(client, 2026)) == (
+        date(2026, 3, 25),
+        date(2026, 9, 27),
+    )
+    assert client.calls == [("/seasons/2026", {"sportId": 1})]
+
+
 def test_pitching_rosters_returns_empty_when_mlb_returns_no_teams(monkeypatch) -> None:
     client = _RoutingClient({"/teams": {"teams": []}})
     monkeypatch.setattr(mlb, "eastern_today", lambda: date(2026, 7, 23))

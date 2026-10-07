@@ -45,7 +45,7 @@ Documentation should explain architecture, durable semantics, operational choice
 - CI is read-only. Refresh receives contents-write only. Pages and id-token permissions belong only to the deployment job.
 - Changes under `pipeline/**` must continue to trigger the real-data Pages build.
 
-GitHub cron is best-effort and observed dispatches run hours late (observations and ruled-out theories: `docs/deployment.md`). Do not promise exact freshness or reframe ordinary dispatch delay as a workflow defect. An external scheduler is a new integration requiring approval.
+Nightly refresh is dispatched by an approved systemd timer on the operator's server (`ops/refresh-trigger/`, `docs/deployment.md`); GitHub cron is retired. The server's token may only dispatch Actions. Do not promise exact freshness: a refresh still depends on that machine being up. Any other scheduler is a new integration requiring approval.
 
 ## Observable React boundary
 

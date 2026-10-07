@@ -119,6 +119,19 @@ class MLBClient:
                 pass
         return base + random.uniform(0, base * 0.25)
 
+    async def regular_season_dates(self, season: int) -> tuple[date, date]:
+        """Return MLB's official regular-season start and end dates.
+
+        MLB revises the end date when postponed games are made up, so this is
+        the authoritative season boundary rather than a fixed calendar guess.
+        """
+        payload = await self.get_json(f"/seasons/{season}", params={"sportId": 1})
+        (entry,) = payload["seasons"]
+        return (
+            date.fromisoformat(entry["regularSeasonStartDate"]),
+            date.fromisoformat(entry["regularSeasonEndDate"]),
+        )
+
     async def completed_games(self, season: int) -> list[dict[str, Any]]:
         today = eastern_today()
         end_date = today.isoformat() if season == today.year else f"{season}-11-15"

@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .classify import Appearance, classify_appearances, load_role_overrides
-from .mlb import MLBClient, fetch_game_batch
+from .mlb import MLBClient, eastern_today, fetch_game_batch
 from .schema import AppearanceRecord, FetchStateRecord, GameRecord, NextGameRecord, RosterPitcherRecord, Snapshot
 from .storage import load_snapshot, write_snapshot
 from .validation import SnapshotValidationError, validate_snapshot
@@ -53,6 +53,57 @@ def games_to_refresh(
         if force or state is None or state.fetch_status == "failed" or not has_data or recent:
             pending.append(game)
     return pending
+
+
+def refresh_skip_reason(
+    *,
+    today: date,
+    season_start: date,
+    season_end: date,
+    reconcile_days: int,
+    manifest: dict[str, Any] | None,
+) -> str | None:
+    """Return why a scheduled refresh has nothing to do, or None when it is due.
+
+    Every regular-season day is due. Afterwards, refresh continues until a
+    complete snapshot was generated on or after the last day the final games
+    fall inside the reconciliation window, so a missed or failed run near the
+    season's end is caught up instead of abandoned.
+    """
+    if today < season_start:
+        return f"regular season starts {season_start.isoformat()}"
+    if today <= season_end or manifest is None or manifest["result"] != "complete":
+        return None
+    # Refresh plans the reconciliation window from the UTC date of the run, so
+    # compare against the UTC date the snapshot was generated.
+    generated = datetime.fromisoformat(manifest["generated_at"]).date()
+    if generated < season_end + timedelta(days=reconcile_days):
+        return None
+    return (
+        f"regular season ended {season_end.isoformat()}; "
+        f"complete snapshot reconciled on {generated.isoformat()}"
+    )
+
+
+async def scheduled_skip_reason(
+    season: int,
+    data_dir: Path,
+    *,
+    reconcile_days: int,
+    now: datetime | None = None,
+    client_factory: Callable[[], Any] = MLBClient,
+) -> str | None:
+    manifest_path = data_dir / "seasons" / str(season) / "manifest.json"
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else None
+    async with client_factory() as client:
+        season_start, season_end = await client.regular_season_dates(season)
+    return refresh_skip_reason(
+        today=eastern_today(now),
+        season_start=season_start,
+        season_end=season_end,
+        reconcile_days=reconcile_days,
+        manifest=manifest,
+    )
 
 
 def _classify(snapshot: Snapshot, overrides: dict[str, Any]) -> None:
@@ -228,11 +279,23 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--reconcile-days", type=int, default=7)
     parser.add_argument("--overrides", type=Path, default=Path("config/role_overrides.json"))
+    parser.add_argument(
+        "--only-when-due",
+        action="store_true",
+        help="Skip outside the regular season once its final reconciliation is complete",
+    )
     return parser
 
 
 def main() -> None:
     args = _parser().parse_args()
+    if args.only_when_due and not args.force:
+        reason = asyncio.run(
+            scheduled_skip_reason(args.season, args.data_dir, reconcile_days=args.reconcile_days)
+        )
+        if reason is not None:
+            print(json.dumps({"reason": reason, "result": "skipped", "season": args.season}, indent=2))
+            return
     overrides_file = load_role_overrides(args.overrides, args.season)
     summary = asyncio.run(
         update_season(
