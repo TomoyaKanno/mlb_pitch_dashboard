@@ -7,7 +7,7 @@ import {
   seriesTooltipText, statusLabel, statusTone, valueAxisTicks, nextGameTimeStatus,
   NEXT_GAME_OVER_AFTER_HOURS, type CompleteGame, type CoverageStatus,
   type Team, type TeamDayPoint,
-  BULLPEN_TOTAL_WINDOWS, daysRestLabel, seasonOverCaption, trailingPitchTotal,
+  BULLPEN_TOTAL_WINDOWS, daysRestLabel, seasonOverPhase, trailingPitchTotal,
 } from "./metrics";
 
 const team: Team = {
@@ -43,13 +43,13 @@ describe("static dashboard metrics", () => {
     expect(nextGameTimeStatus(null, start)).toBeNull();
   });
 
-  it("captions a finished season as postseason time in October and November only", () => {
+  it("treats a finished season as postseason time in October and November only", () => {
     const at = (month: number, day: number) => new Date(2026, month - 1, day, 12).getTime();
-    expect(seasonOverCaption(at(9, 30))).toBe("Offseason baby");
-    expect(seasonOverCaption(at(10, 1))).toBe("Postseason time!");
-    expect(seasonOverCaption(at(11, 30))).toBe("Postseason time!");
-    expect(seasonOverCaption(at(12, 1))).toBe("Offseason baby");
-    expect(seasonOverCaption(at(3, 1))).toBe("Offseason baby");
+    expect(seasonOverPhase(at(9, 30))).toBe("offseason");
+    expect(seasonOverPhase(at(10, 1))).toBe("postseason");
+    expect(seasonOverPhase(at(11, 30))).toBe("postseason");
+    expect(seasonOverPhase(at(12, 1))).toBe("offseason");
+    expect(seasonOverPhase(at(3, 1))).toBe("offseason");
   });
 
   it("sums trailing calendar-day relief pitches for the heatmap totals", () => {

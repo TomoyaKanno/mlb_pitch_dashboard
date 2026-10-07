@@ -1,8 +1,9 @@
 import {useEffect, useState, type CSSProperties} from "npm:react";
 import {
-  BULLPEN_TOTAL_WINDOWS, daysRestLabel, nextGameTimeStatus, seasonOverCaption, trailingPitchTotal,
+  BULLPEN_TOTAL_WINDOWS, daysRestLabel, nextGameTimeStatus, seasonOverPhase, trailingPitchTotal,
   type NextGameTimeStatus,
 } from "./metrics.js";
+import {SeasonOverScene} from "./SeasonOverScene.js";
 
 export interface RecentPitcher {
   pitcher_id: number;
@@ -631,7 +632,10 @@ export function RecentStrain({
             pitchers={selected.pitchers}
           />
         </section>
-        <section className="recent-game-card" aria-label="Next game">
+        <section
+          className={nextGame ? "recent-game-card" : "recent-game-card season-over-card"}
+          aria-label="Next game"
+        >
           <div className="next-game-card-heading">
             <p className="recent-card-label">Next game</p>
             {nextGameStatus ? <NextGameStatusBadge status={nextGameStatus} /> : null}
@@ -643,10 +647,7 @@ export function RecentStrain({
               <ProbableStarterPanel game={nextGame} />
             </>
           ) : (
-            <div className="recent-game-copy">
-              <strong>Season's over!</strong>
-              <span>{seasonOverCaption(nowMs)}</span>
-            </div>
+            <SeasonOverScene phase={seasonOverPhase(nowMs)} />
           )}
         </section>
       </div>
