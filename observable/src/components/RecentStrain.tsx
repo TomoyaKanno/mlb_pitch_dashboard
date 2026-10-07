@@ -1,6 +1,6 @@
 import {useEffect, useState, type CSSProperties} from "npm:react";
 import {
-  BULLPEN_TOTAL_WINDOWS, daysRestLabel, nextGameTimeStatus, trailingPitchTotal,
+  BULLPEN_TOTAL_WINDOWS, daysRestLabel, nextGameTimeStatus, seasonOverCaption, trailingPitchTotal,
   type NextGameTimeStatus,
 } from "./metrics.js";
 
@@ -644,8 +644,8 @@ export function RecentStrain({
             </>
           ) : (
             <div className="recent-game-copy">
-              <strong>No upcoming game</strong>
-              <span>Next-game schedule data will appear after a refresh.</span>
+              <strong>Season's over!</strong>
+              <span>{seasonOverCaption(nowMs)}</span>
             </div>
           )}
         </section>
