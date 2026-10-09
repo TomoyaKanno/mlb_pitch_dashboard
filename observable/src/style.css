@@ -22,6 +22,19 @@
   --warning: #8a5a00;
   --avg-notch: #111111;
   --avg-notch-halo: #ffffff;
+  /* Offseason scene: winter morning. */
+  --snow-sky-top: #dfe7fb;
+  --snow-sky-bottom: #f4f1fc;
+  --snow-ground: #fbfcff;
+  --snow-drift: #ffffff;
+  --snow-shadow: #d6dcf0;
+  --snow-wall: #c9cde6;
+  --snow-steel: #9a98b8;
+  --snow-sun: #fff4d6;
+  --snow-flake: #ffffff;
+  --snow-flake-edge: #c7cdea;
+  --snow-pill: #dbe6ff;
+  --snow-pill-text: #26387a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,6 +57,19 @@
     --warning: #ffd166;
     --avg-notch: #ffffff;
     --avg-notch-halo: #111111;
+    /* Offseason scene: snowy night. */
+    --snow-sky-top: #0c1230;
+    --snow-sky-bottom: #1d2147;
+    --snow-ground: #2a2f57;
+    --snow-drift: #3a4072;
+    --snow-shadow: #1f2448;
+    --snow-wall: #161a3a;
+    --snow-steel: #0b0e24;
+    --snow-sun: #e9e6ff;
+    --snow-flake: #eef1ff;
+    --snow-flake-edge: transparent;
+    --snow-pill: #26306a;
+    --snow-pill-text: #d3dcff;
   }
 }
 
@@ -105,6 +131,52 @@ button.active { color: var(--surface); border-color: var(--accent); background: 
 .recent-game-copy { display: grid; gap: 3px; min-width: 0; }
 .recent-game-copy strong { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 .recent-game-copy span { color: var(--muted); font-size: .82rem; }
+
+/* Season-over scenes fill the Next game card once a team has no regular-season game left. */
+.season-over-card { grid-template-rows: auto 1fr; align-content: stretch; }
+.season-over { display: grid; grid-template-rows: minmax(220px, 1fr) auto; min-height: 340px; overflow: hidden; border-radius: 10px; isolation: isolate; }
+.season-over-art { display: block; width: 100%; height: 100%; }
+.season-over-copy { display: grid; justify-items: center; gap: 10px; padding: 4px 16px 22px; text-align: center; }
+.season-over-copy strong { font-family: var(--serif, Georgia, serif); font-size: clamp(1.9rem, 4.5vw, 2.7rem); line-height: 1; letter-spacing: -.035em; }
+.season-over-caption { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; font-size: .78rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+.season-over-caption::before, .season-over-caption::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .55; }
+
+.season-over-postseason { background: #0d0a22; }
+.season-over-postseason .season-over-copy strong { color: #fff8e6; text-shadow: 0 2px 18px rgba(245, 197, 66, .35); }
+.season-over-postseason .season-over-caption { color: #2a1660; background: linear-gradient(135deg, #ffe08a, #f5c542); box-shadow: 0 0 0 1px rgba(255, 233, 176, .4), 0 6px 20px rgba(245, 197, 66, .25); }
+.season-over-postseason .season-over-tower { fill: #07051a; }
+.season-over-bulb { fill: #fff3c4; filter: drop-shadow(0 0 3px #ffe9b0); }
+.season-over-star { fill: #fff8e6; animation: season-over-twinkle 4s ease-in-out infinite; }
+
+.season-over-offseason { background: var(--snow-ground); }
+.season-over-offseason .season-over-copy strong { color: var(--text); }
+.season-over-offseason .season-over-caption { color: var(--snow-pill-text); background: var(--snow-pill); }
+.season-over-offseason .season-over-tower { fill: var(--snow-steel); }
+.season-over-bulb-off { fill: var(--snow-shadow); }
+.season-over-ground { fill: var(--snow-ground); }
+.season-over-drift { fill: var(--snow-drift); }
+.season-over-wall { fill: var(--snow-wall); }
+.season-over-sun { fill: var(--snow-sun); }
+.season-over-base { fill: var(--snow-drift); stroke: var(--snow-shadow); stroke-width: 1; }
+.season-over-chalk { fill: none; stroke: var(--snow-shadow); stroke-width: 2; stroke-dasharray: 3 7; stroke-linecap: round; }
+.season-over-flake { fill: var(--snow-flake); stroke: var(--snow-flake-edge); stroke-width: .6; }
+
+.season-over-fall { animation-name: season-over-fall; animation-timing-function: linear; animation-iteration-count: infinite; }
+.season-over-confetti { transform-box: fill-box; transform-origin: center; animation-name: season-over-confetti; }
+.season-over-beams { transform-origin: 200px 300px; animation: season-over-sweep 9s ease-in-out infinite; }
+@keyframes season-over-fall {
+  from { transform: translate(0, 0); }
+  to { transform: translate(var(--drift, 0), 340px); }
+}
+@keyframes season-over-confetti {
+  from { transform: translate(0, 0) rotate(0deg); }
+  to { transform: translate(var(--drift, 0), 340px) rotate(540deg); }
+}
+@keyframes season-over-twinkle { 0%, 100% { opacity: .9; } 50% { opacity: .25; } }
+@keyframes season-over-sweep { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .season-over-fall, .season-over-star, .season-over-beams { animation: none; }
+}
 .recent-game-context {
   display: flex;
   flex-wrap: wrap;

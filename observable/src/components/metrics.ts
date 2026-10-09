@@ -91,14 +91,16 @@ export function nextGameTimeStatus(
   return elapsedMs >= overAfterMs ? "over" : "live";
 }
 
+export type SeasonOverPhase = "postseason" | "offseason";
+
 /**
- * Caption for a team with no upcoming regular-season game. The pipeline
+ * Phase for a team with no upcoming regular-season game. The pipeline
  * schedules regular-season games only, so an empty next game means the team's
  * season is over; October and November are postseason time.
  */
-export function seasonOverCaption(nowMs: number = Date.now()): string {
+export function seasonOverPhase(nowMs: number = Date.now()): SeasonOverPhase {
   const month = new Date(nowMs).getMonth();
-  return month === 9 || month === 10 ? "Postseason time!" : "Offseason baby";
+  return month === 9 || month === 10 ? "postseason" : "offseason";
 }
 
 /** Sums a pitcher's trailing calendar-day relief pitches, inclusive of the heatmap end date. */
